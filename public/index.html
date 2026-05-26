@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>두드림 - 시니어 디지털 자립</title>
+  
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
+  
+  <style>
+    /* 1. 전체 레이아웃 고정 */
+    * { box-sizing: border-box; }
+    html, body { 
+      margin: 0; padding: 0; width: 100%; height: 100vh; 
+      overflow: hidden !important; 
+      font-family: 'Pretendard', sans-serif; 
+      background: #f4f7fa; 
+      display: flex; flex-direction: column; 
+    }
+
+    /* 2. 헤더 영역 */
+    .header-wrapper {
+      width: 100%; height: 60px; background: white;
+      flex-shrink: 0; z-index: 1000; border-bottom: 1px solid #eee;
+    }
+    iframe { border: none; display: block; width: 100%; height: 100%; }
+
+    #root { flex: 1; display: flex; flex-direction: column; min-height: 0; }
+    .color-strip { width: 100%; height: 5px; transition: background-color 0.5s ease; }
+
+    /* 3. 슬라이더 영역 */
+    .slider-outer { 
+      width: 100%; height: 38vh; position: relative; 
+      background: #edf1f7; display: flex; align-items: center; 
+      justify-content: center; overflow: hidden; flex-shrink: 0;
+    }
+    .slider-inner { display: flex; align-items: center; transition: transform 0.7s cubic-bezier(0.25, 1, 0.5, 1); gap: 30px; }
+    
+    .slide { 
+      min-width: 900px; height: 33vh; border-radius: 30px; 
+      overflow: hidden; box-shadow: 0 12px 30px rgba(0,0,0,0.1); 
+      transition: all 0.6s ease; opacity: 0.3; transform: scale(0.95); background: white; 
+    }
+    .slide.active { opacity: 1; transform: scale(1.0); }
+    .slide img { width: 100%; height: 100%; object-fit: cover; }
+
+    .nav-btn { 
+        position: absolute; top: 50%; transform: translateY(-50%); 
+        width: 55px; height: 55px; background: rgba(255,255,255,0.9); 
+        border-radius: 50%; display: flex; align-items: center; justify-content: center; 
+        cursor: pointer; z-index: 10; border: none; font-size: 22px; color: #333;
+    }
+    .prev { left: 30px; } .next { right: 30px; }
+
+    /* 4. 하단 콘텐츠 영역 */
+    .hero { 
+      flex: 1; display: flex; flex-direction: column; 
+      justify-content: center; align-items: center; 
+      padding: 5px 0;
+    }
+    
+    .hero-text { text-align: center; margin-bottom: 20px; }
+    .hero h1 { font-size: 38px; margin: 0 0 8px 0; color: #1a1a1a; font-weight: 800; letter-spacing: -1.2px; }
+    .hero p { font-size: 19px; color: #444; line-height: 1.5; font-weight: 500; margin: 0; }
+
+    /* ✅ 버튼 그룹 - 버튼 크기 살짝 키움 (너비 480->520) */
+    .btn-group { display: flex; flex-direction: column; gap: 12px; width: 100%; align-items: center; }
+    .start-btn, .practice-btn { 
+      font-size: 26px; padding: 20px 0; width: 520px; border-radius: 22px; 
+      border: none; color: white; cursor: pointer; font-weight: 800; 
+      transition: all 0.3s; box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    .start-btn:hover, .practice-btn:hover { transform: translateY(-3px); filter: brightness(1.1); }
+
+    /* ✅ 안내 카드 - 아주아주 살짝 내림 (margin-top 25->35) */
+    .cards { display: flex; justify-content: center; gap: 15px; margin-top: 35px; }
+    .card { 
+      background: white; padding: 12px 24px; border-radius: 15px; 
+      font-size: 17px; font-weight: 700; color: #777; 
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05); border: 1px solid #f1f3f5; 
+    }
+
+    /* 5. 푸터 */
+    footer { 
+      width: 100%; padding: 15px 0; text-align: center; color: #bbb; 
+      font-size: 13px; flex-shrink: 0; border-top: 1px solid #eee; background: white; 
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header-wrapper">
+    <iframe src="./header.html" scrolling="no"></iframe>
+  </div>
+
+  <div id="root"></div>
+
+  <footer>
+    © 2026 두드림. 모든 시니어의 디지털 자립을 응원합니다.
+  </footer>
+
+  <script type="text/babel">
+    function App() {
+      const slideData = [
+        {
+          id: 0,
+          img: "Image/img3.png",
+          color: "#7db249",
+          subColor: "#afd485",
+          title: "내 손안의 작은 키오스크",
+          desc: "카페 주문부터 병원 접수까지 실제와 똑같은 화면으로 연습하고\n세상 밖으로 당당하게 나아가세요. 반복 연습이 자신감이 됩니다."
+        },
+        
+        {
+          id: 1,
+          img: "Image/img1.png",
+          color: "#1A4B8F",
+          subColor: "#A5C0E4",
+          title: "어려운 기술은 없습니다",
+          desc: "단지 익숙하지 않을 뿐입니다. 두드림이 친절한 길잡이가 되어드릴게요.\n실수해도 괜찮으니 여기서 마음껏 연습해 보세요."
+        },
+        {
+          id: 2,
+          img: "Image/img4.png",
+          color: "#E67E22",
+          subColor: "#f6c777",
+          title: "당당하게 세상과 소통하기",
+          desc: "디지털로 세상과 더 넓게 연결되기를 바랍니다.\n여러분의 당당한 자립을 위해 두드림이 끝까지 함께하겠습니다."
+        }
+      ];
+
+      const [currentIndex, setCurrentIndex] = React.useState(1);
+      const currentSlide = slideData[currentIndex];
+
+      const handlePrev = () => setCurrentIndex(prev => (prev === 0 ? 2 : prev - 1));
+      const handleNext = () => setCurrentIndex(prev => (prev === 2 ? 0 : prev + 1));
+
+      return (
+        <div style={{ flex: 1, display: "flex", flexDirection: "column", minHeight: 0 }}>
+          <div className="color-strip" style={{ backgroundColor: currentSlide.color }}></div>
+
+          <div className="slider-outer">
+            <button className="nav-btn prev" onClick={handlePrev}><i className="fa-solid fa-chevron-left"></i></button>
+            <div className="slider-inner" style={{ transform: `translateX(${-(currentIndex - 1) * 930}px)` }}>
+              {slideData.map((slide, index) => (
+                <div key={index} className={`slide ${index === currentIndex ? 'active' : ''}`}>
+                  <img src={slide.img} alt={slide.title} />
+                </div>
+              ))}
+            </div>
+            <button className="nav-btn next" onClick={handleNext}><i className="fa-solid fa-chevron-right"></i></button>
+          </div>
+          
+          <div className="hero">
+            <div className="hero-text">
+              <h1>{currentSlide.title}</h1>
+              <p style={{ whiteSpace: 'pre-line' }}>{currentSlide.desc}</p>
+            </div>
+
+            <div className="btn-group">
+              <button className="start-btn" style={{ backgroundColor: currentSlide.color }} onClick={() => window.location.href='select_topic.html'}>
+                교육 시작하기
+              </button>
+              <button className="practice-btn" style={{ backgroundColor: currentSlide.subColor }} onClick={() => window.location.href = 'kiosk.html'}>
+  체험하기
+</button>
+            </div>
+
+            <div className="cards">
+              <div className="card">천천히 눌러도 괜찮아요</div>
+              <div className="card">뒤에 사람 신경 쓰지 마세요</div>
+              <div className="card">언제든 도움을 요청하세요</div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById("root"));
+    root.render(<App />);
+  </script>
+</body>
+</html>

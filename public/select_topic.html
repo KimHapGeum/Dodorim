@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>두드림 - 주제 선택</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
+
+    <style>
+        /* 1. 기본 레이아웃 및 스크롤 방지 */
+        html, body {
+            margin: 0; padding: 0; width: 100%; height: 100vh;
+            overflow: hidden !important; 
+            font-family: 'Pretendard', sans-serif;
+            background-color: #f9fbff;
+            color: #1a1a1a;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 2. 헤더 영역 (iframe 스타일) */
+        #main-header-wrapper {
+            width: 100%;
+            height: 60px;
+            background-color: #ffffff;
+            flex-shrink: 0;
+            z-index: 9999;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        iframe { border: none; display: block; }
+        
+        /* 3. 중앙 콘텐츠 영역 */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start; /* 💡 상단 정렬로 변경하여 위로 밀어 올림 */
+            padding-top: 60px; /* 💡 제목이 너무 딱 붙지 않게 적당한 여백만 부여 */
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 💡 상단 제목 그룹 위치 및 글자 크기 수정 */
+        .title-group {
+            text-align: center;
+            margin-bottom: 50px; /* 카드와의 간격 */
+            animation: fadeInUp 0.8s ease-out forwards;
+        }
+
+        .title-group h1 { 
+            font-size: 48px; /* 💡 기존 42px -> 48px로 확대 */
+            font-weight: 800; 
+            margin: 0; 
+            color: #0b1a33; 
+        }
+        .title-group p { 
+            font-size: 26px; /* 💡 기존 22px -> 26px로 확대 */
+            color: #222; 
+            margin-top: 14px; 
+            font-weight: 700; 
+        }
+
+        .topic-container {
+            display: flex;
+            gap: 35px;
+            justify-content: center;
+            width: 100%;
+        }
+
+        /* 4. 카드 디자인 */
+        .card {
+            background: white;
+            width: 340px; /* 글씨가 커진 만큼 카드 가로폭도 살짝 넓힘 */
+            padding: 50px 25px;
+            border-radius: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border: 2px solid #e2e8f0;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease-out forwards;
+            transition: all 0.25s ease-in-out;
+            cursor: pointer;
+        }
+
+        .card:nth-child(1) { animation-delay: 0.2s; }
+        .card:nth-child(2) { animation-delay: 0.4s; }
+        .card:nth-child(3) { animation-delay: 0.6s; }
+
+        .card:hover {
+            transform: translateY(-12px);
+            box-shadow: 0 25px 45px rgba(0, 86, 179, 0.18);
+            border-color: #0056b3;
+            background-color: #f4f9ff;
+        }
+
+        .icon-box { 
+            font-size: 90px; /* 💡 기존 80px -> 90px로 아이콘 확대 */
+            color: #0056b3; 
+            margin-bottom: 25px; 
+            transition: 0.2s; 
+        }
+        .card:hover .icon-box { transform: scale(1.08); }
+        
+        /* 💡 카드 내부 글씨 크기 추가 확대 */
+        .card h2 { 
+            font-size: 42px; /* 💡 기존 38px -> 42px로 대폭 확대 */
+            font-weight: 900; 
+            margin: 0 0 20px 0; 
+            color: #111; 
+        }
+        .card:hover h2 { color: #004494; }
+
+        .card p { 
+            font-size: 22px; /* 💡 기존 19px -> 22px로 선명하게 확대 */
+            font-weight: 600;
+            color: #444; 
+            line-height: 1.6; 
+            margin: 0;
+        }
+
+        /* 5. 하단 푸터 */
+        footer { padding: 18px 0; text-align: center; color: #bbb; font-size: 14px; flex-shrink: 0; border-top: 1px solid #f0f0f0; background: white; }
+    </style>
+</head>
+<body>
+
+    <div id="main-header-wrapper">
+        <iframe src="./header.html?type=edu" width="100%" height="60px" scrolling="no" title="두드림 헤더"></iframe>
+    </div>
+
+    <main class="main-content">
+        <div class="title-group">
+            <h1>어떤 것을 배워볼까요?</h1>
+            <p>배우고 싶은 기기 그림을 살짝 눌러주세요.</p>
+        </div>
+
+        <div class="topic-container">
+            <div class="card" onclick="location.href='kiosk_edu.html'">
+                <div class="icon-box"><i class="fa-solid fa-display"></i></div>
+                <h2>키오스크</h2>
+                <p>식당과 카페에서 당당하게!<br>주문하는 방법을 연습합니다.</p>
+            </div>
+        
+            <div class="card" onclick="location.href='self_check.html'">
+                <div class="icon-box"><i class="fa-solid fa-barcode"></i></div>
+                <h2>셀프 계산대</h2>
+                <p>마트나 편의점에서 직접<br>바코드를 찍고 결제해 봅니다.</p>
+            </div>
+        
+            <div class="card" onclick="location.href='device_edu.html'">
+                <div class="icon-box"><i class="fa-solid fa-mobile-button"></i></div>
+                <h2>전자기기</h2>
+                <p>스마트폰 기본 사용법부터<br>은행 ATM기기까지 알아봅니다.</p>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        © 2026 두드림. 모든 시니어의 디지털 자립을 응원합니다.
+    </footer>
+
+    <script>
+        window.toggleVoice = function() {
+            alert("음성 안내 기능을 전환합니다.");
+        };
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>두드림 - 무인매장 키오스크 연습</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
+
+    <style>
+        /* ✅ 1. 기본 레이아웃 - 스크롤 절대 방지 */
+        * { box-sizing: border-box; }
+        html, body { 
+            margin: 0; padding: 0; width: 100%; height: 100vh; 
+            overflow: hidden !important; 
+            font-family: 'Pretendard', sans-serif; 
+            background-color: #f9fbff; 
+            color: #1a1a1a;
+            display: flex; flex-direction: column; 
+        }
+
+        /* ✅ 2. 헤더 영역 */
+        #main-header-wrapper {
+            width: 100%; height: 60px;
+            background-color: #ffffff;
+            flex-shrink: 0; z-index: 9999;
+            border-bottom: 1px solid #ebf0f5;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+        }
+        iframe { border: none; display: block; width: 100%; height: 60px; }
+
+        /* ✅ 3. 메인 콘텐츠 - 고정형 연출 */
+        .main-content {
+            flex: 1; display: flex; flex-direction: column;
+            align-items: center; 
+            justify-content: flex-start; 
+            padding-top: 40px; 
+            overflow: hidden !important; 
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 상단 인디케이터 배지 */
+        .step-indicator {
+            background: #e1e7f0; padding: 8px 22px; border-radius: 30px;
+            font-weight: 700; color: #556b8d; margin-bottom: 15px; 
+            font-size: 20px; 
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+
+        /* 상단 제목 그룹 글자 크기 대폭 확대 */
+        .title-group {
+            text-align: center; margin-bottom: 35px;
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+        .title-group h1 { 
+            font-size: 48px; 
+            font-weight: 800; margin: 0; color: #0b1a33; 
+        }
+        .title-group p { 
+            font-size: 26px; 
+            color: #222; margin-top: 12px; font-weight: 700; 
+        }
+
+        /* ✅ 4. 카드 그리드 */
+        .lecture-grid {
+            display: flex;
+            justify-content: center;
+            gap: 35px;
+            width: 95%;
+            max-width: 1100px; 
+        }
+
+        /* 가늘고 세련된 1px 테두리를 적용한 패밀리 디자인 카드 */
+        .card {
+            background: #ffffff; 
+            padding: 0px 0px 45px 0px; 
+            border-radius: 36px; box-shadow: 0 12px 30px rgba(0,0,0,0.05);
+            text-align: center; display: flex; flex-direction: column; align-items: center;
+            border: 1px solid rgba(226, 232, 240, 0.7); 
+            opacity: 0;
+            animation: fadeInUp 0.6s ease-out forwards;
+            transition: all 0.25s ease-in-out; cursor: pointer;
+            flex: 1; overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 86, 179, 0.18);
+            border-color: #0056b3;
+            background-color: #f4f9ff;
+        }
+
+        /* 이미지 박스 및 하단 구분선 */
+        .img-box { 
+            width: 100%; 
+            height: 160px; 
+            display: flex; align-items: center; justify-content: center;
+            overflow: hidden; background-color: #ffffff;
+            border-bottom: 1px solid rgba(226, 232, 240, 0.7); 
+            transition: 0.25s ease-in-out;
+        }
+        
+        /* 💡 이미지(로고) 크기 비율을 대폭 확대하여(65% -> 85%) 시원하게 연출 */
+        .img-box img { max-height: 85%; max-width: 85%; object-fit: contain; transition: 0.25s ease-in-out; }
+        .card:hover .img-box img { transform: scale(1.05); }
+        
+        .card:hover .img-box { border-bottom-color: #0056b3; }
+
+        /* 매장 이름 글씨 */
+        .card h2 { 
+            font-size: 40px; 
+            margin: 35px 0 0 0; color: #111; font-weight: 900; 
+        }
+        .card:hover h2 { color: #004494; }
+
+        /* 부연 설명 문구 영역 */
+        .card p {
+            font-size: 22px; color: #444; line-height: 1.6; margin: 15px 0 0 0; font-weight: 600;
+        }
+
+        /* 하단 뒤로가기 버튼 스타일 및 0.5초 딜레이 리듬 일치 */
+        .btn-back-bottom {
+            margin-top: 45px; 
+            background: #e2e8f0; border: none; color: #475569;
+            padding: 14px 38px; border-radius: 50px;
+            font-size: 22px; font-weight: 700; cursor: pointer; transition: 0.2s;
+            display: inline-flex; align-items: center; gap: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            text-decoration: none; 
+            
+            opacity: 0;
+            animation: fadeInUp 0.6s ease-out forwards;
+            animation-delay: 0.5s; 
+        }
+        .btn-back-bottom:hover { background: #cbd5e1; color: #1e293b; }
+
+        footer { padding: 18px 0; text-align: center; color: #bbb; font-size: 14px; flex-shrink: 0; border-top: 1px solid #eee; background: white; }
+    </style>
+</head>
+<body>
+
+    <div id="main-header-wrapper">
+        <iframe src="./header.html?type=edu" scrolling="no"></iframe>
+    </div>
+
+    <main class="main-content">
+        <div class="step-indicator">무인매장 계산 연습</div>
+        
+        <div class="title-group">
+            <h1>어디에서 연습해볼까요?</h1>
+            <p>연습하고 싶은 장소 그림을 살짝 눌러주세요.</p>
+        </div>
+
+        <div class="lecture-grid" id="kiosk-list">
+            </div>
+
+        <button class="btn-back-bottom" onclick="location.href='self_check.html'">
+            <i class="fa-solid fa-arrow-left"></i> 이전 화면으로 가기
+        </button>
+    </main>
+
+    <footer>
+        © 2026 두드림. 모든 시니어의 디지털 자립을 응원합니다.
+    </footer>
+
+    <script>
+        const kioskData = [
+            { 
+                name: '아이스크림', 
+                img: 'Unmanned.img/ice.jpg', 
+                desc: '달콤한 간식을 직접 고르고<br>키오스크 화면에서 손쉽게 결제합니다.', 
+                url: 'screen.html?type=icecream' 
+            },
+            { 
+                name: '무인편의점', 
+                img: 'Unmanned.img/emart.jpg', 
+                desc: '늦은 시간에도 당황하지 않고<br>필요한 물건을 스스로 계산해봅니다.', 
+                url: 'screen.html?type=unmanned_store' 
+            }
+        ];
+
+        const listContainer = document.getElementById('kiosk-list');
+        listContainer.innerHTML = ''; 
+
+        kioskData.forEach((item, index) => {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.style.animationDelay = ((index * 0.1) + 0.1) + 's'; 
+            card.onclick = () => location.href = item.url;
+            
+            card.innerHTML = `
+                <div class="img-box">
+                    <img src="${item.img}" alt="${item.name}">
+                </div>
+                <h2>${item.name}</h2>
+                <p>${item.desc}</p>
+            `;
+            listContainer.appendChild(card);
+        });
+
+        window.toggleVoice = function(isOn) {
+            console.log("무인매장 페이지 음성 안내 상태:", isOn);
+        };
+    </script>
+</body>
+</html>

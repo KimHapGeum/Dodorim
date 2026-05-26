@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Do+Hyeon&family=Noto+Sans+KR:wght@700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
+            font-family: 'Noto Sans KR', sans-serif; 
+            color: #1a1a1a; 
+            background-color: #ffffff; 
+            overflow: hidden; 
+        }
+
+        .header-inner {
+            max-width: 1200px; 
+            margin: 0 auto;
+            padding: 0 40px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            height: 60px; 
+        }
+
+        /* ✅ 로고 디자인: 빨간 점 제거 및 최적화 */
+        .main-logo-top { 
+            display: flex; 
+            align-items: center; 
+            text-decoration: none; 
+        }
+
+        .logo-text { 
+            font-family: 'Black Han Sans', sans-serif; 
+            font-size: 42px; 
+            letter-spacing: -1.5px; 
+            background: linear-gradient(135deg, #0056b3 0%, #00a0e9 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 2px 3px 5px rgba(0,0,0,0.08);
+            line-height: 1;
+            display: inline-block;
+            padding-top: 2px;
+        }
+
+    
+
+        #btn-area { display: flex; align-items: center; }
+
+        /* 음성 안내 컨트롤 스타일 */
+        .voice-control {
+            display: flex; 
+            align-items: center; 
+            background: #f0f2f5;
+            padding: 5px 5px 5px 18px; 
+            border-radius: 50px; 
+            cursor: pointer; 
+            border: 2px solid #d1d5db; 
+            height: 46px; 
+            transition: all 0.2s ease;
+        }
+        
+        .voice-label { 
+            font-weight: 800; 
+            font-size: 16px; 
+            color: #333; 
+            margin-right: 10px;
+        }
+
+        .voice-btn { 
+            width: 36px; 
+            height: 36px; 
+            border-radius: 50%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-size: 16px; 
+        }
+
+        .voice-on { background: #0056b3; color: white; }
+        .voice-off { background: #6c757d; color: white; }
+
+        /* 버튼 스타일 */
+        .login-btn { 
+            padding: 10px 20px; border-radius: 10px; font-weight: 700; border: none; 
+            cursor: pointer; font-size: 15px; background: #f1f3f5; color: #495057; 
+        }
+
+        .logout-btn {
+            background: none; border: none; color: #666; padding: 8px 10px;
+            cursor: pointer; font-size: 16px; font-weight: 700;
+            display: flex; align-items: center; gap: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header-inner">
+        <a href="index.html" target="_top" class="main-logo-top">
+            <span class="logo-text">두드림</span>
+        </a>
+        <div id="btn-area"></div>
+    </div>
+
+    <script>
+        (function() {
+            const btnArea = document.getElementById('btn-area');
+            const params = new URLSearchParams(window.location.search);
+            const type = params.get('type');
+
+            if (type === 'manager') {
+                btnArea.innerHTML = `<button class="logout-btn" onclick="handleLogout()"><i class="fa-solid fa-arrow-right-from-bracket"></i> 로그아웃</button>`;
+            } else if (type === 'login') {
+                btnArea.innerHTML = '';
+            } else if (type === 'edu') {
+                btnArea.innerHTML = `
+                    <div class="voice-control" id="voiceToggle" onclick="toggleVoiceLocal()">
+                        <div class="voice-label" id="voiceStatus">음성 안내 켜짐</div>
+                        <div class="voice-btn voice-on" id="voiceIconBox">
+                            <i class="fa-solid fa-volume-high" id="voiceIcon"></i>
+                        </div>
+                    </div>`;
+            } else {
+                btnArea.innerHTML = `<button class="login-btn" onclick="window.parent.location.href='login.html'">관리자 로그인</button>`;
+            }
+        })();
+
+        let isVoiceOn = true;
+        function toggleVoiceLocal() {
+            isVoiceOn = !isVoiceOn;
+            const statusText = document.getElementById('voiceStatus');
+            const iconBox = document.getElementById('voiceIconBox');
+            const icon = document.getElementById('voiceIcon');
+
+            if (isVoiceOn) {
+                statusText.innerText = "음성 안내 켜짐";
+                iconBox.className = "voice-btn voice-on";
+                icon.className = "fa-solid fa-volume-high";
+            } else {
+                statusText.innerText = "음성 안내 꺼짐";
+                iconBox.className = "voice-btn voice-off";
+                icon.className = "fa-solid fa-volume-xmark";
+            }
+
+            if (window.parent && typeof window.parent.toggleVoice === 'function') {
+                window.parent.toggleVoice(isVoiceOn);
+            }
+        }
+
+        function handleLogout() {
+            if (confirm('로그아웃 하시겠습니까?')) window.parent.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html>

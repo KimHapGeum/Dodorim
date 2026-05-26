@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>두드림 - 전자기기 학습</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
+
+    <style>
+        /* ✅ 1. 기본 레이아웃 - 스크롤 절대 방지 */
+        * { box-sizing: border-box; }
+        html, body { 
+            margin: 0; padding: 0; width: 100%; height: 100vh; 
+            overflow: hidden !important; /* 브라우저 스크롤 완벽 차단 */
+            font-family: 'Pretendard', sans-serif; 
+            background-color: #f9fbff; 
+            color: #1a1a1a;
+            display: flex; flex-direction: column;
+        }
+
+        /* ✅ 2. 헤더 영역 */
+        #main-header-wrapper {
+            width: 100%; 
+            height: 60px;
+            background-color: #ffffff;
+            flex-shrink: 0; 
+            z-index: 9999;
+            border-bottom: 1px solid #ebf0f5;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+        }
+        iframe { border: none; display: block; width: 100%; height: 60px; }
+
+        /* ✅ 3. 메인 콘텐츠 - 이전 버튼까지 한 화면에 고정 */
+        .main-content {
+            flex: 1; display: flex; flex-direction: column;
+            align-items: center; 
+            justify-content: flex-start; /* 상단 정렬로 안정적인 내부 공간 확보 */
+            padding-top: 40px; /* 상단 여백 조율 */
+            overflow: hidden !important; /* 내부 들썩임 스크롤 완벽 차단 */
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); } 
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 상단 인디케이터 */
+        .step-indicator {
+            background: #e1e7f0; padding: 8px 22px; border-radius: 30px;
+            font-weight: 700; color: #556b8d; margin-bottom: 15px; 
+            font-size: 20px; /* 크기 확대 */
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+
+        /* 상단 제목 그룹 글자 크기 대폭 확대 및 여백 조정 */
+        .title-group {
+            text-align: center; margin-bottom: 35px;
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+        .title-group h1 { 
+            font-size: 48px; /* 40px -> 48px 확대 */
+            font-weight: 800; margin: 0; color: #0b1a33; 
+        }
+        .title-group p { 
+            font-size: 26px; /* 19px -> 26px 확대 */
+            color: #222; margin-top: 12px; font-weight: 700; 
+        }
+
+        /* ✅ 4. 카드 그리드 - 카드가 화면을 가득 채우도록 스케일 확대 */
+        .lecture-grid {
+            display: flex; 
+            justify-content: center; 
+            gap: 35px; /* 카드 사이 간격을 넓혀 시원하게 배치 */
+            width: 95%; 
+            max-width: 1100px; /* 최대 가로 넓이 대폭 확장 */
+        }
+
+        /* 💡 어르신들이 누르기 편하게 덩치를 키우고 테두리는 얇고 깔끔하게 세팅 */
+        .card {
+            background: white; 
+            padding: 45px 35px; /* 안쪽 여백을 넓혀 카드 몸집을 크게 확보 */
+            border-radius: 36px; box-shadow: 0 12px 30px rgba(0,0,0,0.05);
+            text-align: center; display: flex; flex-direction: column; align-items: center;
+            
+            /* 💡 이전 수정 내용과 완벽하게 똑같이 맞춘 가늘고 세련된 테두리 두께 */
+            border: 1px solid rgba(226, 232, 240, 0.7); 
+            
+            opacity: 0;
+            animation: fadeInUp 0.6s ease-out forwards;
+            transition: all 0.25s ease-in-out;
+            cursor: pointer; flex: 1;
+        }
+
+        /* 마우스 오버 효과 */
+        .card:hover {
+            transform: translateY(-8px); 
+            box-shadow: 0 20px 40px rgba(0, 86, 179, 0.18);
+            border-color: #0056b3;
+            background-color: #f4f9ff;
+        }
+
+        /* 이미지(아이콘) 박스 크기 최적화 */
+        .img-box { 
+            width: 100%; 
+            height: 160px; /* 카드 비율에 맞춰 높이 160px 조정 */
+            margin-bottom: 25px; 
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 24px; 
+            font-size: 70px; /* 아이콘 크기 확대 */
+            color: white;
+            transition: 0.25s ease-in-out;
+        }
+        .bg-phone { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+        .bg-atm { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+        .card:hover .img-box { transform: scale(1.04); }
+
+        /* 💡 카드 내부 텍스트 크기 확대 */
+        .card h2 { 
+            font-size: 40px; /* 28px -> 40px로 큼직하게 확대 */
+            margin: 0 0 15px 0; color: #111; font-weight: 900; 
+        }
+        .card:hover h2 { color: #004494; }
+        
+        .card p { 
+            font-size: 22px; /* 17px -> 22px로 확대 */
+            color: #444; line-height: 1.6; margin: 0; font-weight: 600; 
+        }
+
+        /* 💡 완벽하게 대칭을 맞춘 하단 뒤로가기 버튼 */
+        .btn-back-bottom {
+            margin-top: 45px; /* 화면 밖으로 삐져나가지 않도록 배치 간격 고정 */
+            background: #e2e8f0; border: none; color: #475569;
+            padding: 14px 38px; border-radius: 50px;
+            font-size: 22px; font-weight: 700; cursor: pointer; transition: 0.2s;
+            display: inline-flex; align-items: center; gap: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            text-decoration: none; /* 밑줄 해제 */
+            
+            /* 💡 애니메이션 똑같이 적용: 카드들이 나타난 직후 자연스럽게 차오릅니다 */
+            opacity: 0;
+            animation: fadeInUp 0.6s ease-out forwards;
+            animation-delay: 0.5s; /* 다른 안내 화면들과 동일한 박자 타이밍 */
+        }
+        .btn-back-bottom:hover { background: #cbd5e1; color: #1e293b; }
+
+        footer { padding: 18px 0; text-align: center; color: #bbb; font-size: 14px; flex-shrink: 0; border-top: 1px solid #eee; background: white; }
+    </style>
+</head>
+<body>
+
+    <div id="main-header-wrapper">
+        <iframe src="./header.html?type=edu" scrolling="no"></iframe>
+    </div>
+
+    <main class="main-content">
+        <div class="step-indicator">전자기기 학습</div>
+        <div class="title-group">
+            <h1>어떤 기기를 배워볼까요?</h1>
+            <p>연습하고 싶은 장소 그림을 살짝 눌러주세요.</p>
+        </div>
+
+        <div class="lecture-grid">
+            <div class="card" style="animation-delay: 0.1s;" onclick="location.href='phone.html'">
+                <div class="img-box bg-phone">
+                    <i class="fa-solid fa-mobile-screen-button"></i>
+                </div>
+                <h2>휴대폰</h2>
+                <p>전화, 문자, 앱 설치 등<br>기본적인 휴대폰 사용법을 익힙니다.</p>
+            </div>
+
+            <div class="card" style="animation-delay: 0.2s;" onclick="location.href='atm.html'">
+                <div class="img-box bg-atm">
+                    <i class="fa-solid fa-money-bill-transfer"></i>
+                </div>
+                <h2>ATM</h2>
+                <p>은행 무인기기에서 입금,<br>출금, 송금하는 법을 연습합니다.</p>
+            </div>
+        </div>
+
+        <button class="btn-back-bottom" onclick="location.href='select_topic.html'">
+            <i class="fa-solid fa-arrow-left"></i> 이전 화면으로 가기
+        </button>
+    </main>
+
+    <footer>© 2026 두드림. 모든 시니어의 디지털 자립을 응원합니다.</footer>
+
+    <script>
+        window.toggleVoice = function(isOn) {
+            console.log("전자기기 학습 페이지 음성 상태:", isOn);
+        };
+    </script>
+</body>
+</html>

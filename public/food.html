@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>두드림 - 음식점/카페 선택</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
+
+    <style>
+        /* ✅ 1. 기본 스타일 설정 - 스크롤 절대 방지 */
+        * { box-sizing: border-box; }
+        html, body {
+            margin: 0; padding: 0;
+            width: 100%; height: 100vh;
+            overflow: hidden !important; /* 브라우저 스크롤 완벽 차단 */
+            font-family: 'Pretendard', sans-serif;
+            background-color: #f4f7fa; 
+            color: #1a1a1a;
+            display: flex; flex-direction: column;
+        }
+
+        /* ✅ 2. 헤더 영역 */
+        #main-header-wrapper {
+            width: 100%; 
+            height: 60px;
+            background-color: #ffffff;
+            flex-shrink: 0; 
+            z-index: 1000;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        iframe { border: none; display: block; width: 100%; height: 100%; }
+
+        /* ✅ 3. 중앙 콘텐츠 영역 - 이전 버튼까지 스크롤 없이 고정 */
+        .main-content {
+            flex: 1; 
+            display: flex; 
+            flex-direction: column;
+            align-items: center; 
+            justify-content: flex-start; /* 상단 정렬로 변경하여 위로 밀어 올림 */
+            padding-top: 35px; /* 적절한 상단 공간 확보 */
+            overflow: hidden !important; /* 내부 스크롤 차단 */
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 상단 제목 그룹 글자 크기 확대 및 여백 축소 */
+        .title-group {
+            text-align: center; 
+            margin-bottom: 25px;
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+        .title-group h1 { 
+            font-size: 46px; 
+            font-weight: 800; margin: 0; color: #0b1a33; letter-spacing: -1px; 
+        }
+        .title-group p { 
+            font-size: 24px; 
+            color: #222; margin-top: 12px; font-weight: 700; 
+        }
+
+        /* ✅ 4. 카드 그리드 레이아웃 (6개 카드 맞춤형 압축 배치) */
+        .topic-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px; /* 스크롤 방지를 위해 간격 최적화 */
+            max-width: 1000px;
+            width: 90%;
+        }
+
+        /* 버튼 역할을 대신 할 카드 본체 스타일 최적화 */
+        .card {
+            background: #ffffff; 
+            padding: 20px; /* 내부 여백을 콤팩트하게 조정하여 높이 축소 */
+            border-radius: 24px; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.04);
+            text-align: center; 
+            display: flex; 
+            flex-direction: column;
+            align-items: center;
+            border: 2px solid #e2e8f0; 
+            opacity: 0;
+            animation: fadeInUp 0.6s ease-out forwards;
+            transition: all 0.25s ease-in-out;
+            cursor: pointer;
+        }
+
+        /* 마우스 오버 강조 효과 */
+        .card:hover {
+            transform: translateY(-6px); /* 위로 들리는 높이 최적화로 삐져나감 방지 */
+            box-shadow: 0 15px 35px rgba(0, 86, 179, 0.15);
+            border-color: #0056b3;
+            background-color: #f4f9ff;
+        }
+
+        /* 이미지 박스 크기 최적화 */
+        .img-box { 
+            width: 100%; 
+            height: 100px; /* 한 화면 고정을 위해 세밀하게 축소 */
+            margin-bottom: 12px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            overflow: hidden; 
+            border-radius: 16px;
+            background-color: #ffffff; 
+        }
+        
+        .img-box img { 
+            max-height: 100%; 
+            max-width: 100%; 
+            object-fit: contain; 
+            transition: 0.25s ease-in-out; 
+        }
+        .card:hover img { transform: scale(1.05); }
+
+        /* 브랜드 이름 글자 크기 대폭 확대 */
+        .card h2 { 
+            font-size: 34px; 
+            margin: 0; 
+            color: #111; 
+            font-weight: 900; 
+        }
+        .card:hover h2 { color: #004494; }
+
+        /* 💡 애니메이션 효과가 완벽하게 연동된 하단 뒤로가기 버튼 */
+        .btn-back-bottom {
+            margin-top: 30px; /* 이전 버튼이 화면 밖으로 밀려나지 않게 간격 조율 */
+            background: #e2e8f0; border: none; color: #475569;
+            padding: 12px 32px; border-radius: 50px;
+            font-size: 20px; font-weight: 700; cursor: pointer; transition: 0.2s;
+            display: inline-flex; align-items: center; gap: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            text-decoration: none; /* 밑줄 제거 */
+            
+            /* 💡 애니메이션 속성 추가: 카드들이 나오고 난 뒤 부드럽게 위로 스르륵 나타납니다 */
+            opacity: 0;
+            animation: fadeInUp 0.6s ease-out forwards;
+            animation-delay: 0.5s; /* 💡 공공장소 페이지와 동일한 박자 설정 */
+        }
+        .btn-back-bottom:hover { background: #cbd5e1; color: #1e293b; }
+
+        /* 푸터 스타일 */
+        footer { padding: 18px 0; text-align: center; color: #bbb; font-size: 14px; flex-shrink: 0; border-top: 1px solid #eee; background: white; }
+    </style>
+</head>
+<body>
+
+    <div id="main-header-wrapper">
+        <iframe src="./header.html?type=edu" scrolling="no"></iframe>
+    </div>
+
+    <main class="main-content">
+        <div class="title-group">
+            <h1>어디에서 주문해볼까요?</h1>
+            <p>연습하고 싶은 장소 그림을 살짝 눌러주세요.</p>
+        </div>
+
+        <div class="topic-container" id="kiosk-list">
+            </div>
+
+        <button class="btn-back-bottom" onclick="location.href='kiosk_edu.html'">
+            <i class="fa-solid fa-arrow-left"></i> 이전 화면으로 가기
+        </button>
+    </main>
+
+    <footer>
+        © 2026 두드림. 모든 시니어의 디지털 자립을 응원합니다.
+    </footer>
+
+    <script>
+        // 🛠️ 음식점/카페 데이터
+        const kioskData = [
+            { name: '버거킹', img: 'Image/bu.jpg', url: 'screen.html?type=burgerking' },
+            { name: '롯데리아', img: 'Image/lo.jpg', url: 'screen.html?type=lotteria' },
+            { name: '맥도날드', img: 'Image/ma.jpg', url: 'screen.html?type=mcdonalds' },
+            { name: '메가커피', img: 'Image/me.jpg', url: 'screen.html?type=megacoffee' },
+            { name: '컴포즈', img: 'Image/co.jpg', url: 'screen.html?type=compose' },
+            { name: '스타벅스', img: 'Image/st.jpg', url: 'screen.html?type=starbucks' }
+        ];
+
+        const listContainer = document.getElementById('kiosk-list');
+
+        // 카드 생성 로직
+        kioskData.forEach((item, index) => {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.style.animationDelay = (index * 0.08) + 's'; /* 진입 애니메이션 속도 소폭 최적화 */
+            card.onclick = () => location.href = item.url;
+            
+            card.innerHTML = `
+                <div class="img-box">
+                    <img src="${item.img}" alt="${item.name}">
+                </div>
+                <h2>${item.name}</h2>
+            `;
+            listContainer.appendChild(card);
+        });
+
+        // 음성 안내 연동 함수
+        window.toggleVoice = function(isOn) {
+            console.log("카페/음식점 페이지 음성 안내 상태:", isOn);
+        };
+    </script>
+</body>
+</html>
