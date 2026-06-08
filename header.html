@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Do+Hyeon&family=Noto+Sans+KR:wght@700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
+            font-family: 'Noto Sans KR', sans-serif; 
+            color: #1a1a1a; 
+            background-color: #ffffff; 
+            overflow: hidden; 
+        }
+
+        .header-inner {
+            max-width: 1500px; /* 광폭 모니터 대응 확대 */
+            margin: 0 auto;
+            padding: 0 40px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            height: 70px; /* 부모 70px 규격 높이 일치 */
+        }
+
+        .main-logo-top { 
+            display: flex; 
+            align-items: center; 
+            text-decoration: none; 
+        }
+
+        .logo-text { 
+            font-family: 'Black Han Sans', sans-serif; 
+            font-size: 42px; 
+            letter-spacing: -1.5px; 
+            background: linear-gradient(135deg, #0056b3 0%, #00a0e9 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 2px 3px 5px rgba(0,0,0,0.08);
+            line-height: 1;
+            display: inline-block;
+            padding-top: 2px;
+        }
+
+        #btn-area { display: flex; align-items: center; gap: 12px; }
+
+        /* 💡 헤더용 글자 크기 통합 컨트롤 스타일 */
+        .font-control-group {
+            display: flex;
+            align-items: center;
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 50px;
+            padding: 3px;
+        }
+
+        .btn-header-font {
+            border: none;
+            background: transparent;
+            padding: 6px 16px;
+            font-size: 16px;
+            font-weight: 800;
+            color: #475569;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            border-radius: 50px;
+            transition: all 0.2s;
+        }
+
+        .btn-header-font:hover {
+            background: #0056b3;
+            color: #ffffff;
+        }
+
+        /* 음성 안내 컨트롤 스타일 */
+        .voice-control {
+            display: flex; 
+            align-items: center; 
+            background: #f0f2f5;
+            padding: 5px 5px 5px 18px; 
+            border-radius: 50px; 
+            cursor: pointer; 
+            border: 2px solid #d1d5db; 
+            height: 46px; 
+            transition: all 0.2s ease;
+        }
+        
+        .voice-label { 
+            font-weight: 800; 
+            font-size: 16px; 
+            color: #333; 
+            margin-right: 10px;
+        }
+
+        .voice-btn { 
+            width: 36px; 
+            height: 36px; 
+            border-radius: 50%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-size: 16px; 
+        }
+
+        .voice-on { background: #0056b3; color: white; }
+        .voice-off { background: #6c757d; color: white; }
+
+        /* 버튼 스타일 */
+        .login-btn { 
+            padding: 10px 20px; border-radius: 10px; font-weight: 700; border: none; 
+            cursor: pointer; font-size: 15px; background: #f1f3f5; color: #495057; 
+        }
+
+        .logout-btn {
+            background: none; border: none; color: #666; padding: 8px 10px;
+            cursor: pointer; font-size: 16px; font-weight: 700;
+            display: flex; align-items: center; gap: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header-inner">
+        <a href="index.html" target="_top" class="main-logo-top">
+            <span class="logo-text">두드림</span>
+        </a>
+        <div id="btn-area"></div>
+    </div>
+
+    <script>
+        // 💡 부모창 제어 래퍼 함수 선언
+        function callParentFontZoom(amount) {
+            if (window.parent && typeof window.parent.adjustFontSize === 'function') {
+                window.parent.adjustFontSize(amount);
+            }
+        }
+
+        (function() {
+            const btnArea = document.getElementById('btn-area');
+            const params = new URLSearchParams(window.location.search);
+            const type = params.get('type');
+
+            if (type === 'manager') {
+                btnArea.innerHTML = `<button class="logout-btn" onclick="handleLogout()"><i class="fa-solid fa-arrow-right-from-bracket"></i> 로그아웃</button>`;
+            } else if (type === 'login') {
+                btnArea.innerHTML = '';
+            } else if (type === 'edu') {
+                // 💡 상단 헤더 우측 바에 글자 조절과 음성 조절 인터페이스 원스톱 결합 배치
+                btnArea.innerHTML = `
+                    <div class="font-control-group">
+                        <button class="btn-header-font" onclick="callParentFontZoom(2)">
+                            <i class="fa-solid fa-magnifying-glass-plus"></i> 글자 크게
+                        </button>
+                        <button class="btn-header-font" onclick="callParentFontZoom(-2)">
+                            <i class="fa-solid fa-magnifying-glass-minus"></i> 글자 작게
+                        </button>
+                    </div>
+                    <div class="voice-control" id="voiceToggle" onclick="toggleVoiceLocal()">
+                        <div class="voice-label" id="voiceStatus">음성 안내 켜짐</div>
+                        <div class="voice-btn voice-on" id="voiceIconBox">
+                            <i class="fa-solid fa-volume-high" id="voiceIcon"></i>
+                        </div>
+                    </div>`;
+            } else {
+                btnArea.innerHTML = `<button class="login-btn" onclick="window.parent.location.href='login.html'">관리자 로그인</button>`;
+            }
+        })();
+
+        let isVoiceOn = true;
+        function toggleVoiceLocal() {
+            isVoiceOn = !isVoiceOn;
+            const statusText = document.getElementById('voiceStatus');
+            const iconBox = document.getElementById('voiceIconBox');
+            const icon = document.getElementById('voiceIcon');
+
+            if (isVoiceOn) {
+                statusText.innerText = "음성 안내 켜짐";
+                iconBox.className = "voice-btn voice-on";
+                icon.className = "fa-solid fa-volume-high";
+            } else {
+                statusText.innerText = "음성 안내 꺼짐";
+                iconBox.className = "voice-btn voice-off";
+                icon.className = "fa-solid fa-volume-xmark";
+            }
+
+            if (window.parent && typeof window.parent.toggleVoice === 'function') {
+                window.parent.toggleVoice(isVoiceOn);
+            }
+        }
+
+        function handleLogout() {
+            if (confirm('로그아웃 하시겠습니까?')) window.parent.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html>
