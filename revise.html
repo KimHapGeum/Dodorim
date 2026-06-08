@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>관리자 - 강의 콘텐츠 관리</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* ==========================================================================
+           1. 글로벌 스타일 및 프리미엄 대시보드 테마 정의 (확정된 디자인 기준)
+           ========================================================================== */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
+            font-family: 'Noto Sans KR', sans-serif; 
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); 
+            min-height: 100vh; 
+            overflow-x: hidden; 
+        }
+        
+        /* 슬라이더 구조 */
+        .viewport { width: 100vw; overflow: hidden; }
+        .slider-container { display: flex; width: 200vw; transition: transform 0.6s cubic-bezier(0.25, 0.8, 0.25, 1); }
+        .page { width: 100vw; min-height: 100vh; flex-shrink: 0; display: flex; flex-direction: column; align-items: center; }
+
+        /* 상단 전폭 고정 화이트 헤더 바 */
+        .header { 
+            width: 100%; 
+            background: #ffffff; 
+            border-bottom: 1px solid #e2e8f0; 
+            height: 90px; 
+            display: flex; 
+            align-items: center; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+        }
+        .header-container { 
+            width: 100%; 
+            max-width: 1200px; 
+            margin: 0 auto; 
+            padding: 0 40px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+        }
+        .admin-title { font-size: 28px; font-weight: 900; color: #1e293b; text-decoration: none; cursor: pointer; }
+        .step-info { font-weight: 700; color: #0056b3; background: #f0f6ff; padding: 8px 18px; border-radius: 20px; font-size: 14px; }
+
+        /* 중앙 배치형 대형 화이트 카드 패널 구조 */
+        .outer-card { 
+            width: 100%; 
+            max-width: 1200px; 
+            padding: 60px 40px; 
+            display: flex; 
+            flex-direction: column;
+        }
+        .form-card-panel {
+            width: 100%;
+            background: #ffffff;
+            border-radius: 24px;
+            padding: 50px;
+            box-shadow: 0 20px 40px rgba(148, 163, 184, 0.12);
+        }
+        
+        /* 내부 가로 스크롤 대시보드 그리드 컨테이너 */
+        .inner-content { 
+            width: 100%; 
+            min-height: 420px; 
+            border: 1px solid #e2e8f0; 
+            border-radius: 16px; 
+            padding: 30px; 
+            background-color: #fafbfc; 
+            display: flex; 
+            align-items: flex-start; 
+            gap: 20px; 
+            overflow-x: auto; 
+        }
+        
+        /* 가로 스크롤바 최적화 */
+        .inner-content::-webkit-scrollbar { height: 6px; }
+        .inner-content::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 4px; }
+
+        /* ==========================================================================
+           2. 공통 폼 컨트롤 요소 (인풋, 셀렉트, 라벨)
+           ========================================================================== */
+        .form-area { width: 100%; }
+        .input-group { margin-bottom: 30px; }
+        .input-group label { display: block; font-weight: 700; margin-bottom: 14px; color: #1e293b; font-size: 16px; }
+        
+        .text-input { 
+            width: 100%; 
+            padding: 18px; 
+            border-radius: 12px; 
+            border: 1px solid #e2e8f0; 
+            font-size: 16px; 
+            outline: none; 
+            background-color: #fff;
+            color: #1e293b;
+            transition: all 0.3s ease; 
+        }
+        .text-input:focus { border-color: #0056b3; box-shadow: 0 0 0 4px rgba(0, 86, 179, 0.1); }
+        
+        .select-group { display: flex; gap: 15px; }
+        .select-box { 
+            flex: 1; 
+            padding: 18px; 
+            border: 1px solid #e2e8f0; 
+            border-radius: 12px; 
+            outline: none; 
+            background: #fff; 
+            cursor: pointer; 
+            font-size: 16px;
+            color: #1e293b;
+            transition: all 0.3s ease;
+        }
+        .select-box:focus { border-color: #0056b3; }
+
+        /* ==========================================================================
+           3. STEP 02: 동적 콘텐츠 대시보드 카드 아이템 디자인 통일
+           ========================================================================== */
+        .item-card { 
+            position: relative;
+            min-width: 230px; 
+            max-width: 230px; 
+            height: 340px; 
+            background: #fff; 
+            border: 1px solid #e2e8f0; 
+            border-radius: 16px; 
+            padding: 22px 18px; 
+            display: flex; 
+            flex-direction: column; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.02); 
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            animation: fadeIn 0.4s ease-out; 
+        }
+        .item-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.06);
+        }
+        
+        /* 메인 커버 하이라이팅 스펙 맞춤 */
+        .item-card.main-cover { border: 2px solid #0056b3; background: #fff; }
+        
+        .item-img { width: 100%; height: 130px; border-radius: 10px; object-fit: cover; margin-bottom: 15px; background: #f1f5f9; }
+        .item-title { font-weight: 700; color: #1e293b; margin-bottom: 8px; font-size: 15px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .item-desc { font-size: 13px; color: #64748b; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+
+        /* 카드 제어 액션 오버레이 아이콘 버튼 */
+        .card-actions {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            display: flex;
+            gap: 6px;
+            z-index: 10;
+        }
+        .action-icon-btn {
+            width: 28px;
+            height: 28px;
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid #e2e8f0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: #64748b;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .action-icon-btn:hover {
+            background: #fff;
+            color: #ef4444;
+            transform: scale(1.1);
+        }
+        .action-icon-btn.edit-btn:hover {
+            color: #0056b3;
+        }
+
+        /* 동적 플러스 대기 등록 버튼 카드 */
+        .add-btn { 
+            min-width: 230px; 
+            height: 340px; 
+            background: #fff; 
+            border: 2px dashed #cbd5e1; 
+            border-radius: 16px; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            cursor: pointer; 
+            transition: all 0.3s ease; 
+            color: #94a3b8; 
+        }
+        .add-btn:hover { 
+            border-color: #0056b3; 
+            background: #f0f6ff; 
+            color: #0056b3; 
+            transform: translateY(-4px); 
+        }
+        .add-btn i { font-size: 36px; margin-bottom: 12px; }
+        .add-btn span { font-weight: 600; font-size: 14px; }
+
+        /* ==========================================================================
+           4. 모달 팝업 내부 입력 폼 디자인 통일
+           ========================================================================== */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(4px); z-index: 2000; justify-content: center; align-items: center; }
+        .modal-content { background: white; padding: 40px; border-radius: 24px; width: 90%; max-width: 520px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15); animation: fadeIn 0.3s ease-out; }
+        
+        /* 모달 내 이미지 미리보기 박스 디자인 매칭 */
+        .preview-box { width: 100%; height: 220px; border-radius: 14px; background: #f8fafc; border: 2px dashed #e2e8f0; display: flex; align-items: center; justify-content: center; cursor: pointer; overflow: hidden; margin-bottom: 20px; transition: 0.3s; }
+        .preview-box:hover { border-color: #0056b3; background-color: #f0f6ff; }
+        .preview-box img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* ==========================================================================
+           5. 하단 제어 내비게이션 바 버튼 디자인 그룹 통일
+           ========================================================================== */
+        .footer-nav { margin-top: 35px; display: flex; gap: 20px; width: 100%; }
+        .btn { flex: 1; padding: 18px; border-radius: 12px; font-weight: 700; cursor: pointer; border: none; font-size: 16px; transition: all 0.2s ease; text-align: center; }
+        
+        .btn-next { background: #0056b3; color: white; }
+        .btn-next:hover { background: #004494; box-shadow: 0 8px 25px rgba(0, 86, 179, 0.25); }
+        .btn-back { background: #f1f5f9; color: #64748b; }
+        .btn-back:hover { background: #e2e8f0; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.95) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+    </style>
+</head>
+<body>
+
+<div class="viewport">
+    <div class="slider-container" id="mainSlider">
+        
+        <div class="page">
+            <header class="header">
+                <div class="header-container">
+                    <a href="#" class="admin-title">두드림</a>
+                    <span class="step-info">로그아웃</span>
+                </div>
+            </header>
+            <main class="outer-card">
+                <div class="form-card-panel">
+                    <div class="form-area">
+                        <div class="input-group">
+                            <label>강의 제목</label>
+                            <input type="text" id="lectureTitle" class="text-input" placeholder="강의 제목을 입력하세요">
+                        </div>
+                        <div class="input-group">
+                            <label>카테고리</label>
+                            <div class="select-group">
+                                <select class="select-box" id="catM"><option value="">대단원 선택</option></select>
+                                <select class="select-box" id="catD"><option value="">중단원 선택</option></select>
+                                <select class="select-box" id="catS"><option value="">소단원 선택</option></select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="footer-nav">
+                        <button class="btn btn-back" onclick="location.href='enrollment.html'">취소</button>
+                        <button class="btn btn-next" onclick="moveSlide(1)">다음 단계 (콘텐츠 구성)</button>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <div class="page">
+            <header class="header">
+                <div class="header-container">
+                    <a href="#" class="admin-title" onclick="moveSlide(0)">두드림</a>
+                    <span class="step-info">로그아웃</span>
+                </div>
+            </header>
+            <main class="outer-card">
+                <div class="form-card-panel">
+                    <div class="inner-content" id="dashboardGrid">
+                        </div>
+                    <div class="footer-nav">
+                        <button class="btn btn-back" onclick="moveSlide(0)">이전 단계</button>
+                        <button class="btn btn-next" onclick="saveAll()">수정 완료 및 저장</button>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+    </div>
+</div>
+
+<div class="modal" id="mainModal">
+    <div class="modal-content">
+        <h3 style="margin-bottom:20px; font-size:18px; font-weight:700; color:#1e293b;">메인 정보 입력/수정</h3>
+        <div class="preview-box" onclick="document.getElementById('fileMainImg').click()" id="mainPreview">
+            <i class="fa-solid fa-plus" style="font-size:26px; color:#cbd5e1;"></i>
+            <input type="file" id="fileMainImg" hidden accept="image/*" onchange="previewMain(this)">
+        </div>
+        <textarea id="mainDesc" class="text-input" style="height:140px; margin-bottom:25px; resize:none; font-family:inherit;" placeholder="강의에 대한 상세 설명을 입력하세요"></textarea>
+        <button class="btn btn-next" style="width:100%; border-radius:12px;" onclick="completeMainInfo()">등록 완료</button>
+    </div>
+</div>
+
+<input type="file" id="videoInput" hidden accept="video/*" onchange="addVideoCard(this)">
+
+<script>
+    const slider = document.getElementById('mainSlider');
+    const dashboardGrid = document.getElementById('dashboardGrid');
+    const categoryData = { "키오스크": { "병원": ["동네병원", "종합병원"], "공공시설": ["민원발급기", "기차역"] }, "셀프 계산대": { "마트": ["홈플러스", "다이소"], "무인점포": ["편의점"] } };
+    
+    // [기능 개선 적용] 강의 추가/수정 진입 시 대표사진과 기본 정보가 바로 나오도록 샘플 데이터 기본값 세팅
+    // (서버 데이터와 연동할 때 이 객체 구조에 데이터를 주입하시면 됩니다)
+    let mainInfo = {
+        img: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=600&auto=format&fit=crop", // 샘플 기본 대표이미지
+        desc: "키오스크 및 디지털 기기를 쉽게 제어하고 익힐 수 있는 시니어 맞춤식 정규 교육과정입니다."
+    }; 
+    
+    let videos = [
+        { name: "01_병원_접수 및 번호표 발행하기.mp4" },
+        { name: "02_종합병원_진료비 무인 수납하기.mp4" }
+    ];     
+
+    function moveSlide(idx) { slider.style.transform = `translateX(-${idx * 100}vw)`; window.scrollTo(0,0); }
+
+    window.onload = () => {
+        // 기본 콤보박스 바인딩
+        const m = document.getElementById('catM'), d = document.getElementById('catD'), s = document.getElementById('catS');
+        for (let k in categoryData) m.options.add(new Option(k, k));
+        m.onchange = () => { d.innerHTML = '<option value="">중단원</option>'; s.innerHTML = '<option value="">소단원</option>'; if(m.value) for(let k in categoryData[m.value]) d.options.add(new Option(k, k)); };
+        d.onchange = () => { s.innerHTML = '<option value="">소단원</option>'; if(d.value) categoryData[m.value][d.value].forEach(v => s.options.add(new Option(v, v))); };
+
+        // [핵심 변경] 화면이 켜지자마자 대표사진 및 등록된 콘텐츠 그리드를 즉시 출력합니다.
+        renderGrid();
+    };
+
+    function openMainModal() { 
+        document.getElementById('mainModal').style.display = 'flex';
+        // 모달을 열었을 때 기존 등록되어 있던 데이터 미리 채워넣기
+        if(mainInfo) {
+            document.getElementById('mainPreview').innerHTML = `<img src="${mainInfo.img}">`;
+            document.getElementById('mainDesc').value = mainInfo.desc;
+            mainImgBase64 = mainInfo.img;
+        }
+    }
+    function closeMainModal() { document.getElementById('mainModal').style.display = 'none'; }
+
+    let mainImgBase64 = "";
+    function previewMain(input) {
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                document.getElementById('mainPreview').innerHTML = `<img src="${e.target.result}">`;
+                mainImgBase64 = e.target.result;
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    function completeMainInfo() {
+        const desc = document.getElementById('mainDesc').value;
+        if(!mainImgBase64 || !desc) { alert("사진과 설명을 모두 입력해주세요."); return; }
+
+        mainInfo = { img: mainImgBase64, desc: desc };
+        closeMainModal();
+        renderGrid();
+    }
+
+    // 그리드 리렌더링 인터페이스 
+    function renderGrid() {
+        dashboardGrid.innerHTML = "";
+
+        // 1. 대표 사진 카드 출력 (데이터가 있으면 표출, 없으면 등록 유도 버튼 배치)
+        if(mainInfo) {
+            const mainCard = document.createElement('div');
+            mainCard.className = 'item-card main-cover';
+            mainCard.innerHTML = `
+                <div class="card-actions">
+                    <div class="action-icon-btn edit-btn" onclick="openMainModal()" title="수정"><i class="fa-solid fa-pen"></i></div>
+                    <div class="action-icon-btn" onclick="deleteMainCover()" title="삭제"><i class="fa-solid fa-trash"></i></div>
+                </div>
+                <div style="font-size:11px; color:#0056b3; font-weight:800; margin-bottom:6px; letter-spacing:0.5px;">MAIN COVER</div>
+                <img src="${mainInfo.img}" class="item-img">
+                <div class="item-title">강의 메인 소개</div>
+                <div class="item-desc">${mainInfo.desc}</div>
+            `;
+            dashboardGrid.appendChild(mainCard);
+        } else {
+            // 대표 표지가 없을 경우 등록을 유도하는 인라인 버튼 배치
+            const mainAddCard = document.createElement('div');
+            mainAddCard.className = 'add-btn';
+            mainAddCard.style.borderColor = '#0056b3';
+            mainAddCard.onclick = openMainModal;
+            mainAddCard.innerHTML = `<i class="fa-solid fa-camera-retro" style="color:#0056b3;"></i><span style="color:#0056b3;">메인 사진/설명 등록</span>`;
+            dashboardGrid.appendChild(mainAddCard);
+        }
+
+        // 2. 등록된 비디오 배열 순차 출력
+        videos.forEach((vid, index) => {
+            const vidCard = document.createElement('div');
+            vidCard.className = 'item-card';
+            vidCard.innerHTML = `
+                <div class="card-actions">
+                    <div class="action-icon-btn" onclick="deleteVideo(${index})" title="삭제"><i class="fa-solid fa-trash"></i></div>
+                </div>
+                <div style="font-size:11px; color:#94a3b8; font-weight:800; margin-bottom:6px; letter-spacing:0.5px;">VIDEO ${index+1}</div>
+                <div class="item-img" style="display:flex; align-items:center; justify-content:center; background:#1e293b; color:white;">
+                    <i class="fa-solid fa-play" style="font-size:26px; color:#fff;"></i>
+                </div>
+                <div class="item-title">${vid.name}</div>
+                <div class="item-desc">등록된 동영상 강의 자료입니다.</div>
+            `;
+            dashboardGrid.appendChild(vidCard);
+        });
+
+        // 3. 우측 고정식 신규 동영상 추가 플러스 버튼
+        const addBtn = document.createElement('div');
+        addBtn.className = 'add-btn';
+        addBtn.onclick = () => document.getElementById('videoInput').click();
+        addBtn.innerHTML = `<i class="fa-solid fa-film"></i><span>강의 영상 추가</span>`;
+        dashboardGrid.appendChild(addBtn);
+    }
+
+    // 영상 수신 등록 제어 및 스크롤바 이동
+    function addVideoCard(input) {
+        if (input.files && input.files[0]) {
+            videos.push({ name: input.files[0].name });
+            renderGrid();
+            dashboardGrid.scrollLeft = dashboardGrid.scrollWidth;
+            input.value = ""; // 동일 파일 연속 추가 대응을 위한 리셋
+        }
+    }
+
+    // 데이터 삭제 기능 추가 
+    function deleteMainCover() {
+        if(confirm("대표 사진과 설명을 삭제하시겠습니까?")) {
+            mainInfo = null;
+            mainImgBase64 = "";
+            document.getElementById('mainPreview').innerHTML = `<i class="fa-solid fa-plus" style="font-size:26px; color:#cbd5e1;"></i>`;
+            document.getElementById('mainDesc').value = "";
+            renderGrid();
+        }
+    }
+
+    function deleteVideo(index) {
+        if(confirm(`VIDEO ${index+1} 항목을 삭제하시겠습니까?`)) {
+            videos.splice(index, 1);
+            renderGrid();
+        }
+    }
+
+    function saveAll() {
+        if(!mainInfo) { alert("메인 사진과 정보를 먼저 등록해주세요."); return; }
+        alert("수정 완료되었습니다!");
+        location.href = 'enrollment.html';
+    }
+</script>
+
+</body>
+</html>
