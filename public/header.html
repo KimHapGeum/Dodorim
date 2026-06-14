@@ -10,21 +10,20 @@
         body { 
             font-family: 'Noto Sans KR', sans-serif; 
             color: #1a1a1a; 
-            background-color: #ffffff; 
+            background-color: transparent; 
             overflow: hidden; 
         }
 
         .header-inner {
-            max-width: 1200px; 
+            max-width: 1500px;
             margin: 0 auto;
             padding: 0 40px; 
             display: flex; 
             justify-content: space-between; 
             align-items: center;
-            height: 60px; 
+            height: 70px;
         }
 
-        /* ✅ 로고 디자인: 빨간 점 제거 및 최적화 */
         .main-logo-top { 
             display: flex; 
             align-items: center; 
@@ -44,9 +43,7 @@
             padding-top: 2px;
         }
 
-    
-
-        #btn-area { display: flex; align-items: center; }
+        #btn-area { display: flex; align-items: center; gap: 12px; }
 
         /* 음성 안내 컨트롤 스타일 */
         .voice-control {
@@ -59,6 +56,7 @@
             border: 2px solid #d1d5db; 
             height: 46px; 
             transition: all 0.2s ease;
+            margin-bottom: 9px;
         }
         
         .voice-label { 
@@ -81,16 +79,19 @@
         .voice-on { background: #0056b3; color: white; }
         .voice-off { background: #6c757d; color: white; }
 
-        /* 버튼 스타일 */
+        /* 관리자 로그인 버튼 스타일 */
         .login-btn { 
             padding: 10px 20px; border-radius: 10px; font-weight: 700; border: none; 
             cursor: pointer; font-size: 15px; background: #f1f3f5; color: #495057; 
+            margin-bottom: 9px;
         }
 
+        /* 로그아웃 버튼 스타일 */
         .logout-btn {
             background: none; border: none; color: #666; padding: 8px 10px;
             cursor: pointer; font-size: 16px; font-weight: 700;
             display: flex; align-items: center; gap: 8px;
+            
         }
     </style>
 </head>
@@ -108,11 +109,21 @@
             const params = new URLSearchParams(window.location.search);
             const type = params.get('type');
 
-            if (type === 'manager') {
+            let parentTarget = "";
+            try {
+                const pathArray = window.parent.location.pathname.split('/');
+                parentTarget = pathArray[pathArray.length - 1];
+            } catch(e) {
+                console.log("iframe 크로스 도메인 제한 체크");
+            }
+
+            // 1. 관리자 모드일 때
+            if (type === 'manager' || parentTarget === 'manager.html') {
                 btnArea.innerHTML = `<button class="logout-btn" onclick="handleLogout()"><i class="fa-solid fa-arrow-right-from-bracket"></i> 로그아웃</button>`;
-            } else if (type === 'login') {
-                btnArea.innerHTML = '';
-            } else if (type === 'edu') {
+            } 
+            
+            // 2. 오직 screen.html에서만 음성 안내 아이콘 세트 노출 (글자 조절 버튼은 삭제)
+            else if (parentTarget === 'screen.html' || type === 'edu') {
                 btnArea.innerHTML = `
                     <div class="voice-control" id="voiceToggle" onclick="toggleVoiceLocal()">
                         <div class="voice-label" id="voiceStatus">음성 안내 켜짐</div>
@@ -120,7 +131,22 @@
                             <i class="fa-solid fa-volume-high" id="voiceIcon"></i>
                         </div>
                     </div>`;
-            } else {
+            } 
+            
+            // 3. 교육하기 다음 대기화면 및 특정 메뉴들 (관리자 로그인 숨김)
+            else if (
+                type === 'login' || 
+                parentTarget === 'login.html' ||
+                parentTarget === 'lecture.html' || 
+                parentTarget.endsWith('_edu.html') || 
+                parentTarget === 'screen_list.html' ||
+                parentTarget === 'select_topic.html'
+            ) {
+                btnArea.innerHTML = ''; 
+            } 
+            
+            // 4. 메인 화면(index.html) 등 기본 상태일 때만 로그인 버튼 노출
+            else {
                 btnArea.innerHTML = `<button class="login-btn" onclick="window.parent.location.href='login.html'">관리자 로그인</button>`;
             }
         })();
