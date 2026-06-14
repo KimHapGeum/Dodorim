@@ -3,89 +3,145 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>관리자 - 강의 수정</title>
+    <title>관리자 - 새 강의 콘텐츠 등록</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
+        /* 글로벌 스타일 및 대시보드 테마 정의 */
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Noto Sans KR', sans-serif; background-color: #f7f9fc; color: #1a1a1a; overflow-x: hidden; }
+        body { 
+            font-family: 'Noto Sans KR', sans-serif; 
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); 
+            min-height: 100vh; 
+            overflow-x: hidden; 
+        }
+        
         .viewport { width: 100vw; overflow: hidden; }
-        .slider-container { display: flex; width: 300vw; transition: transform 0.6s cubic-bezier(0.25, 0.8, 0.25, 1); }
-        .page { width: 100vw; min-height: 100vh; flex-shrink: 0; padding-bottom: 50px; }
-        
-        /* 헤더 제거 후 메인 상단 여백 보정 */
-        .main-content { width: 100%; max-width: 1200px; margin: 0 auto; padding: 40px; }
-        .form-card { background: white; padding: 50px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        .slider-container { display: flex; width: 200vw; transition: transform 0.6s cubic-bezier(0.25, 0.8, 0.25, 1); }
+        .page { width: 100vw; min-height: 100vh; flex-shrink: 0; display: flex; flex-direction: column; align-items: center; }
+
+        /* iframe 높이를 70px로 리셋 및 기본 간격 정리 */
+        .header-iframe {
+            width: 100%;
+            height: 59px; 
+            border: none;
+            background: #ffffff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+            display: block;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* 본문 패널 상단 마진을 조절하여 구분선 밑으로 바짝 밀착 */
+        .outer-card { 
+            width: 100%; 
+            max-width: 1200px; 
+            padding: 0px 40px 50px 40px; 
+            display: flex; 
+            flex-direction: column;
+            margin-top: 25px; 
+        }
+        .form-card-panel {
+            width: 100%;
+            background: #ffffff;
+            border-radius: 24px;
+            padding: 45px;
+            box-shadow: 0 20px 40px rgba(148, 163, 184, 0.12);
+            margin-bottom: 25px;
+        }
+
+        /* 공통 폼 컨트롤 요소 및 스크롤 그리드 */
+        .inner-content { width: 100%; min-height: 420px; border: 1px solid #e2e8f0; border-radius: 16px; padding: 30px; background-color: #fafbfc; display: flex; align-items: flex-start; gap: 20px; overflow-x: auto; }
+        .inner-content::-webkit-scrollbar { height: 6px; }
+        .inner-content::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 4px; }
+
+        .form-area { width: 100%; }
         .input-group { margin-bottom: 30px; }
-        .input-group label { display: block; font-weight: 700; margin-bottom: 12px; font-size: 18px; }
-        .text-input { width: 100%; padding: 15px; border-radius: 10px; border: 2px solid #f0f0f0; font-size: 16px; outline: none; }
-        .select-group { display: flex; gap: 10px; }
-        .select-box { flex: 1; padding: 12px; border: 1px solid #e0e0e0; border-radius: 8px; outline: none; background: #fff; }
-        .upload-row { display: flex; gap: 20px; margin-bottom: 20px; }
+        .input-group label { display: block; font-weight: 700; margin-bottom: 14px; color: #1e293b; font-size: 16px; }
+        .text-input { width: 100%; padding: 18px; border-radius: 12px; border: 1px solid #e2e8f0; font-size: 16px; outline: none; background-color: #fff; color: #1e293b; transition: all 0.3s ease; }
+        .text-input:focus { border-color: #0056b3; box-shadow: 0 0 0 4px rgba(0, 86, 179, 0.1); }
         
-        /* 사진 업로드 박스 디자인 */
-        .upload-box { flex: 1; height: 250px; border: 2px dashed #ddd; border-radius: 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; background: #fafafa; position: relative; overflow: hidden; }
-        .upload-box img { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; z-index: 5; }
-        .textarea-input { flex: 1; height: 250px; padding: 20px; border-radius: 15px; border: 2px solid #f0f0f0; resize: none; font-size: 16px; outline: none; }
-        .footer-nav { display: flex; justify-content: space-between; gap: 20px; }
-        .btn-nav { flex: 1; padding: 18px; border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer; border: none; }
-        .btn-back { background: #eee; color: #666; }
+        .select-group { display: flex; gap: 15px; }
+        .select-box { flex: 1; padding: 18px; border: 1px solid #e2e8f0; border-radius: 12px; outline: none; background: #fff; cursor: pointer; font-size: 16px; color: #1e293b; transition: all 0.3s ease; }
+
+        /* 카드 항목 디자인 */
+        .item-card { position: relative; min-width: 230px; max-width: 230px; height: 340px; background: #fff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 22px 18px; display: flex; flex-direction: column; box-shadow: 0 4px 12px rgba(0,0,0,0.02); transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); animation: fadeIn 0.4s ease-out; }
+        .item-card:hover { transform: translateY(-4px); box-shadow: 0 12px 24px rgba(0, 0, 0, 0.06); }
+        .item-card.main-cover { border: 2px solid #0056b3; background: #fff; }
+        .item-img { width: 100%; height: 130px; border-radius: 10px; object-fit: cover; margin-bottom: 15px; background: #f1f5f9; }
+        .item-title { font-weight: 700; color: #1e293b; margin-bottom: 8px; font-size: 15px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .item-desc { font-size: 13px; color: #64748b; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+
+        .card-actions { position: absolute; top: 12px; right: 12px; display: flex; gap: 6px; z-index: 10; }
+        .action-icon-btn { width: 28px; height: 28px; background: rgba(255, 255, 255, 0.9); border: 1px solid #e2e8f0; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; color: #64748b; cursor: pointer; transition: all 0.2s; }
+        .action-icon-btn:hover { background: #fff; color: #ef4444; transform: scale(1.1); }
+        .action-icon-btn.edit-btn:hover { color: #0056b3; }
+
+        .add-btn { min-width: 230px; height: 340px; background: #fff; border: 2px dashed #cbd5e1; border-radius: 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s ease; color: #94a3b8; }
+        .add-btn:hover { border-color: #0056b3; background: #f0f6ff; color: #0056b3; transform: translateY(-4px); }
+        .add-btn i { font-size: 36px; margin-bottom: 12px; }
+        .add-btn span { font-weight: 600; font-size: 14px; }
+
+        /* 모달 시스템 */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(4px); z-index: 2000; justify-content: center; align-items: center; }
+        .modal-content { background: white; padding: 40px; border-radius: 24px; width: 90%; max-width: 520px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15); }
+        .preview-box { width: 100%; height: 220px; border-radius: 14px; background: #f8fafc; border: 2px dashed #e2e8f0; display: flex; align-items: center; justify-content: center; cursor: pointer; overflow: hidden; margin-bottom: 20px; transition: 0.3s; }
+        .preview-box:hover { border-color: #0056b3; background-color: #f0f6ff; }
+        .preview-box img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* 하단 내비게이션 바 */
+        .footer-nav { margin-top: 35px; display: flex; gap: 20px; width: 100%; }
+        .btn { flex: 1; padding: 18px; border-radius: 12px; font-weight: 700; cursor: pointer; border: none; font-size: 16px; transition: all 0.2s ease; text-align: center; text-decoration: none; }
         .btn-next { background: #0056b3; color: white; }
-        .btn-save { background: #0056b3; color: white; }
+        .btn-next:hover { background: #004494; box-shadow: 0 8px 25px rgba(0, 86, 179, 0.25); }
+        .btn-back { background: #f1f5f9; color: #64748b; }
+        .btn-back:hover { background: #e2e8f0; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.98) translateY(8px); } to { opacity: 1; transform: scale(1) translateY(0); } }
     </style>
 </head>
 <body>
 
 <div class="viewport">
-    <div class="slider-container" id="editSlider">
+    <div class="slider-container" id="mainSlider">
         
         <div class="page">
-            <main class="main-content">
-                <div class="form-card">
-                    <div class="input-group"><label>강의 제목 수정</label><input type="text" id="editTitle" class="text-input" placeholder="제목을 입력하세요"></div>
-                    <div class="input-group"><label>카테고리 재설정</label>
-                        <div class="select-group">
-                            <select class="select-box" id="editM"><option value="">대단원 선택</option></select>
-                            <select class="select-box" id="editD"><option value="">중단원 선택</option></select>
-                            <select class="select-box" id="editS"><option value="">소단원 선택</option></select>
+            <iframe src="header.html?type=login" class="header-iframe"></iframe>
+
+            <main class="outer-card">
+                <div class="form-card-panel">
+                    <div class="form-area">
+                        <div class="input-group">
+                            <label>강의 제목</label>
+                            <input type="text" id="lectureTitle" class="text-input" placeholder="새로운 강의 제목을 입력하세요">
+                        </div>
+                        <div class="input-group">
+                            <label>카테고리</label>
+                            <div class="select-group">
+                                <select class="select-box" id="catM"><option value="">대단원 선택</option></select>
+                                <select class="select-box" id="catD"><option value="">중단원 선택</option></select>
+                                <select class="select-box" id="catS"><option value="">소단원 선택</option></select>
+                            </div>
                         </div>
                     </div>
-                    <div class="footer-nav"><button class="btn-nav btn-back" onclick="location.href='manager.html'">취소</button><button class="btn-nav btn-next" onclick="moveSlide(1)">다음 단계</button></div>
+                    <div class="footer-nav">
+                        <a href="manager.html" class="btn btn-back">취소하고 목록으로</a>
+                        <button class="btn btn-next" onclick="validateStep1()">다음 단계 (콘텐츠 구성) <i class="fa-solid fa-arrow-right"></i></button>
+                    </div>
                 </div>
             </main>
         </div>
 
         <div class="page">
-            <main class="main-content">
-                <div class="form-card">
-                    <div class="upload-row">
-                        <div class="upload-box" onclick="document.getElementById('editFilePic').click()" id="editPicView">
-                            <i class="fa-solid fa-camera" style="font-size:40px; color:#ccc;"></i>
-                            <span style="margin-top:10px; color:#999; font-weight:600;">메인 사진 교체</span>
-                            <input type="file" id="editFilePic" hidden accept="image/*" onchange="previewImg(this)">
-                        </div>
-                        <textarea class="textarea-input" id="editDesc" placeholder="설명을 입력하세요"></textarea>
-                    </div>
-                    <div class="footer-nav"><button class="btn-nav btn-back" onclick="moveSlide(0)">이전 단계</button><button class="btn-nav btn-next" onclick="moveSlide(2)">다음 단계</button></div>
-                </div>
-            </main>
-        </div>
+            <iframe src="header.html?type=login" class="header-iframe"></iframe>
 
-        <div class="page">
-            <main class="main-content">
-                <div class="form-card" style="text-align:center;">
-                    <h2 style="margin-bottom:10px;">자료 수정 완료</h2><p style="color:#888; margin-bottom:40px;">동영상 및 참고 자료를 수정하고 저장을 누르세요.</p>
-                    <div class="upload-row">
-                        <div class="upload-box" onclick="document.getElementById('editVid').click()">
-                            <i class="fa-solid fa-circle-play" style="font-size:35px; color:#0056b3;"></i><span id="vidName" style="margin-top:10px; font-weight:600;">동영상 변경</span>
-                            <input type="file" id="editVid" hidden accept="video/*" onchange="updateFN(this, 'vidName')">
-                        </div>
-                        <div class="upload-box" onclick="document.getElementById('editEtc').click()">
-                            <i class="fa-solid fa-file-pdf" style="font-size:35px; color:#0056b3;"></i><span id="etcName" style="margin-top:10px; font-weight:600;">문서 변경</span>
-                            <input type="file" id="editEtc" hidden onchange="updateFN(this, 'etcName')">
-                        </div>
+            <main class="outer-card">
+                <div class="form-card-panel">
+                    <div class="inner-content" id="dashboardGrid"></div>
+                    <div class="footer-nav">
+                        <button class="btn btn-back" onclick="moveSlide(0)"><i class="fa-solid fa-arrow-left"></i> 이전 단계로</button>
+                        <button class="btn btn-next" style="background:#10b981;" onclick="saveNewLecture()">새 강의 등록 완료</button>
                     </div>
-                    <div class="footer-nav" style="margin-top:40px;"><button class="btn-nav btn-back" onclick="moveSlide(1)">이전 단계</button><button class="btn-nav btn-save" onclick="saveToS4()">수정 완료 및 저장</button></div>
                 </div>
             </main>
         </div>
@@ -93,10 +149,23 @@
     </div>
 </div>
 
+<div class="modal" id="mainModal">
+    <div class="modal-content">
+        <h3 style="margin-bottom:20px; font-size:18px; font-weight:700; color:#1e293b;">메인 정보 입력</h3>
+        <input type="file" id="fileMainImg" accept="image/*" style="display: none;" onchange="previewMain(this)">
+        <div class="preview-box" onclick="document.getElementById('fileMainImg').click()" id="mainPreview">
+            <i class="fa-solid fa-plus" style="font-size:26px; color:#cbd5e1;"></i>
+        </div>
+        <textarea id="mainDesc" class="text-input" style="height:140px; margin-bottom:25px; resize:none; font-family:inherit;" placeholder="강의에 대한 상세 설명을 입력하세요"></textarea>
+        <button class="btn btn-next" style="width:100%; border-radius:12px;" onclick="completeMainInfo()">등록 완료</button>
+    </div>
+</div>
+
+<input type="file" id="videoInput" hidden accept="video/*" onchange="addVideoCard(this)">
+
 <script>
-    const slider = document.getElementById('editSlider');
-    
-    // 🛠️ "전자기기" 단원 데이터를 다른 페이지와 일치하도록 동기화했습니다.
+    const slider = document.getElementById('mainSlider');
+    const dashboardGrid = document.getElementById('dashboardGrid');
     const categoryData = { 
         "키오스크": { 
             "병원": ["동네병원", "종합병원", "약국 수납"], 
@@ -112,85 +181,140 @@
             "ATM": ["KB 국민은행", "NH 농협은행"]
         }
     };
-
-    let lectures = JSON.parse(localStorage.getItem('myLectures')) || [];
-    let targetIdx = new URLSearchParams(window.location.search).get('id');
-    let tempImg = ""; 
-
-    function moveSlide(idx) { slider.style.transform = `translateX(-${idx * 100}vw)`; window.scrollTo(0,0); }
+    
+    let mainInfo = null; 
+    let videos = [];     
+    let mainImgBase64 = "";
 
     window.onload = () => {
-        initCategory();
-        if(targetIdx !== null && lectures[targetIdx]) {
-            const data = lectures[targetIdx];
-            document.getElementById('editTitle').value = data.title;
-            document.getElementById('editDesc').value = data.desc || "";
-            
-            if(data.img) {
-                tempImg = data.img;
-                renderPreview(tempImg);
-            }
-
-            const pArr = data.path.split(' > ');
-            const m = document.getElementById('editM'), d = document.getElementById('editD'), s = document.getElementById('editS');
-            m.value = pArr[0] || ""; m.dispatchEvent(new Event('change'));
-            d.value = pArr[1] || ""; d.dispatchEvent(new Event('change'));
-            s.value = pArr[2] || "";
-        }
-    };
-
-    function initCategory() {
-        const m = document.getElementById('editM'), d = document.getElementById('editD'), s = document.getElementById('editS');
+        const m = document.getElementById('catM'), d = document.getElementById('catD'), s = document.getElementById('catS');
         for (let k in categoryData) m.options.add(new Option(k, k));
         m.onchange = () => { d.innerHTML = '<option value="">중단원 선택</option>'; s.innerHTML = '<option value="">소단원 선택</option>'; if(m.value) for(let k in categoryData[m.value]) d.options.add(new Option(k, k)); };
         d.onchange = () => { s.innerHTML = '<option value="">소단원 선택</option>'; if(d.value) categoryData[m.value][d.value].forEach(v => s.options.add(new Option(v, v))); };
+        renderGrid();
+    };
+
+    function moveSlide(idx) { slider.style.transform = `translateX(-${idx * 100}vw)`; window.scrollTo(0,0); }
+
+    function validateStep1() {
+        const title = document.getElementById('lectureTitle').value.trim();
+        const catM = document.getElementById('catM').value;
+        const catD = document.getElementById('catD').value;
+        const catS = document.getElementById('catS').value;
+
+        if(!title || !catM || !catD || !catS) { 
+            alert("강의 제목 및 카테고리를 완전히 선택해주세요."); 
+            return; 
+        }
+        moveSlide(1);
     }
 
-    function previewImg(input) {
+    function openMainModal() { 
+        document.getElementById('mainModal').style.display = 'flex';
+        if(mainInfo) {
+            document.getElementById('mainPreview').innerHTML = `<img src="${mainInfo.img}" style="width:100%; height:100%; object-fit:cover;">`;
+            document.getElementById('mainDesc').value = mainInfo.desc;
+            mainImgBase64 = mainInfo.img;
+        }
+    }
+    function closeMainModal() { document.getElementById('mainModal').style.display = 'none'; }
+
+    function previewMain(input) {
         if (input.files && input.files[0]) {
             const reader = new FileReader();
-            reader.onload = e => {
-                tempImg = e.target.result; 
-                renderPreview(tempImg);
+            reader.onload = function(e) {
+                document.getElementById('mainPreview').innerHTML = `<img src="${e.target.result}" style="width:100%; height:100%; object-fit:cover;">`;
+                mainImgBase64 = e.target.result;
             };
             reader.readAsDataURL(input.files[0]);
         }
     }
 
-    function renderPreview(src) {
-        const view = document.getElementById('editPicView');
-        view.innerHTML = `
-            <i class="fa-solid fa-camera" style="font-size:40px; color:#ccc;"></i>
-            <span style="margin-top:10px; color:#999; font-weight:600;">메인 사진 교체</span>
-            <input type="file" id="editFilePic" hidden accept="image/*" onchange="previewImg(this)">
-            <img src="${src}" style="width:100%; height:100%; object-fit:cover; position:absolute; top:0; left:0; z-index:10;">
-        `;
+    function completeMainInfo() {
+        const desc = document.getElementById('mainDesc').value.trim();
+        if(!mainImgBase64 || !desc) { alert("사진과 설명을 모두 입력해주세요."); return; }
+        mainInfo = { img: mainImgBase64, desc: desc };
+        closeMainModal();
+        renderGrid();
     }
 
-    function updateFN(input, id) { if(input.files[0]) document.getElementById(id).innerText = input.files[0].name; }
+    function renderGrid() {
+        dashboardGrid.innerHTML = "";
+        if(mainInfo) {
+            const mainCard = document.createElement('div');
+            mainCard.className = 'item-card main-cover';
+            mainCard.innerHTML = `
+                <div class="card-actions">
+                    <div class="action-icon-btn edit-btn" onclick="openMainModal()"><i class="fa-solid fa-pen"></i></div>
+                    <div class="action-icon-btn" onclick="deleteMainCover()"><i class="fa-solid fa-trash"></i></div>
+                </div>
+                <div style="font-size:11px; color:#0056b3; font-weight:800; margin-bottom:6px; letter-spacing:0.5px;">MAIN COVER</div>
+                <img src="${mainInfo.img}" class="item-img">
+                <div class="item-title">강의 메인 소개</div>
+                <div class="item-desc">${mainInfo.desc}</div>
+            `;
+            dashboardGrid.appendChild(mainCard);
+        } else {
+            const mainAddCard = document.createElement('div');
+            mainAddCard.className = 'add-btn';
+            mainAddCard.style.borderColor = '#0056b3';
+            mainAddCard.onclick = openMainModal;
+            mainAddCard.innerHTML = `<i class="fa-solid fa-camera-retro" style="color:#0056b3;"></i><span style="color:#0056b3;">메인 사진/설명 등록</span>`;
+            dashboardGrid.appendChild(mainAddCard);
+        }
 
-    function saveToS4() {
-        if (targetIdx === null) return;
+        videos.forEach((vid, index) => {
+            const vidCard = document.createElement('div');
+            vidCard.className = 'item-card';
+            vidCard.innerHTML = `
+                <div class="card-actions">
+                    <div class="action-icon-btn" onclick="deleteVideo(${index})"><i class="fa-solid fa-trash"></i></div>
+                </div>
+                <div style="font-size:11px; color:#94a3b8; font-weight:800; margin-bottom:6px; letter-spacing:0.5px;">VIDEO ${index+1}</div>
+                <div class="item-img" style="display:flex; align-items:center; justify-content:center; background:#1e293b; color:white;">
+                    <i class="fa-solid fa-play" style="font-size:26px; color:#fff;"></i>
+                </div>
+                <div class="item-title">${vid.name}</div>
+                <div class="item-desc">등록된 동영상 강의 자료입니다.</div>
+            `;
+            dashboardGrid.appendChild(vidCard);
+        });
+
+        const addBtn = document.createElement('div');
+        addBtn.className = 'add-btn';
+        addBtn.onclick = () => document.getElementById('videoInput').click();
+        addBtn.innerHTML = `<i class="fa-solid fa-film"></i><span>강의 영상 추가</span>`;
+        dashboardGrid.appendChild(addBtn);
+    }
+
+    function addVideoCard(input) {
+        if (input.files && input.files[0]) {
+            videos.push({ name: input.files[0].name });
+            renderGrid();
+            dashboardGrid.scrollLeft = dashboardGrid.scrollWidth;
+            input.value = "";
+        }
+    }
+
+    function deleteMainCover() {
+        if(confirm("대표 사진구성을 해제하시겠습니까?")) {
+            mainInfo = null; mainImgBase64 = "";
+            document.getElementById('fileMainImg').value = "";
+            document.getElementById('mainPreview').innerHTML = `<i class="fa-solid fa-plus" style="font-size:26px; color:#cbd5e1;"></i>`;
+            document.getElementById('mainDesc').value = "";
+            renderGrid();
+        }
+    }
+
+    function deleteVideo(index) {
+        if(confirm("해당 영상을 삭제하시겠습니까?")) { videos.splice(index, 1); renderGrid(); }
+    }
+
+    function saveNewLecture() {
+        if(!mainInfo) { alert("STEP 02의 대표 사진 및 메인 설명 구성을 완료해주세요."); return; }
         
-        const title = document.getElementById('editTitle').value;
-        const m = document.getElementById('editM').value;
-        const d = document.getElementById('editD').value;
-        const s = document.getElementById('editS').value;
-
-        if(!title) return alert("강의 제목을 입력해주세요.");
-
-        lectures[targetIdx] = {
-            title: title,
-            path: `${m} > ${d} > ${s}`,
-            img: tempImg, 
-            desc: document.getElementById('editDesc').value
-        };
-
-        localStorage.setItem('myLectures', JSON.stringify(lectures));
-        alert("수정사항이 완벽하게 저장되었습니다.");
-        
-        // 🛠️ 저장 완료 후 목록 관리 홈 페이지인 manager.html로 돌아갑니다.
-        location.href = "manager.html";
+        alert("새로운 강의 콘텐츠 등록이 완벽하게 완료되었습니다!");
+        location.href = "manager.html"; 
     }
 </script>
 </body>
