@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>두드림</title>
+    <title>두드림 - 강의 보기</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
@@ -32,8 +32,45 @@
             z-index: 9999;
             border-bottom: 1px solid rgba(0, 0, 0, 0.05); 
             box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+            position: relative;
         }
         iframe { border: none; display: block; width: 100%; height: 70px; }
+
+        /* ✨ 글자 크기 조절 버튼 레이아웃 - 좌측(로고 오른쪽 옆)으로 위치 변경 */
+        .header-font-controls {
+            position: absolute;
+           right: 430px; /* 💡 로고 글자('두드림') 바로 오른쪽에 오도록 왼쪽 여백 설정 */
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            align-items: center;
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 50px;
+            padding: 3px;
+            z-index: 10000;
+            margin-top: -2px; /* 음성 버튼 높이와 밸런스 유지 */
+        }
+
+        .btn-header-font {
+            border: none;
+            background: transparent;
+            padding: 7px 14px;
+            font-size: 18px;
+            font-weight: 800;
+            color: #475569;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            border-radius: 50px;
+            transition: all 0.2s;
+        }
+
+        .btn-header-font:hover {
+            background: #0056b3;
+            color: #ffffff;
+        }
 
         /* 메인 레이아웃 */
         .viewer-wrapper {
@@ -82,26 +119,26 @@
 
         /* 2. 하단 설명 칸 */
         .desc-area {
-            padding: 20px 60px; 
+            padding: 25px 60px; 
             background-color: #ffffff;
             border-top: 1px solid #f1f5f9;
             flex-shrink: 0; 
-            height: 120px; 
+            height: 140px; 
             overflow-y: auto; 
-            position: relative; /* 버튼 배치를 위한 기준점 지정 */
+            position: relative;
         }
         .desc-area h2 {
-            font-size: 24px;
+            font-size: 26px;
             font-weight: 800;
-            margin-bottom: 4px;
+            margin-bottom: 6px;
             color: #0056b3;
             letter-spacing: -0.5px;
         }
         .desc-area p {
-            font-size: 18px; /* 기본 크기 설정 */
+            font-size: 20px; 
             line-height: 1.6;
             color: #334155; 
-            transition: font-size 0.15s ease; /* 크기 변경 시 부드러운 효과 */
+            transition: font-size 0.15s ease;
         }
 
         /* 스마트 설명창 스크롤바 디자인 */
@@ -109,33 +146,6 @@
         .desc-area::-webkit-scrollbar-track { background: transparent; }
         .desc-area::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
         .desc-area::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-
-        /* 🛠️ 글자 크기 조절 버튼 컨테이너 */
-        .size-control-container {
-            position: absolute;
-            top: 15px;
-            right: 40px;
-            display: flex;
-            gap: 6px;
-        }
-        .btn-size-ctrl {
-            background-color: #f1f5f9;
-            border: 1px solid #cbd5e1;
-            padding: 4px 10px;
-            border-radius: 6px;
-            font-size: 13px;
-            font-weight: 700;
-            color: #475569;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            transition: all 0.2s;
-        }
-        .btn-size-ctrl:hover {
-            background-color: #e2e8f0;
-            color: #1e293b;
-        }
 
         /* 좌우 화살표 버튼 */
         .nav-btn {
@@ -192,6 +202,15 @@
 
     <div id="main-header-wrapper">
         <iframe src="./header.html?type=edu" scrolling="no"></iframe>
+        
+        <div class="header-font-controls">
+            <button class="btn-header-font" onclick="window.adjustFontSize(2)">
+                <i class="fa-solid fa-magnifying-glass-plus"></i> 글자 크게
+            </button>
+            <button class="btn-header-font" onclick="window.adjustFontSize(-2)">
+                <i class="fa-solid fa-magnifying-glass-minus"></i> 글자 작게
+            </button>
+        </div>
     </div>
 
     <main class="viewer-wrapper">
@@ -205,11 +224,6 @@
             </div>
 
             <div class="desc-area">
-                <div class="size-control-container">
-                    <button class="btn-size-ctrl" onclick="adjustFontSize(2)"><i class="fa-solid fa-plus"></i> 글자 크게</button>
-                    <button class="btn-size-ctrl" onclick="adjustFontSize(-2)"><i class="fa-solid fa-minus"></i> 글자 작게</button>
-                </div>
-
                 <h2 id="lectureTitle">강의 제목</h2>
                 <p id="lectureDesc">여기에 강의에 대한 상세한 설명이 적힙니다.</p>
             </div>
@@ -223,6 +237,9 @@
     </main>
 
     <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const currentStep = parseInt(urlParams.get('step')) || 1;
+
         const lectures = [
             {
                 title: "시작하기",
@@ -242,21 +259,22 @@
         ];
 
         let currentIndex = 0;
-        let currentFontSize = 18; // 기본 폰트 크기 상태 저장 (기존 CSS 18px과 일치)
+        let currentFontSize = 20; 
 
         const prevBtn = document.getElementById('prevBtn');
         const nextBtn = document.getElementById('nextBtn');
         const descText = document.getElementById('lectureDesc');
 
-        // 🛠️ 글자 크기 조절 함수
-        function adjustFontSize(amount) {
+        // 헤더 글자 변경 이벤트 수신부
+        window.adjustFontSize = function(amount) {
             currentFontSize += amount;
-            // 최솟값 14px, 최댓값 30px 범위 제한으로 레이아웃 깨짐 방지
-            if (currentFontSize < 14) currentFontSize = 14;
-            if (currentFontSize > 30) currentFontSize = 30;
+            if (currentFontSize < 16) currentFontSize = 16;
+            if (currentFontSize > 36) currentFontSize = 36; 
             
-            descText.style.fontSize = currentFontSize + 'px';
-        }
+            if(descText) {
+                descText.style.fontSize = currentFontSize + 'px';
+            }
+        };
 
         function updateUI() {
             const card = document.getElementById('lectureCard');
@@ -272,7 +290,7 @@
 
             const current = lectures[currentIndex];
             title.textContent = current.title;
-            titleDisplay.textContent = current.title + " 화면";
+            titleDisplay.textContent = `제 ${currentStep}강: ` + current.title + " 화면";
             desc.textContent = current.desc;
             screen.style.backgroundColor = current.bgColor;
             indicator.textContent = `${currentIndex + 1} / ${lectures.length}`;
@@ -292,14 +310,17 @@
 
         function changeLecture(direction) {
             currentIndex += direction;
-
             if (currentIndex < 0) currentIndex = 0;
             if (currentIndex >= lectures.length) currentIndex = lectures.length - 1;
-
             updateUI();
         }
 
         updateUI();
+
+        // 헤더 음성 버튼 토글 이벤트 수신부
+        window.toggleVoice = function(isOn) {
+            console.log("상세화면 음성 가동 상태:", isOn);
+        };
     </script>
 </body>
 </html>
