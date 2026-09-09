@@ -147,6 +147,9 @@
     </footer>
 
     <script>
+        // addition.html / revise.html과 공유하는 저장 키
+        const STORAGE_KEY = "doodream_lectures";
+
         const categoryData = {
             "키오스크": {
                 "병원": ["동네병원", "종합병원", "약국 수납"],
@@ -203,6 +206,18 @@
         subSelect.addEventListener('change', updateList);
         searchInput.addEventListener('input', updateList);
 
+        function loadLectures() {
+            try {
+                return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+            } catch (e) {
+                return [];
+            }
+        }
+
+        function saveLectures(list) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+        }
+
         function updateList() {
             const mainVal = mainSelect.value;
             const midVal = midSelect.value;
@@ -214,31 +229,41 @@
                 return;
             }
 
-            const path = `${mainVal} > ${midVal} > ${subVal}`;
-            const title = `${subVal} 실습 강의`;
+            const lectures = loadLectures().filter(item =>
+                item.main === mainVal && item.mid === midVal && item.sub === subVal
+            );
 
-            if (keyword && !title.toLowerCase().includes(keyword)) {
-                listContainer.innerHTML = '<div class="empty-msg">검색 결과가 없습니다.</div>';
+            const filtered = keyword
+                ? lectures.filter(item => item.title.toLowerCase().includes(keyword))
+                : lectures;
+
+            if (filtered.length === 0) {
+                listContainer.innerHTML = keyword
+                    ? '<div class="empty-msg">검색 결과가 없습니다.</div>'
+                    : '<div class="empty-msg">등록된 강의가 없습니다. 신규 등록을 눌러 강의를 추가해 주세요.</div>';
                 return;
             }
 
-            // 🛠️ 수정 버튼 클릭 시 revise.html로 이동하도록 경로 매핑 완료했습니다.
-            listContainer.innerHTML = `
+            const path = `${mainVal} > ${midVal} > ${subVal}`;
+
+            listContainer.innerHTML = filtered.map(item => `
                 <div class="content-item">
                     <div class="info">
                         <span class="category-path">${path}</span>
-                        <h3>${title}</h3>
+                        <h3>${item.title}</h3>
                     </div>
                     <div class="actions">
-                        <button class="icon-btn edit-icon" onclick="location.href='revise.html'"><i class="fa-regular fa-pen-to-square"></i></button>
-                        <button class="icon-btn delete-icon" onclick="handleDelete()"><i class="fa-regular fa-trash-can"></i></button>
+                        <button class="icon-btn edit-icon" onclick="location.href='revise.html?id=${item.id}'"><i class="fa-regular fa-pen-to-square"></i></button>
+                        <button class="icon-btn delete-icon" onclick="handleDelete(${item.id})"><i class="fa-regular fa-trash-can"></i></button>
                     </div>
                 </div>
-            `;
+            `).join('');
         }
 
-        function handleDelete() {
-            if(confirm('이 강의를 정말 삭제하시겠습니까?')) {
+        function handleDelete(id) {
+            if (confirm('이 강의를 정말 삭제하시겠습니까?')) {
+                const remaining = loadLectures().filter(item => item.id !== id);
+                saveLectures(remaining);
                 alert('삭제되었습니다.');
                 updateList();
             }
