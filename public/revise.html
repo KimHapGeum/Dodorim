@@ -7,124 +7,509 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
+        /* addition.html과 동일한 디자인 토큰(색상/카드/모달)을 그대로 사용하여 톤을 통일 */
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { 
-            font-family: 'Noto Sans KR', sans-serif; 
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); 
-            min-height: 100vh; 
-            padding-bottom: 50px;
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
         }
 
-        .header-iframe { width: 100%; height: 59px; border: none; background: #ffffff; box-shadow: 0 2px 10px rgba(0,0,0,0.02); display: block; }
-        .container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 25px 40px; }
-        .form-card-panel { width: 100%; background: #ffffff; border-radius: 24px; padding: 45px; box-shadow: 0 20px 40px rgba(148, 163, 184, 0.12); }
-
-        /* 카드 그리드 스타일 */
-        .inner-content { 
-            width: 100%; min-height: 420px; padding: 40px; 
-            background-color: #fafbfc; display: flex; align-items: flex-start; 
-            gap: 24px; overflow-x: auto; border-radius: 16px; border: 1px solid #e2e8f0;
+        .header-iframe {
+            width: 100%;
+            height: 59px;
+            border: none;
+            background: #ffffff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+            display: block;
+            margin: 0;
+            padding: 0;
         }
-        
-        /* 카드 디자인: 움직임 없음, Hover 시 테두리 색상 변경 */
-        .item-card { 
-            position: relative; min-width: 240px; max-width: 240px; height: 350px; 
-            background: #fff; border-radius: 20px; padding: 20px; 
-            border: 2px solid transparent; /* 초기 테두리 투명 */
-            box-shadow: 0 4px 6px rgba(0,0,0,0.03), 0 10px 15px rgba(0,0,0,0.05); 
-            transition: border-color 0.3s ease; 
-            display: flex; flex-direction: column;
+
+        .outer-card {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0px 40px 50px 40px;
+            display: flex;
+            flex-direction: column;
+            margin-top: 25px;
         }
-        .item-card:hover { border-color: #ea580c; }
-        .item-card.main-cover { border: 2px solid #ea580c; }
-        
-        .item-img { width: 100%; height: 140px; border-radius: 12px; object-fit: cover; margin-bottom: 16px; background: #f1f5f9; }
-        .item-title { font-weight: 700; color: #1e293b; margin-bottom: 8px; font-size: 16px; }
-        .item-desc { font-size: 13px; color: #64748b; line-height: 1.6; flex-grow: 1; }
-
-        .card-actions { position: absolute; top: 16px; right: 16px; display: flex; gap: 8px; }
-        .action-icon-btn { 
-            width: 32px; height: 32px; background: rgba(255, 255, 255, 0.9); 
-            border: 1px solid #e2e8f0; border-radius: 8px; display: flex; 
-            align-items: center; justify-content: center; cursor: pointer; 
-            transition: 0.2s; color: #94a3b8;
+        .form-card-panel {
+            width: 100%;
+            background: #ffffff;
+            border-radius: 24px;
+            padding: 45px;
+            box-shadow: 0 20px 40px rgba(148, 163, 184, 0.12);
+            margin-bottom: 25px;
         }
-        .action-icon-btn:hover { color: #ea580c; border-color: #ea580c; background: #fff5f0; }
 
-        .add-btn { 
-            min-width: 240px; height: 350px; border: 2px dashed #cbd5e1; 
-            border-radius: 20px; display: flex; flex-direction: column; 
-            align-items: center; justify-content: center; cursor: pointer; 
-            color: #94a3b8; background: transparent; transition: 0.3s;
+        .form-area { width: 100%; margin-bottom: 10px; }
+        .input-group { margin-bottom: 30px; }
+        .input-group label { display: block; font-weight: 700; margin-bottom: 14px; color: #1e293b; font-size: 16px; }
+        .text-input { width: 100%; padding: 18px; border-radius: 12px; border: 1px solid #e2e8f0; font-size: 16px; outline: none; background-color: #fff; color: #1e293b; transition: all 0.3s ease; }
+        .text-input:focus { border-color: #0056b3; box-shadow: 0 0 0 4px rgba(0, 86, 179, 0.1); }
+
+        .select-group { display: flex; gap: 15px; }
+        .select-box { flex: 1; padding: 18px; border: 1px solid #e2e8f0; border-radius: 12px; outline: none; background: #fff; cursor: pointer; font-size: 16px; color: #1e293b; transition: all 0.3s ease; }
+
+        .section-divider { border: none; border-top: 1px solid #e2e8f0; margin: 10px 0 30px 0; }
+        .section-title { font-weight: 700; margin-bottom: 14px; color: #1e293b; font-size: 16px; }
+
+        .inner-content { width: 100%; min-height: 420px; border: 1px solid #e2e8f0; border-radius: 16px; padding: 30px; background-color: #fafbfc; display: flex; align-items: flex-start; gap: 20px; overflow-x: auto; }
+        .inner-content::-webkit-scrollbar { height: 6px; }
+        .inner-content::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 4px; }
+
+        .item-card { position: relative; min-width: 230px; max-width: 230px; height: 340px; background: #fff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 22px 18px; display: flex; flex-direction: column; box-shadow: 0 4px 12px rgba(0,0,0,0.02); transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); animation: fadeIn 0.4s ease-out; }
+        .item-card:hover { transform: translateY(-4px); box-shadow: 0 12px 24px rgba(0, 0, 0, 0.06); }
+        .item-card.main-cover { border: 2px solid #0056b3; background: #fff; }
+        .item-img { width: 100%; height: 130px; border-radius: 10px; object-fit: cover; margin-bottom: 15px; background: #f1f5f9; }
+        .item-title { font-weight: 700; color: #1e293b; margin-bottom: 8px; font-size: 15px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .item-desc { font-size: 13px; color: #64748b; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 4; line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+        .item-badge { font-size: 11px; font-weight: 800; margin-bottom: 6px; letter-spacing: 0.5px; }
+        .item-badge.badge-image { color: #10b981; }
+        .item-badge.badge-video { color: #94a3b8; }
+
+        .card-actions { position: absolute; top: 12px; right: 12px; display: flex; gap: 6px; z-index: 10; }
+        .action-icon-btn { width: 28px; height: 28px; background: rgba(255, 255, 255, 0.9); border: 1px solid #e2e8f0; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; color: #64748b; cursor: pointer; transition: all 0.2s; }
+        .action-icon-btn:hover { background: #fff; color: #ef4444; transform: scale(1.1); }
+        .action-icon-btn.edit-btn:hover { color: #0056b3; }
+
+        .add-btn { min-width: 230px; height: 340px; background: #fff; border: 2px dashed #cbd5e1; border-radius: 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s ease; color: #94a3b8; }
+        .add-btn:hover { border-color: #0056b3; background: #f0f6ff; color: #0056b3; transform: translateY(-4px); }
+        .add-btn i { font-size: 36px; margin-bottom: 12px; }
+        .add-btn span { font-weight: 600; font-size: 14px; }
+        .add-btn.content-add-more i { font-size: 34px; margin-bottom: 0; }
+
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(4px); z-index: 2000; justify-content: center; align-items: center; }
+        .modal-content { background: white; padding: 40px; border-radius: 24px; width: 90%; max-width: 520px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15); position: relative; }
+        .modal-close { position: absolute; top: 20px; right: 20px; width: 32px; height: 32px; border-radius: 8px; border: none; background: #f1f5f9; color: #64748b; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+        .modal-close:hover { background: #fde8e8; color: #ef4444; }
+        .preview-box { width: 100%; height: 220px; border-radius: 14px; background: #f8fafc; border: 2px dashed #e2e8f0; display: flex; align-items: center; justify-content: center; cursor: pointer; overflow: hidden; margin-bottom: 20px; transition: 0.3s; }
+        .preview-box:hover { border-color: #0056b3; background-color: #f0f6ff; }
+        .preview-box img { width: 100%; height: 100%; object-fit: cover; }
+
+        .content-file-box {
+            width: 260px; height: 260px;
+            margin: 0 auto 25px auto;
+            border-radius: 18px;
+            background: #f8fafc;
+            border: 2px dashed #cbd5e1;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            cursor: pointer; overflow: hidden; transition: 0.3s;
+            color: #94a3b8; text-align: center; gap: 10px;
         }
-        .add-btn:hover { border-color: #ea580c; color: #ea580c; background: #fff7ed; }
+        .content-file-box:hover, .content-file-box.dragover { border-color: #0056b3; background: #f0f6ff; color: #0056b3; }
+        .content-file-box img { width: 100%; height: 100%; object-fit: cover; }
+        .content-file-box i { font-size: 38px; }
+        .content-file-box span { font-size: 13px; font-weight: 600; line-height: 1.6; padding: 0 20px; }
 
-        .modal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(15,23,42,0.4); backdrop-filter: blur(4px); z-index: 2000; justify-content: center; align-items: center; }
-        .modal-content { background: white; padding: 40px; border-radius: 24px; width: 90%; max-width: 520px; }
-        .preview-box { width: 100%; height: 220px; border-radius: 14px; background: #f8fafc; border: 2px dashed #e2e8f0; display: flex; align-items: center; justify-content: center; cursor: pointer; margin-bottom: 20px; }
-        .text-input { width: 100%; padding: 18px; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 25px; outline: none; }
+        .footer-nav { margin-top: 35px; display: flex; gap: 20px; width: 100%; }
+        .btn { flex: 1; padding: 18px; border-radius: 12px; font-weight: 700; cursor: pointer; border: none; font-size: 16px; transition: all 0.2s ease; text-align: center; text-decoration: none; }
+        .btn-next { background: #0056b3; color: white; }
+        .btn-next:hover { background: #004494; box-shadow: 0 8px 25px rgba(0, 86, 179, 0.25); }
+        .btn-back { background: #f1f5f9; color: #64748b; }
+        .btn-back:hover { background: #e2e8f0; }
 
-        .footer-nav { margin-top: 35px; display: flex; gap: 20px; }
-        .btn { flex: 1; padding: 18px; border-radius: 12px; font-weight: 700; cursor: pointer; border: none; font-size: 16px; text-decoration: none; text-align: center; }
-        .btn-next { background: #ea580c; color: white; }
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.98) translateY(8px); } to { opacity: 1; transform: scale(1) translateY(0); } }
     </style>
 </head>
 <body>
 
 <iframe src="header.html?type=login" class="header-iframe"></iframe>
 
-<main class="container">
+<main class="outer-card">
     <div class="form-card-panel">
+        <div class="form-area">
+            <div class="input-group">
+                <label>강의 제목</label>
+                <input type="text" id="lectureTitle" class="text-input" placeholder="강의 제목을 입력하세요">
+            </div>
+            <div class="input-group">
+                <label>카테고리</label>
+                <div class="select-group">
+                    <select class="select-box" id="catM"><option value="">대단원 선택</option></select>
+                    <select class="select-box" id="catD"><option value="">중단원 선택</option></select>
+                    <select class="select-box" id="catS"><option value="">소단원 선택</option></select>
+                </div>
+            </div>
+        </div>
+
+        <hr class="section-divider">
+        <div class="section-title">콘텐츠 구성</div>
+
         <div class="inner-content" id="dashboardGrid"></div>
+
         <div class="footer-nav">
-            <a href="manager.html" class="btn" style="background:#f1f5f9; color:#64748b;">취소 및 돌아가기</a>
-            <button class="btn btn-next" onclick="saveEditLecture()">최종 수정 반영하기</button>
+            <a href="manager.html" class="btn btn-back">취소하고 목록으로</a>
+            <button class="btn btn-next" style="background:#10b981;" onclick="saveEditLecture()">수정 내용 저장</button>
         </div>
     </div>
 </main>
 
 <div class="modal" id="mainModal">
     <div class="modal-content">
-        <h3 style="margin-bottom:20px;">메인 정보 수정</h3>
+        <button class="modal-close" onclick="closeMainModal()"><i class="fa-solid fa-xmark"></i></button>
+        <h3 style="margin-bottom:20px; font-size:18px; font-weight:700; color:#1e293b;">메인 정보 수정</h3>
         <input type="file" id="fileMainImg" accept="image/*" style="display: none;" onchange="previewMain(this)">
         <div class="preview-box" onclick="document.getElementById('fileMainImg').click()" id="mainPreview">
             <i class="fa-solid fa-plus" style="font-size:26px; color:#cbd5e1;"></i>
         </div>
-        <textarea id="mainDesc" class="text-input" placeholder="상세 설명을 변경하세요"></textarea>
-        <button class="btn btn-next" style="width:100%" onclick="completeMainInfo()">변경 완료</button>
+        <textarea id="mainDesc" class="text-input" style="height:140px; margin-bottom:25px; resize:none; font-family:inherit;" placeholder="강의에 대한 상세 설명을 입력하세요"></textarea>
+        <div style="display:flex; gap:15px;">
+            <button class="btn btn-back" style="border-radius:12px;" onclick="closeMainModal()"><i class="fa-solid fa-arrow-left"></i> 취소</button>
+            <button class="btn btn-next" style="border-radius:12px;" onclick="completeMainInfo()">변경 완료</button>
+        </div>
     </div>
 </div>
-<input type="file" id="videoInput" hidden accept="video/*" onchange="addVideoCard(this)">
+
+<div class="modal" id="contentModal">
+    <div class="modal-content">
+        <button class="modal-close" onclick="closeContentModal()"><i class="fa-solid fa-xmark"></i></button>
+        <h3 style="margin-bottom:20px; font-size:18px; font-weight:700; color:#1e293b;">콘텐츠 추가</h3>
+
+        <input type="file" id="fileContent" accept="image/*,video/*" style="display:none;" onchange="previewContentFile(this)">
+        <div class="content-file-box" id="contentFileBox" onclick="document.getElementById('fileContent').click()">
+            <i class="fa-solid fa-cloud-arrow-up"></i>
+            <span>사진 또는 동영상 파일을 이곳에 끌어다 놓거나<br>클릭하여 추가하세요</span>
+        </div>
+
+        <div style="display:flex; gap:15px; margin-top:25px;">
+            <button class="btn btn-back" style="border-radius:12px;" onclick="closeContentModal()"><i class="fa-solid fa-arrow-left"></i> 취소</button>
+            <button class="btn btn-next" style="border-radius:12px;" onclick="completeContentInfo()">추가하기</button>
+        </div>
+    </div>
+</div>
 
 <script>
     const dashboardGrid = document.getElementById('dashboardGrid');
-    let mainInfo = { img: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=600&auto=format&fit=crop", desc: "스마트폰을 이용해 스타벅스 사이렌오더 음료 주문법을 실습합니다." };
-    let videos = [{ name: "01_사이렌오더결제트랙.mp4" }];
+    const categoryData = {
+        "키오스크": {
+            "병원": ["동네병원", "종합병원", "약국 수납"],
+            "공공시설": ["민원/발급", "기차역", "공항", "영화관"],
+            "음식점/카페": ["버거킹", "롯데리아", "맥도날드", "메가커피", "컴포즈", "스타벅스"]
+        },
+        "셀프 계산대": {
+            "대형 매장": ["다이소", "홈플러스"],
+            "무인 매장": ["아이스크림", "무인편의점"]
+        },
+        "전자기기": {
+            "휴대폰": ["전화/문자하기"],
+            "ATM": ["KB 국민은행", "NH 농협은행"]
+        }
+    };
+
+    const STORAGE_KEY = "doodream_lectures"; // manager.html / addition.html과 공유하는 저장 키
+
+    let lectureId = null;   // 수정 대상 강의의 id
+    let mainInfo = null;    // { img, desc }
+    let contents = [];      // { type: 'image'|'video', data }
+    let mainImgBase64 = "";
+    let pendingContentFile = null;
+
+    function loadLectures() {
+        try {
+            return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+        } catch (e) {
+            return [];
+        }
+    }
+
+    window.onload = () => {
+        const m = document.getElementById('catM'), d = document.getElementById('catD'), s = document.getElementById('catS');
+        for (let k in categoryData) m.options.add(new Option(k, k));
+        m.onchange = () => { d.innerHTML = '<option value="">중단원 선택</option>'; s.innerHTML = '<option value="">소단원 선택</option>'; if (m.value) for (let k in categoryData[m.value]) d.options.add(new Option(k, k)); };
+        d.onchange = () => { s.innerHTML = '<option value="">소단원 선택</option>'; if (d.value) categoryData[m.value][d.value].forEach(v => s.options.add(new Option(v, v))); };
+
+        // URL의 id로 실제 저장된 강의를 불러온다
+        const params = new URLSearchParams(location.search);
+        lectureId = params.get('id') ? Number(params.get('id')) : null;
+        const lectures = loadLectures();
+        const record = lectures.find(item => item.id === lectureId);
+
+        if (!record) {
+            alert('수정할 강의 정보를 찾을 수 없습니다. 목록에서 다시 시도해주세요.');
+            location.href = 'manager.html';
+            return;
+        }
+
+        // 폼에 기존 값 채우기
+        document.getElementById('lectureTitle').value = record.title || '';
+        m.value = record.main || '';
+        d.innerHTML = '<option value="">중단원 선택</option>';
+        if (m.value) for (let k in categoryData[m.value]) d.options.add(new Option(k, k));
+        d.value = record.mid || '';
+        s.innerHTML = '<option value="">소단원 선택</option>';
+        if (m.value && d.value) categoryData[m.value][d.value].forEach(v => s.options.add(new Option(v, v)));
+        s.value = record.sub || '';
+
+        mainInfo = { img: record.mainImg, desc: record.mainDesc };
+        contents = Array.isArray(record.contents) ? record.contents.slice() : [];
+
+        renderGrid();
+
+        const box = document.getElementById('contentFileBox');
+        box.addEventListener('dragover', (e) => { e.preventDefault(); box.classList.add('dragover'); });
+        box.addEventListener('dragleave', () => box.classList.remove('dragover'));
+        box.addEventListener('drop', (e) => {
+            e.preventDefault();
+            box.classList.remove('dragover');
+            if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+                handleContentFile(e.dataTransfer.files[0]);
+            }
+        });
+    };
+
+    /* ---------------- 메인 사진/설명 모달 ---------------- */
+
+    function openMainModal() {
+        document.getElementById('mainModal').style.display = 'flex';
+        if (mainInfo && mainInfo.img) {
+            document.getElementById('mainPreview').innerHTML = `<img src="${mainInfo.img}" style="width:100%; height:100%; object-fit:cover;">`;
+        } else {
+            document.getElementById('mainPreview').innerHTML = `<i class="fa-solid fa-plus" style="font-size:26px; color:#cbd5e1;"></i>`;
+        }
+        document.getElementById('mainDesc').value = (mainInfo && mainInfo.desc) || '';
+        mainImgBase64 = (mainInfo && mainInfo.img) || '';
+    }
+
+    function closeMainModal(revert = true) {
+        document.getElementById('mainModal').style.display = 'none';
+        if (revert) {
+            document.getElementById('fileMainImg').value = "";
+            if (mainInfo) {
+                mainImgBase64 = mainInfo.img;
+                document.getElementById('mainPreview').innerHTML = `<img src="${mainInfo.img}" style="width:100%; height:100%; object-fit:cover;">`;
+                document.getElementById('mainDesc').value = mainInfo.desc;
+            } else {
+                mainImgBase64 = "";
+                document.getElementById('mainPreview').innerHTML = `<i class="fa-solid fa-plus" style="font-size:26px; color:#cbd5e1;"></i>`;
+                document.getElementById('mainDesc').value = "";
+            }
+        }
+    }
+
+    document.getElementById('mainModal').addEventListener('click', (e) => {
+        if (e.target.id === 'mainModal') closeMainModal();
+    });
+
+    // 이미지를 안전한 크기로 압축하여 base64로 변환 (addition.html과 동일한 로직)
+    function compressImage(file, maxDim = 900, quality = 0.75) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    let { width, height } = img;
+                    if (width > maxDim || height > maxDim) {
+                        if (width > height) { height = Math.round(height * (maxDim / width)); width = maxDim; }
+                        else { width = Math.round(width * (maxDim / height)); height = maxDim; }
+                    }
+                    const canvas = document.createElement('canvas');
+                    canvas.width = width; canvas.height = height;
+                    canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+                    resolve(canvas.toDataURL('image/jpeg', quality));
+                };
+                img.onerror = () => reject(new Error('이미지를 불러올 수 없습니다.'));
+                img.src = e.target.result;
+            };
+            reader.onerror = () => reject(new Error('파일을 읽을 수 없습니다.'));
+            reader.readAsDataURL(file);
+        });
+    }
+
+    function previewMain(input) {
+        const file = input.files && input.files[0];
+        if (!file) return;
+        if (!file.type.startsWith('image/')) {
+            alert("이미지 파일만 업로드할 수 있습니다.");
+            input.value = "";
+            return;
+        }
+        compressImage(file).then((dataUrl) => {
+            document.getElementById('mainPreview').innerHTML = `<img src="${dataUrl}" style="width:100%; height:100%; object-fit:cover;">`;
+            mainImgBase64 = dataUrl;
+        }).catch(() => {
+            alert("이미지를 처리하는 중 오류가 발생했습니다. 다른 사진으로 시도해주세요.");
+        });
+    }
+
+    function completeMainInfo() {
+        const desc = document.getElementById('mainDesc').value.trim();
+        if (!mainImgBase64 || !desc) { alert("사진과 설명을 모두 입력해주세요."); return; }
+        mainInfo = { img: mainImgBase64, desc: desc };
+        closeMainModal(false);
+        renderGrid();
+    }
+
+    /* ---------------- 콘텐츠 추가 모달 ---------------- */
+
+    function openContentModal() {
+        pendingContentFile = null;
+        document.getElementById('fileContent').value = "";
+        resetContentFileBox();
+        document.getElementById('contentModal').style.display = 'flex';
+    }
+
+    function closeContentModal() {
+        document.getElementById('contentModal').style.display = 'none';
+    }
+
+    document.getElementById('contentModal').addEventListener('click', (e) => {
+        if (e.target.id === 'contentModal') closeContentModal();
+    });
+
+    function resetContentFileBox() {
+        document.getElementById('contentFileBox').innerHTML = `<i class="fa-solid fa-cloud-arrow-up"></i><span>사진 또는 동영상 파일을 이곳에 끌어다 놓거나<br>클릭하여 추가하세요</span>`;
+    }
+
+    function previewContentFile(input) {
+        const file = input.files && input.files[0];
+        handleContentFile(file);
+    }
+
+    function handleContentFile(file) {
+        if (!file) return;
+
+        if (file.type.startsWith('image/')) {
+            compressImage(file).then((dataUrl) => {
+                pendingContentFile = { type: 'image', data: dataUrl };
+                document.getElementById('contentFileBox').innerHTML = `<img src="${dataUrl}">`;
+            }).catch(() => {
+                alert("이미지를 처리하는 중 오류가 발생했습니다. 다른 사진으로 시도해주세요.");
+            });
+        } else if (file.type.startsWith('video/')) {
+            pendingContentFile = { type: 'video', data: file.name };
+            document.getElementById('contentFileBox').innerHTML = `<i class="fa-solid fa-circle-check" style="color:#10b981;"></i><span>${file.name}</span>`;
+        } else {
+            alert("사진 또는 동영상 파일만 추가할 수 있습니다.");
+        }
+    }
+
+    function completeContentInfo() {
+        if (!pendingContentFile) { alert("사진 또는 동영상 파일을 추가해주세요."); return; }
+        contents.push({ type: pendingContentFile.type, data: pendingContentFile.data });
+        closeContentModal();
+        renderGrid();
+    }
+
+    function deleteContent(index) {
+        if (confirm("해당 콘텐츠를 삭제하시겠습니까?")) { contents.splice(index, 1); renderGrid(); }
+    }
+
+    /* ---------------- 그리드 렌더링 ---------------- */
 
     function renderGrid() {
         dashboardGrid.innerHTML = "";
-        const mainCard = document.createElement('div'); mainCard.className = 'item-card main-cover';
-        mainCard.innerHTML = `<div class="card-actions"><div class="action-icon-btn" onclick="openMainModal()"><i class="fa-solid fa-pen"></i></div></div><div style="font-size:11px; color:#ea580c; font-weight:800; margin-bottom:6px;">MAIN COVER</div><img src="${mainInfo.img}" class="item-img"><div class="item-title">강의 메인 소개</div><div class="item-desc">${mainInfo.desc}</div>`;
-        dashboardGrid.appendChild(mainCard);
-        
-        videos.forEach((vid, index) => {
-            const vidCard = document.createElement('div'); vidCard.className = 'item-card';
-            vidCard.innerHTML = `<div class="card-actions"><div class="action-icon-btn" onclick="deleteVideo(${index})"><i class="fa-solid fa-trash"></i></div></div><div style="font-size:11px; color:#94a3b8; font-weight:800; margin-bottom:6px;">VIDEO ${index+1}</div><div class="item-img" style="background:#1e293b; display:flex; align-items:center; justify-content:center; color:#fff;"><i class="fa-solid fa-play"></i></div><div class="item-title">${vid.name}</div><div class="item-desc">등록된 영상입니다.</div>`;
-            dashboardGrid.appendChild(vidCard);
+
+        if (mainInfo && mainInfo.img) {
+            const mainCard = document.createElement('div');
+            mainCard.className = 'item-card main-cover';
+            mainCard.innerHTML = `
+                <div class="card-actions">
+                    <div class="action-icon-btn edit-btn" onclick="openMainModal()"><i class="fa-solid fa-pen"></i></div>
+                </div>
+                <div class="item-badge" style="color:#0056b3;">MAIN COVER</div>
+                <img src="${mainInfo.img}" class="item-img">
+                <div class="item-title">강의 메인 소개</div>
+                <div class="item-desc">${mainInfo.desc}</div>
+            `;
+            dashboardGrid.appendChild(mainCard);
+        } else {
+            const mainAddCard = document.createElement('div');
+            mainAddCard.className = 'add-btn';
+            mainAddCard.style.borderColor = '#0056b3';
+            mainAddCard.onclick = openMainModal;
+            mainAddCard.innerHTML = `<i class="fa-solid fa-camera-retro" style="color:#0056b3;"></i><span style="color:#0056b3;">메인 사진/설명 등록</span>`;
+            dashboardGrid.appendChild(mainAddCard);
+        }
+
+        contents.forEach((item, index) => {
+            const card = document.createElement('div');
+            card.className = 'item-card';
+
+            let badgeLabel = "", badgeClass = "", body = "";
+            if (item.type === 'image') {
+                badgeLabel = "사진";
+                badgeClass = "badge-image";
+                body = `
+                    <img src="${item.data}" class="item-img">
+                    <div class="item-title">사진 콘텐츠</div>
+                    <div class="item-desc">등록된 이미지 자료입니다.</div>
+                `;
+            } else {
+                badgeLabel = "동영상";
+                badgeClass = "badge-video";
+                body = `
+                    <div class="item-img" style="display:flex; align-items:center; justify-content:center; background:#1e293b; color:white;">
+                        <i class="fa-solid fa-play" style="font-size:26px; color:#fff;"></i>
+                    </div>
+                    <div class="item-title">${item.data}</div>
+                    <div class="item-desc">등록된 동영상 강의 자료입니다.</div>
+                `;
+            }
+
+            card.innerHTML = `
+                <div class="card-actions">
+                    <div class="action-icon-btn" onclick="deleteContent(${index})"><i class="fa-solid fa-trash"></i></div>
+                </div>
+                <div class="item-badge ${badgeClass}">${badgeLabel}</div>
+                ${body}
+            `;
+            dashboardGrid.appendChild(card);
         });
-        
-        const addBtn = document.createElement('div'); addBtn.className = 'add-btn'; addBtn.onclick = () => document.getElementById('videoInput').click(); addBtn.innerHTML = `<i class="fa-solid fa-film" style="font-size:30px;"></i><span style="margin-top:10px;">영상 추가</span>`;
+
+        const addBtn = document.createElement('div');
+        addBtn.className = 'add-btn content-add-more';
+        addBtn.onclick = openContentModal;
+        addBtn.innerHTML = `<i class="fa-solid fa-plus"></i>`;
         dashboardGrid.appendChild(addBtn);
     }
 
-    function openMainModal() { document.getElementById('mainModal').style.display = 'flex'; }
-    function closeMainModal() { document.getElementById('mainModal').style.display = 'none'; }
-    function completeMainInfo() { mainInfo.desc = document.getElementById('mainDesc').value; closeMainModal(); renderGrid(); }
-    function deleteVideo(idx) { videos.splice(idx, 1); renderGrid(); }
-    function addVideoCard(input) { if(input.files[0]) { videos.push({name: input.files[0].name}); renderGrid(); } }
-    function saveEditLecture() { alert("수정 내용이 저장되었습니다."); location.href = "manager.html"; }
-    
-    renderGrid();
+    /* ---------------- 저장 ---------------- */
+
+    function saveEditLecture() {
+        const title = document.getElementById('lectureTitle').value.trim();
+        const catM = document.getElementById('catM').value;
+        const catD = document.getElementById('catD').value;
+        const catS = document.getElementById('catS').value;
+
+        if (!title || !catM || !catD || !catS) { alert("강의 제목 및 카테고리를 완전히 선택해주세요."); return; }
+        if (!mainInfo || !mainInfo.img) { alert("대표 사진 및 메인 설명 구성을 완료해주세요."); return; }
+        if (contents.length === 0) { alert("사진 또는 동영상 콘텐츠를 1개 이상 등록해주세요."); return; }
+
+        const lectures = loadLectures();
+        const idx = lectures.findIndex(item => item.id === lectureId);
+        if (idx === -1) {
+            alert("수정할 강의를 찾을 수 없습니다.");
+            location.href = "manager.html";
+            return;
+        }
+
+        lectures[idx] = {
+            ...lectures[idx],
+            main: catM,
+            mid: catD,
+            sub: catS,
+            title: title,
+            videoCount: contents.filter(c => c.type === 'video').length,
+            contentCount: contents.length,
+            mainImg: mainInfo.img,
+            mainDesc: mainInfo.desc,
+            contents: contents
+        };
+
+        try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(lectures));
+        } catch (e) {
+            alert("저장 용량을 초과하여 수정에 실패했습니다. 사진 개수를 줄이거나 더 작은 사진으로 다시 시도해주세요.");
+            return;
+        }
+
+        alert("수정 내용이 저장되었습니다.");
+        location.href = "manager.html";
+    }
 </script>
 </body>
 </html>
