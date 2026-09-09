@@ -71,6 +71,9 @@
         .item-img { width: 100%; height: 130px; border-radius: 10px; object-fit: cover; margin-bottom: 15px; background: #f1f5f9; }
         .item-title { font-weight: 700; color: #1e293b; margin-bottom: 8px; font-size: 15px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .item-desc { font-size: 13px; color: #64748b; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 4; line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+        .item-badge { font-size: 11px; font-weight: 800; margin-bottom: 6px; letter-spacing: 0.5px; }
+        .item-badge.badge-image { color: #10b981; }
+        .item-badge.badge-video { color: #94a3b8; }
 
         .card-actions { position: absolute; top: 12px; right: 12px; display: flex; gap: 6px; z-index: 10; }
         .action-icon-btn { width: 28px; height: 28px; background: rgba(255, 255, 255, 0.9); border: 1px solid #e2e8f0; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; color: #64748b; cursor: pointer; transition: all 0.2s; }
@@ -82,12 +85,33 @@
         .add-btn i { font-size: 36px; margin-bottom: 12px; }
         .add-btn span { font-weight: 600; font-size: 14px; }
 
+        /* 콘텐츠(사진/동영상 파일)를 추가하는 + 버튼: 메인 카드와 동일한 크기, 항상 목록 맨 끝에 붙는다 */
+        .add-btn.content-add-more i { font-size: 34px; margin-bottom: 0; }
+
         /* 모달 시스템 */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(4px); z-index: 2000; justify-content: center; align-items: center; }
-        .modal-content { background: white; padding: 40px; border-radius: 24px; width: 90%; max-width: 520px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15); }
+        .modal-content { background: white; padding: 40px; border-radius: 24px; width: 90%; max-width: 520px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15); position: relative; }
+        .modal-close { position: absolute; top: 20px; right: 20px; width: 32px; height: 32px; border-radius: 8px; border: none; background: #f1f5f9; color: #64748b; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+        .modal-close:hover { background: #fde8e8; color: #ef4444; }
         .preview-box { width: 100%; height: 220px; border-radius: 14px; background: #f8fafc; border: 2px dashed #e2e8f0; display: flex; align-items: center; justify-content: center; cursor: pointer; overflow: hidden; margin-bottom: 20px; transition: 0.3s; }
         .preview-box:hover { border-color: #0056b3; background-color: #f0f6ff; }
         .preview-box img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* 콘텐츠 추가 모달: 종류 구분 없이 파일 하나를 넣는 정사각형 칸, 모달 정중앙에 배치 */
+        .content-file-box {
+            width: 260px; height: 260px;
+            margin: 0 auto 25px auto;
+            border-radius: 18px;
+            background: #f8fafc;
+            border: 2px dashed #cbd5e1;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            cursor: pointer; overflow: hidden; transition: 0.3s;
+            color: #94a3b8; text-align: center; gap: 10px;
+        }
+        .content-file-box:hover, .content-file-box.dragover { border-color: #0056b3; background: #f0f6ff; color: #0056b3; }
+        .content-file-box img { width: 100%; height: 100%; object-fit: cover; }
+        .content-file-box i { font-size: 38px; }
+        .content-file-box span { font-size: 13px; font-weight: 600; line-height: 1.6; padding: 0 20px; }
 
         /* 하단 내비게이션 바 */
         .footer-nav { margin-top: 35px; display: flex; gap: 20px; width: 100%; }
@@ -151,17 +175,38 @@
 
 <div class="modal" id="mainModal">
     <div class="modal-content">
+        <button class="modal-close" onclick="closeMainModal()"><i class="fa-solid fa-xmark"></i></button>
         <h3 style="margin-bottom:20px; font-size:18px; font-weight:700; color:#1e293b;">메인 정보 입력</h3>
         <input type="file" id="fileMainImg" accept="image/*" style="display: none;" onchange="previewMain(this)">
         <div class="preview-box" onclick="document.getElementById('fileMainImg').click()" id="mainPreview">
             <i class="fa-solid fa-plus" style="font-size:26px; color:#cbd5e1;"></i>
         </div>
-        <textarea id="mainDesc" class="text-input" style="height:140px; margin-bottom:25px; resize:none; font-family:inherit;" placeholder="강의에 대한 상세 설명을 입력하세요"></textarea>
-        <button class="btn btn-next" style="width:100%; border-radius:12px;" onclick="completeMainInfo()">등록 완료</button>
+        <textarea id="mainDesc" class="text-input" style="height:140px; margin-bottom:25px; resize:none; font-family:inherit;" placeholder="강의에 대한 상세 설명을 입력하세요 (선택 사항)"></textarea>
+        <div style="display:flex; gap:15px;">
+            <button class="btn btn-back" style="border-radius:12px;" onclick="closeMainModal()"><i class="fa-solid fa-arrow-left"></i> 이전 단계로</button>
+            <button class="btn btn-next" style="border-radius:12px;" onclick="completeMainInfo()">등록 완료</button>
+        </div>
     </div>
 </div>
 
-<input type="file" id="videoInput" hidden accept="video/*" onchange="addVideoCard(this)">
+<!-- 콘텐츠 추가 모달: 텍스트/사진/동영상 구분 없이, 파일 하나를 정중앙 칸에 넣으면 된다 -->
+<div class="modal" id="contentModal">
+    <div class="modal-content">
+        <button class="modal-close" onclick="closeContentModal()"><i class="fa-solid fa-xmark"></i></button>
+        <h3 style="margin-bottom:20px; font-size:18px; font-weight:700; color:#1e293b;">콘텐츠 추가</h3>
+
+        <input type="file" id="fileContent" accept="image/*,video/*" style="display:none;" onchange="previewContentFile(this)">
+        <div class="content-file-box" id="contentFileBox" onclick="document.getElementById('fileContent').click()">
+            <i class="fa-solid fa-cloud-arrow-up"></i>
+            <span>사진 또는 동영상 파일을 이곳에 끌어다 놓거나<br>클릭하여 추가하세요</span>
+        </div>
+
+        <div style="display:flex; gap:15px; margin-top:25px;">
+            <button class="btn btn-back" style="border-radius:12px;" onclick="closeContentModal()"><i class="fa-solid fa-arrow-left"></i> 이전 단계로</button>
+            <button class="btn btn-next" style="border-radius:12px;" onclick="completeContentInfo()">추가하기</button>
+        </div>
+    </div>
+</div>
 
 <script>
     const slider = document.getElementById('mainSlider');
@@ -181,10 +226,13 @@
             "ATM": ["KB 국민은행", "NH 농협은행"]
         }
     };
+
+    const STORAGE_KEY = "doodream_lectures"; // manager.html과 공유하는 저장 키
     
-    let mainInfo = null; 
-    let videos = [];     
+    let mainInfo = null;
+    let contents = [];       // { type: 'image'|'video', data(base64 또는 파일명), caption }
     let mainImgBase64 = "";
+    let pendingContentFile = null; // 콘텐츠 추가 모달에서 선택/드롭한 파일 { type, data }
 
     window.onload = () => {
         const m = document.getElementById('catM'), d = document.getElementById('catD'), s = document.getElementById('catS');
@@ -192,6 +240,18 @@
         m.onchange = () => { d.innerHTML = '<option value="">중단원 선택</option>'; s.innerHTML = '<option value="">소단원 선택</option>'; if(m.value) for(let k in categoryData[m.value]) d.options.add(new Option(k, k)); };
         d.onchange = () => { s.innerHTML = '<option value="">소단원 선택</option>'; if(d.value) categoryData[m.value][d.value].forEach(v => s.options.add(new Option(v, v))); };
         renderGrid();
+
+        // 콘텐츠 추가 모달의 파일 칸에 드래그 앤 드롭 지원
+        const box = document.getElementById('contentFileBox');
+        box.addEventListener('dragover', (e) => { e.preventDefault(); box.classList.add('dragover'); });
+        box.addEventListener('dragleave', () => box.classList.remove('dragover'));
+        box.addEventListener('drop', (e) => {
+            e.preventDefault();
+            box.classList.remove('dragover');
+            if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+                handleContentFile(e.dataTransfer.files[0]);
+            }
+        });
     };
 
     function moveSlide(idx) { slider.style.transform = `translateX(-${idx * 100}vw)`; window.scrollTo(0,0); }
@@ -209,91 +269,94 @@
         moveSlide(1);
     }
 
+    /* ---------------- 메인 사진/설명 모달 ---------------- */
+
     function openMainModal() { 
         document.getElementById('mainModal').style.display = 'flex';
         if(mainInfo) {
-            document.getElementById('mainPreview').innerHTML = `<img src="${mainInfo.img}" style="width:100%; height:100%; object-fit:cover;">`;
-            document.getElementById('mainDesc').value = mainInfo.desc;
-            mainImgBase64 = mainInfo.img;
+            document.getElementById('mainPreview').innerHTML = mainInfo.img
+                ? `<img src="${mainInfo.img}" style="width:100%; height:100%; object-fit:cover;">`
+                : `<i class="fa-solid fa-plus" style="font-size:26px; color:#cbd5e1;"></i>`;
+            document.getElementById('mainDesc').value = mainInfo.desc || '';
+            mainImgBase64 = mainInfo.img || '';
         }
     }
-    function closeMainModal() { document.getElementById('mainModal').style.display = 'none'; }
+
+    // revert=true(기본값): 저장하지 않은 변경 사항을 취소하고 이전 상태로 되돌린 뒤 닫음
+    // revert=false: 등록 완료 후처럼, 이미 반영된 상태 그대로 닫기만 함
+    function closeMainModal(revert = true) {
+        document.getElementById('mainModal').style.display = 'none';
+        if (revert) {
+            document.getElementById('fileMainImg').value = "";
+            if (mainInfo) {
+                mainImgBase64 = mainInfo.img || '';
+                document.getElementById('mainPreview').innerHTML = mainInfo.img
+                    ? `<img src="${mainInfo.img}" style="width:100%; height:100%; object-fit:cover;">`
+                    : `<i class="fa-solid fa-plus" style="font-size:26px; color:#cbd5e1;"></i>`;
+                document.getElementById('mainDesc').value = mainInfo.desc || '';
+            } else {
+                mainImgBase64 = "";
+                document.getElementById('mainPreview').innerHTML = `<i class="fa-solid fa-plus" style="font-size:26px; color:#cbd5e1;"></i>`;
+                document.getElementById('mainDesc').value = "";
+            }
+        }
+    }
+
+    // 모달 바깥(배경) 클릭 시에도 취소하고 닫히도록 처리
+    document.getElementById('mainModal').addEventListener('click', (e) => {
+        if (e.target.id === 'mainModal') closeMainModal();
+    });
+
+    // 이미지를 localStorage에 안전하게 저장할 수 있는 크기로 줄여서 base64로 변환한다
+    // (원본 사진을 그대로 base64로 저장하면 용량이 커서 localStorage 저장 한도를 넘어
+    //  "저장은 실패했는데 화면상 아무 반응도 없는" 문제가 생길 수 있다)
+    function compressImage(file, maxDim = 900, quality = 0.75) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    let { width, height } = img;
+                    if (width > maxDim || height > maxDim) {
+                        if (width > height) { height = Math.round(height * (maxDim / width)); width = maxDim; }
+                        else { width = Math.round(width * (maxDim / height)); height = maxDim; }
+                    }
+                    const canvas = document.createElement('canvas');
+                    canvas.width = width; canvas.height = height;
+                    canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+                    resolve(canvas.toDataURL('image/jpeg', quality));
+                };
+                img.onerror = () => reject(new Error('이미지를 불러올 수 없습니다.'));
+                img.src = e.target.result;
+            };
+            reader.onerror = () => reject(new Error('파일을 읽을 수 없습니다.'));
+            reader.readAsDataURL(file);
+        });
+    }
 
     function previewMain(input) {
-        if (input.files && input.files[0]) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                document.getElementById('mainPreview').innerHTML = `<img src="${e.target.result}" style="width:100%; height:100%; object-fit:cover;">`;
-                mainImgBase64 = e.target.result;
-            };
-            reader.readAsDataURL(input.files[0]);
+        const file = input.files && input.files[0];
+        if (!file) return;
+        if (!file.type.startsWith('image/')) {
+            alert("이미지 파일만 업로드할 수 있습니다.");
+            input.value = "";
+            return;
         }
+        compressImage(file).then((dataUrl) => {
+            document.getElementById('mainPreview').innerHTML = `<img src="${dataUrl}" style="width:100%; height:100%; object-fit:cover;">`;
+            mainImgBase64 = dataUrl;
+        }).catch(() => {
+            alert("이미지를 처리하는 중 오류가 발생했습니다. 다른 사진으로 시도해주세요.");
+        });
     }
 
+    // 사진/설명을 넣지 않아도(빈 값이어도) 등록 완료를 누르면 다음 단계로 진행할 수 있도록,
+    // 필수 입력 검증 없이 그대로 반영한다.
     function completeMainInfo() {
         const desc = document.getElementById('mainDesc').value.trim();
-        if(!mainImgBase64 || !desc) { alert("사진과 설명을 모두 입력해주세요."); return; }
         mainInfo = { img: mainImgBase64, desc: desc };
-        closeMainModal();
+        closeMainModal(false);
         renderGrid();
-    }
-
-    function renderGrid() {
-        dashboardGrid.innerHTML = "";
-        if(mainInfo) {
-            const mainCard = document.createElement('div');
-            mainCard.className = 'item-card main-cover';
-            mainCard.innerHTML = `
-                <div class="card-actions">
-                    <div class="action-icon-btn edit-btn" onclick="openMainModal()"><i class="fa-solid fa-pen"></i></div>
-                    <div class="action-icon-btn" onclick="deleteMainCover()"><i class="fa-solid fa-trash"></i></div>
-                </div>
-                <div style="font-size:11px; color:#0056b3; font-weight:800; margin-bottom:6px; letter-spacing:0.5px;">MAIN COVER</div>
-                <img src="${mainInfo.img}" class="item-img">
-                <div class="item-title">강의 메인 소개</div>
-                <div class="item-desc">${mainInfo.desc}</div>
-            `;
-            dashboardGrid.appendChild(mainCard);
-        } else {
-            const mainAddCard = document.createElement('div');
-            mainAddCard.className = 'add-btn';
-            mainAddCard.style.borderColor = '#0056b3';
-            mainAddCard.onclick = openMainModal;
-            mainAddCard.innerHTML = `<i class="fa-solid fa-camera-retro" style="color:#0056b3;"></i><span style="color:#0056b3;">메인 사진/설명 등록</span>`;
-            dashboardGrid.appendChild(mainAddCard);
-        }
-
-        videos.forEach((vid, index) => {
-            const vidCard = document.createElement('div');
-            vidCard.className = 'item-card';
-            vidCard.innerHTML = `
-                <div class="card-actions">
-                    <div class="action-icon-btn" onclick="deleteVideo(${index})"><i class="fa-solid fa-trash"></i></div>
-                </div>
-                <div style="font-size:11px; color:#94a3b8; font-weight:800; margin-bottom:6px; letter-spacing:0.5px;">VIDEO ${index+1}</div>
-                <div class="item-img" style="display:flex; align-items:center; justify-content:center; background:#1e293b; color:white;">
-                    <i class="fa-solid fa-play" style="font-size:26px; color:#fff;"></i>
-                </div>
-                <div class="item-title">${vid.name}</div>
-                <div class="item-desc">등록된 동영상 강의 자료입니다.</div>
-            `;
-            dashboardGrid.appendChild(vidCard);
-        });
-
-        const addBtn = document.createElement('div');
-        addBtn.className = 'add-btn';
-        addBtn.onclick = () => document.getElementById('videoInput').click();
-        addBtn.innerHTML = `<i class="fa-solid fa-film"></i><span>강의 영상 추가</span>`;
-        dashboardGrid.appendChild(addBtn);
-    }
-
-    function addVideoCard(input) {
-        if (input.files && input.files[0]) {
-            videos.push({ name: input.files[0].name });
-            renderGrid();
-            dashboardGrid.scrollLeft = dashboardGrid.scrollWidth;
-            input.value = "";
-        }
     }
 
     function deleteMainCover() {
@@ -306,13 +369,175 @@
         }
     }
 
-    function deleteVideo(index) {
-        if(confirm("해당 영상을 삭제하시겠습니까?")) { videos.splice(index, 1); renderGrid(); }
+    /* ---------------- 콘텐츠 추가 모달 (텍스트/사진/동영상 구분 없이 파일 하나) ---------------- */
+
+    function openContentModal() {
+        pendingContentFile = null;
+        document.getElementById('fileContent').value = "";
+        resetContentFileBox();
+        document.getElementById('contentModal').style.display = 'flex';
     }
 
+    function closeContentModal() {
+        document.getElementById('contentModal').style.display = 'none';
+    }
+
+    document.getElementById('contentModal').addEventListener('click', (e) => {
+        if (e.target.id === 'contentModal') closeContentModal();
+    });
+
+    function resetContentFileBox() {
+        document.getElementById('contentFileBox').innerHTML = `<i class="fa-solid fa-cloud-arrow-up"></i><span>사진 또는 동영상 파일을 이곳에 끌어다 놓거나<br>클릭하여 추가하세요</span>`;
+    }
+
+    function previewContentFile(input) {
+        const file = input.files && input.files[0];
+        handleContentFile(file);
+    }
+
+    // 사진이든 동영상이든 구분하지 않고 하나의 칸으로 받아, 파일 종류만 자동으로 판별한다
+    function handleContentFile(file) {
+        if (!file) return;
+
+        if (file.type.startsWith('image/')) {
+            compressImage(file).then((dataUrl) => {
+                pendingContentFile = { type: 'image', data: dataUrl };
+                document.getElementById('contentFileBox').innerHTML = `<img src="${dataUrl}">`;
+            }).catch(() => {
+                alert("이미지를 처리하는 중 오류가 발생했습니다. 다른 사진으로 시도해주세요.");
+            });
+        } else if (file.type.startsWith('video/')) {
+            pendingContentFile = { type: 'video', data: file.name };
+            document.getElementById('contentFileBox').innerHTML = `<i class="fa-solid fa-circle-check" style="color:#10b981;"></i><span>${file.name}</span>`;
+        } else {
+            alert("사진 또는 동영상 파일만 추가할 수 있습니다.");
+        }
+    }
+
+    function completeContentInfo() {
+        if (!pendingContentFile) { alert("사진 또는 동영상 파일을 추가해주세요."); return; }
+        contents.push({ type: pendingContentFile.type, data: pendingContentFile.data });
+        closeContentModal();
+        renderGrid();
+    }
+
+    function deleteContent(index) {
+        if(confirm("해당 콘텐츠를 삭제하시겠습니까?")) { contents.splice(index, 1); renderGrid(); }
+    }
+
+    /* ---------------- 그리드 렌더링 ---------------- */
+
+    function renderGrid() {
+        dashboardGrid.innerHTML = "";
+
+        if(mainInfo) {
+            const mainCard = document.createElement('div');
+            mainCard.className = 'item-card main-cover';
+            const imgHtml = mainInfo.img
+                ? `<img src="${mainInfo.img}" class="item-img">`
+                : `<div class="item-img" style="display:flex; align-items:center; justify-content:center; color:#cbd5e1;"><i class="fa-solid fa-image" style="font-size:28px;"></i></div>`;
+            mainCard.innerHTML = `
+                <div class="card-actions">
+                    <div class="action-icon-btn edit-btn" onclick="openMainModal()"><i class="fa-solid fa-pen"></i></div>
+                    <div class="action-icon-btn" onclick="deleteMainCover()"><i class="fa-solid fa-trash"></i></div>
+                </div>
+                <div class="item-badge" style="color:#0056b3;">MAIN COVER</div>
+                ${imgHtml}
+                <div class="item-title">강의 메인 소개</div>
+                <div class="item-desc">${mainInfo.desc || '설명이 입력되지 않았습니다.'}</div>
+            `;
+            dashboardGrid.appendChild(mainCard);
+        } else {
+            const mainAddCard = document.createElement('div');
+            mainAddCard.className = 'add-btn';
+            mainAddCard.style.borderColor = '#0056b3';
+            mainAddCard.onclick = openMainModal;
+            mainAddCard.innerHTML = `<i class="fa-solid fa-camera-retro" style="color:#0056b3;"></i><span style="color:#0056b3;">메인 사진/설명 등록</span>`;
+            dashboardGrid.appendChild(mainAddCard);
+        }
+
+        // 메인 정보가 등록된 이후부터, 사진/동영상 파일을 자유롭게 추가한 콘텐츠 카드들
+        contents.forEach((item, index) => {
+            const card = document.createElement('div');
+            card.className = 'item-card';
+
+            let badgeLabel = "", badgeClass = "", body = "";
+            if (item.type === 'image') {
+                badgeLabel = "사진";
+                badgeClass = "badge-image";
+                body = `
+                    <img src="${item.data}" class="item-img">
+                    <div class="item-title">사진 콘텐츠</div>
+                    <div class="item-desc">등록된 이미지 자료입니다.</div>
+                `;
+            } else {
+                badgeLabel = "동영상";
+                badgeClass = "badge-video";
+                body = `
+                    <div class="item-img" style="display:flex; align-items:center; justify-content:center; background:#1e293b; color:white;">
+                        <i class="fa-solid fa-play" style="font-size:26px; color:#fff;"></i>
+                    </div>
+                    <div class="item-title">${item.data}</div>
+                    <div class="item-desc">등록된 동영상 강의 자료입니다.</div>
+                `;
+            }
+
+            card.innerHTML = `
+                <div class="card-actions">
+                    <div class="action-icon-btn" onclick="deleteContent(${index})"><i class="fa-solid fa-trash"></i></div>
+                </div>
+                <div class="item-badge ${badgeClass}">${badgeLabel}</div>
+                ${body}
+            `;
+            dashboardGrid.appendChild(card);
+        });
+
+        // + 버튼은 메인 정보 등록 여부와 상관없이 항상 목록 맨 끝에 표시되어,
+        // 파일을 넣지 않고도 화면을 계속 진행/저장할 수 있다
+        const addBtn = document.createElement('div');
+        addBtn.className = 'add-btn content-add-more';
+        addBtn.onclick = openContentModal;
+        addBtn.innerHTML = `<i class="fa-solid fa-plus"></i>`;
+        dashboardGrid.appendChild(addBtn);
+    }
+
+    /* ---------------- 저장 ---------------- */
+
+    // 대표 사진/설명이나 콘텐츠 파일을 하나도 넣지 않아도 등록이 완료되도록,
+    // 필수 입력 검증(alert) 없이 바로 저장을 시도한다.
     function saveNewLecture() {
-        if(!mainInfo) { alert("STEP 02의 대표 사진 및 메인 설명 구성을 완료해주세요."); return; }
-        
+        const record = {
+            id: Date.now(),
+            main: document.getElementById('catM').value,
+            mid: document.getElementById('catD').value,
+            sub: document.getElementById('catS').value,
+            title: document.getElementById('lectureTitle').value.trim(),
+            videoCount: contents.filter(c => c.type === 'video').length,
+            contentCount: contents.length,
+            mainImg: mainInfo ? mainInfo.img : "",
+            mainDesc: mainInfo ? mainInfo.desc : "",
+            contents: contents
+        };
+
+        // manager.html과 공유하는 localStorage에 실제로 저장한다
+        let existing = [];
+        try {
+            existing = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+        } catch (e) {
+            existing = [];
+        }
+        existing.push(record);
+
+        // 사진 용량이 많으면 localStorage 저장 한도를 초과할 수 있는데, 이 경우
+        // setItem이 예외를 던지면서 버튼을 눌러도 아무 반응 없는 것처럼 보이는 문제가 있었다.
+        // 이제 실패 시 사용자에게 명확히 안내하고, 입력했던 내용은 화면에 그대로 남겨둔다.
+        try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(existing));
+        } catch (e) {
+            alert("저장 용량을 초과하여 등록에 실패했습니다. 사진 개수를 줄이거나 더 작은 사진으로 다시 시도해주세요.");
+            return; // manager.html로 이동하지 않고, 입력한 내용은 그대로 유지
+        }
+
         alert("새로운 강의 콘텐츠 등록이 완벽하게 완료되었습니다!");
         location.href = "manager.html"; 
     }
