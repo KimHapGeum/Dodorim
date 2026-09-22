@@ -10,169 +10,335 @@
 
     <style>
         /* ✅ 1. 기본 레이아웃 - 스크롤 절대 방지 */
-        * { box-sizing: border-box; }
-        html, body { 
-            margin: 0; padding: 0; width: 100%; height: 100vh; 
-            font-family: 'Pretendard', sans-serif; 
+        * {
+            box-sizing: border-box;
+        }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100vh;
+            font-family: 'Pretendard', sans-serif;
             background-color: #f4f7fa;
             color: #1a1a1a;
-            display: flex; flex-direction: column;
-            overflow: hidden !important; /* 브라우저 스크롤 완벽 차단 */
+            display: flex;
+            flex-direction: column;
+            overflow: hidden !important;
         }
 
         /* ✅ 2. 헤더 영역 */
         #main-header-wrapper {
-            width: 100%; height: 60px;
+            width: 100%;
+            height: 60px;
             background-color: #ffffff;
-            flex-shrink: 0; z-index: 1000;
+            flex-shrink: 0;
+            z-index: 1000;
             border-bottom: 1px solid #e2e8f0;
         }
-        iframe { border: none; display: block; width: 100%; height: 100%; }
 
-        /* ✅ 3. 중앙 콘텐츠 영역 - 이전 버튼까지 한 화면에 고정 */
+        iframe {
+            border: none;
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* ✅ 3. 중앙 콘텐츠 영역 */
         .main-content {
-            flex: 1; 
-            display: flex; flex-direction: column;
-            align-items: center; 
-            justify-content: flex-start; 
-            padding-top: 35px; /* 상단 여백을 살짝 줄여 공간 확보 */
-            overflow: hidden !important; 
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding-top: 35px;
+            overflow: hidden !important;
         }
 
         @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         /* 상단 제목 그룹 */
         .title-group {
-            text-align: center; margin-bottom: 30px; /* 여백 최적화 */
+            text-align: center;
+            margin-bottom: 30px;
             animation: fadeInUp 0.6s ease-out forwards;
         }
-        .title-group h1 { 
-            font-size: 48px; 
-            font-weight: 800; margin: 0; color: #0b1a33; letter-spacing: -1px; 
+
+        .title-group h1 {
+            font-size: 48px;
+            font-weight: 800;
+            margin: 0;
+            color: #0b1a33;
+            letter-spacing: -1px;
         }
-        .title-group p { 
-            font-size: 26px; 
-            color: #222; margin-top: 12px; font-weight: 700; 
+
+        .title-group p {
+            font-size: 26px;
+            color: #222;
+            margin-top: 12px;
+            font-weight: 700;
         }
 
         /* ✅ 4. 카드 그리드 */
         .lecture-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 20px; /* 간격을 살짝 좁혀서 컴팩트하게 배치 */
-            width: 90%; max-width: 850px; 
+            gap: 20px;
+            width: 90%;
+            max-width: 850px;
         }
 
         /* 카드 본체 스타일 */
         .card {
-            background: #ffffff; 
-            padding: 25px 30px; /* 세로 패딩을 줄여 높이 축소 */
-            border-radius: 28px; box-shadow: 0 10px 25px rgba(0,0,0,0.04);
-            text-align: center; display: flex; flex-direction: column; align-items: center;
-            border: 2px solid #e2e8f0; opacity: 0;
+            background: #ffffff;
+            padding: 25px 30px;
+            border-radius: 28px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.04);
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border: 2px solid #e2e8f0;
+            opacity: 0;
             animation: fadeInUp 0.6s ease-out forwards;
-            transition: all 0.25s ease-in-out; cursor: pointer;
+            transition: all 0.25s ease-in-out;
+            cursor: pointer;
         }
 
         /* 마우스 오버 효과 */
         .card:hover {
-            transform: translateY(-6px); /* 들리는 높이 최적화 */
+            transform: translateY(-6px);
             box-shadow: 0 15px 35px rgba(0, 86, 179, 0.15);
             border-color: #0056b3;
             background-color: #f4f9ff;
         }
 
-        .img-box { 
-            width: 100%; height: 120px; /* 이미지 상자 높이를 120px로 조절하여 안정성 확보 */
-            margin-bottom: 15px; display: flex; align-items: center; justify-content: center;
-            overflow: hidden; border-radius: 18px; background-color: #ffffff;
+        .img-box {
+            width: 100%;
+            height: 120px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border-radius: 18px;
+            background-color: #ffffff;
         }
-        .img-box img { max-height: 100%; max-width: 100%; object-fit: contain; transition: 0.25s ease-in-out; }
-        .card:hover img { transform: scale(1.04); }
+
+        .img-box img {
+            max-height: 100%;
+            max-width: 100%;
+            object-fit: contain;
+            transition: 0.25s ease-in-out;
+        }
+
+        .card:hover img {
+            transform: scale(1.04);
+        }
 
         /* 카드 내부 장소명 */
-        .card h2 { 
-            font-size: 36px; 
-            margin: 0; color: #111; font-weight: 900; 
+        .card h2 {
+            font-size: 36px;
+            margin: 0;
+            color: #111;
+            font-weight: 900;
         }
-        .card:hover h2 { color: #004494; }
 
-        /* 💡 애니메이션 효과가 완벽하게 연동된 하단 뒤로가기 버튼 */
+        .card:hover h2 {
+            color: #004494;
+        }
+
+        /* ✅ 하단 버튼 영역 */
+        .bottom-buttons {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-top: 35px;
+        }
+
+        /* 이전 화면 버튼 */
         .btn-back-bottom {
-            margin-top: 35px; /* 이전 버튼이 절대 잘리지 않도록 배치 간격 조정 */
-            background: #e2e8f0; border: none; color: #475569;
-            padding: 14px 35px; border-radius: 50px;
-            font-size: 22px; font-weight: 700; cursor: pointer; transition: 0.2s;
-            display: inline-flex; align-items: center; gap: 10px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-            
-            /* 💡 애니메이션 속성 추가: 카드들이 나오고 난 뒤 부드럽게 위로 스르륵 나타납니다 */
+            background: #e2e8f0;
+            border: none;
+            color: #475569;
+            padding: 14px 35px;
+            border-radius: 50px;
+            font-size: 22px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+
             opacity: 0;
             animation: fadeInUp 0.6s ease-out forwards;
-            animation-delay: 0.5s; 
+            animation-delay: 0.5s;
         }
-        .btn-back-bottom:hover { background: #cbd5e1; color: #1e293b; }
+
+        .btn-back-bottom:hover {
+            background: #cbd5e1;
+            color: #1e293b;
+            transform: translateY(-2px);
+        }
+
+        /* ✅ 건의하기 버튼 */
+        .btn-suggestion {
+            background: #0056b3;
+            border: none;
+            color: #ffffff;
+            padding: 14px 35px;
+            border-radius: 50px;
+            font-size: 22px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+
+            opacity: 0;
+            animation: fadeInUp 0.6s ease-out forwards;
+            animation-delay: 0.6s;
+        }
+
+        .btn-suggestion:hover {
+            background: #004494;
+            transform: translateY(-2px);
+        }
 
         /* ✅ 5. 푸터 영역 */
-        footer { padding: 18px 0; text-align: center; color: #bbb; font-size: 14px; flex-shrink: 0; border-top: 1px solid #eee; background: white; }
+        footer {
+            padding: 18px 0;
+            text-align: center;
+            color: #bbb;
+            font-size: 14px;
+            flex-shrink: 0;
+            border-top: 1px solid #eee;
+            background: white;
+        }
     </style>
 </head>
+
 <body>
 
+    <!-- 헤더 -->
     <div id="main-header-wrapper">
         <iframe src="./header.html?type=edu" scrolling="no"></iframe>
     </div>
 
+    <!-- 메인 콘텐츠 -->
     <main class="main-content">
+
+        <!-- 제목 -->
         <div class="title-group">
             <h1>공공장소 키오스크 연습하기!</h1>
             <p>자주 방문하는 장소 그림을 살짝 눌러주세요.</p>
         </div>
 
+        <!-- 장소 카드 -->
         <div class="lecture-grid" id="kiosk-list">
-            </div>
+        </div>
 
-        <button class="btn-back-bottom" onclick="location.href='kiosk_edu.html'">
-            <i class="fa-solid fa-arrow-left"></i> 이전 화면으로 가기
-        </button>
+        <!-- 하단 버튼 -->
+        <div class="bottom-buttons">
+
+            <!-- 이전 화면 -->
+            <button
+                class="btn-back-bottom"
+                onclick="location.href='kiosk_edu.html'">
+                <i class="fa-solid fa-arrow-left"></i>
+                이전 화면으로 가기
+            </button>
+
+            <!-- 건의하기 -->
+            <button
+                class="btn-suggestion"
+                onclick="location.href='suggestion.html'">
+                <i class="fa-regular fa-comment-dots"></i>
+                건의하기
+            </button>
+
+        </div>
+
     </main>
 
+    <!-- 푸터 -->
     <footer>
         © 2026 두드림. 모든 시니어의 디지털 자립을 응원합니다.
     </footer>
 
     <script>
-        // 🛠️ 공공장소 데이터 
+        // 🛠️ 공공장소 데이터
         const kioskData = [
-            { name: '민원 / 발급', img: 'Public.img/Ma.jpg', url: 'screen.html?type=civil' },
-            { name: '기차역', img: 'Public.img/ktx.jpg', url: 'screen.html?type=train' },
-            { name: '공항', img: 'Public.img/Ai.jpg', url: 'screen.html?type=airport' },
-            { name: '영화관', img: 'Public.img/tick.jpg', url: 'screen.html?type=cinema' }
+            {
+                name: '민원 / 발급',
+                img: 'Public.img/Ma.jpg',
+                url: 'screen.html?type=civil'
+            },
+            {
+                name: '기차역',
+                img: 'Public.img/ktx.jpg',
+                url: 'screen.html?type=train'
+            },
+            {
+                name: '공항',
+                img: 'Public.img/Ai.jpg',
+                url: 'screen.html?type=airport'
+            },
+            {
+                name: '영화관',
+                img: 'Public.img/tick.jpg',
+                url: 'screen.html?type=cinema'
+            }
         ];
 
         const listContainer = document.getElementById('kiosk-list');
 
         kioskData.forEach((item, index) => {
+
             const card = document.createElement('div');
+
             card.className = 'card';
-            card.style.animationDelay = (index * 0.1) + 's'; 
-            card.onclick = () => location.href = item.url;
-            
+
+            card.style.animationDelay = (index * 0.1) + 's';
+
+            card.onclick = () => {
+                location.href = item.url;
+            };
+
             card.innerHTML = `
                 <div class="img-box">
                     <img src="${item.img}" alt="${item.name}">
                 </div>
+
                 <h2>${item.name}</h2>
             `;
+
             listContainer.appendChild(card);
         });
 
+        // 음성 안내 상태
         window.toggleVoice = function(isOn) {
-            console.log("공공장소 페이지 음성 안내 상태:", isOn);
+            console.log(
+                "공공장소 페이지 음성 안내 상태:",
+                isOn
+            );
         };
     </script>
+
 </body>
 </html>
