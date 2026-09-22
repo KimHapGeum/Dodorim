@@ -7,7 +7,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        /* 글로벌 스타일 및 대시보드 테마 정의 */
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { 
             font-family: 'Noto Sans KR', sans-serif; 
@@ -20,7 +19,6 @@
         .slider-container { display: flex; width: 200vw; transition: transform 0.6s cubic-bezier(0.25, 0.8, 0.25, 1); }
         .page { width: 100vw; min-height: 100vh; flex-shrink: 0; display: flex; flex-direction: column; align-items: center; }
 
-        /* iframe 높이를 70px로 리셋 및 기본 간격 정리 */
         .header-iframe {
             width: 100%;
             height: 59px; 
@@ -32,7 +30,6 @@
             padding: 0;
         }
 
-        /* 본문 패널 상단 마진을 조절하여 구분선 밑으로 바짝 밀착 */
         .outer-card { 
             width: 100%; 
             max-width: 1200px; 
@@ -50,7 +47,6 @@
             margin-bottom: 25px;
         }
 
-        /* 공통 폼 컨트롤 요소 및 스크롤 그리드 */
         .inner-content { width: 100%; min-height: 420px; border: 1px solid #e2e8f0; border-radius: 16px; padding: 30px; background-color: #fafbfc; display: flex; align-items: flex-start; gap: 20px; overflow-x: auto; }
         .inner-content::-webkit-scrollbar { height: 6px; }
         .inner-content::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 4px; }
@@ -63,6 +59,38 @@
         
         .select-group { display: flex; gap: 15px; }
         .select-box { flex: 1; padding: 18px; border: 1px solid #e2e8f0; border-radius: 12px; outline: none; background: #fff; cursor: pointer; font-size: 16px; color: #1e293b; transition: all 0.3s ease; }
+
+        /* 생성 유형 선택 버튼 스타일 */
+        .type-select-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        .type-btn {
+            padding: 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 14px;
+            background: #fff;
+            font-size: 16px;
+            font-weight: 700;
+            color: #64748b;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: left;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .type-btn i { font-size: 20px; color: #94a3b8; margin-bottom: 4px; }
+        .type-btn:hover { border-color: #0056b3; color: #0056b3; background: #f8fafc; }
+        .type-btn.active {
+            border-color: #0056b3;
+            background: #f0f6ff;
+            color: #0056b3;
+            box-shadow: 0 4px 12px rgba(0, 86, 179, 0.08);
+        }
+        .type-btn.active i { color: #0056b3; }
 
         /* 카드 항목 디자인 */
         .item-card { position: relative; min-width: 230px; max-width: 230px; height: 340px; background: #fff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 22px 18px; display: flex; flex-direction: column; box-shadow: 0 4px 12px rgba(0,0,0,0.02); transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); animation: fadeIn 0.4s ease-out; }
@@ -84,8 +112,6 @@
         .add-btn:hover { border-color: #0056b3; background: #f0f6ff; color: #0056b3; transform: translateY(-4px); }
         .add-btn i { font-size: 36px; margin-bottom: 12px; }
         .add-btn span { font-weight: 600; font-size: 14px; }
-
-        /* 콘텐츠(사진/동영상 파일)를 추가하는 + 버튼: 메인 카드와 동일한 크기, 항상 목록 맨 끝에 붙는다 */
         .add-btn.content-add-more i { font-size: 34px; margin-bottom: 0; }
 
         /* 모달 시스템 */
@@ -97,7 +123,6 @@
         .preview-box:hover { border-color: #0056b3; background-color: #f0f6ff; }
         .preview-box img { width: 100%; height: 100%; object-fit: cover; }
 
-        /* 콘텐츠 추가 모달: 종류 구분 없이 파일 하나를 넣는 정사각형 칸, 모달 정중앙에 배치 */
         .content-file-box {
             width: 260px; height: 260px;
             margin: 0 auto 25px auto;
@@ -113,7 +138,6 @@
         .content-file-box i { font-size: 38px; }
         .content-file-box span { font-size: 13px; font-weight: 600; line-height: 1.6; padding: 0 20px; }
 
-        /* 하단 내비게이션 바 */
         .footer-nav { margin-top: 35px; display: flex; gap: 20px; width: 100%; }
         .btn { flex: 1; padding: 18px; border-radius: 12px; font-weight: 700; cursor: pointer; border: none; font-size: 16px; transition: all 0.2s ease; text-align: center; text-decoration: none; }
         .btn-next { background: #0056b3; color: white; }
@@ -129,33 +153,62 @@
 <div class="viewport">
     <div class="slider-container" id="mainSlider">
         
+        <!-- 1단계 페이지 -->
         <div class="page">
             <iframe src="header.html?type=login" class="header-iframe"></iframe>
 
             <main class="outer-card">
                 <div class="form-card-panel">
                     <div class="form-area">
+                        
+                        <!-- 생성 유형 선택 버튼 그룹 -->
                         <div class="input-group">
-                            <label>강의 제목</label>
-                            <input type="text" id="lectureTitle" class="text-input" placeholder="새로운 강의 제목을 입력하세요">
+                            <label>생성 유형 선택</label>
+                            <div class="type-select-grid">
+                                <button type="button" class="type-btn" id="btnTypeMain" onclick="selectCreationType('main')">
+                                    <i class="fa-solid fa-layer-group"></i>
+                                    대단원 생성
+                                </button>
+                                <button type="button" class="type-btn" id="btnTypeMid" onclick="selectCreationType('mid')">
+                                    <i class="fa-solid fa-bars-progress"></i>
+                                    중단원 생성
+                                </button>
+                                <button type="button" class="type-btn" id="btnTypeSub" onclick="selectCreationType('sub')">
+                                    <i class="fa-solid fa-list-check"></i>
+                                    소단원 생성
+                                </button>
+                                <button type="button" class="type-btn" id="btnTypeLecture" onclick="selectCreationType('lecture')">
+                                    <i class="fa-solid fa-book-open"></i>
+                                    강의 목록 생성
+                                </button>
+                            </div>
                         </div>
+
                         <div class="input-group">
-                            <label>카테고리</label>
+                            <label>제목 입력</label>
+                            <input type="text" id="lectureTitle" class="text-input" placeholder="이름을 입력하세요">
+                        </div>
+
+                        <!-- 카테고리 선택 영역 (유형에 따라 동적으로 노출됨) -->
+                        <div class="input-group" id="categoryGroup" style="display: none;">
+                            <label>상위 분류 선택</label>
                             <div class="select-group">
-                                <select class="select-box" id="catM"><option value="">대단원 선택</option></select>
-                                <select class="select-box" id="catD"><option value="">중단원 선택</option></select>
-                                <select class="select-box" id="catS"><option value="">소단원 선택</option></select>
+                                <select class="select-box" id="catM" style="display:none;"><option value="">대단원 선택</option></select>
+                                <select class="select-box" id="catD" style="display:none;"><option value="">중단원 선택</option></select>
+                                <select class="select-box" id="catS" style="display:none;"><option value="">소단원 선택</option></select>
                             </div>
                         </div>
                     </div>
+
                     <div class="footer-nav">
                         <a href="manager.html" class="btn btn-back">취소하고 목록으로</a>
-                        <button class="btn btn-next" onclick="validateStep1()">다음 단계 (콘텐츠 구성) <i class="fa-solid fa-arrow-right"></i></button>
+                        <button class="btn btn-next" id="nextStepBtn" onclick="handleNextStep()">다음 단계 (콘텐츠 구성) <i class="fa-solid fa-arrow-right"></i></button>
                     </div>
                 </div>
             </main>
         </div>
 
+        <!-- 2단계 페이지 (강의 목록 생성 전용) -->
         <div class="page">
             <iframe src="header.html?type=login" class="header-iframe"></iframe>
 
@@ -189,7 +242,6 @@
     </div>
 </div>
 
-<!-- 콘텐츠 추가 모달: 텍스트/사진/동영상 구분 없이, 파일 하나를 정중앙 칸에 넣으면 된다 -->
 <div class="modal" id="contentModal">
     <div class="modal-content">
         <button class="modal-close" onclick="closeContentModal()"><i class="fa-solid fa-xmark"></i></button>
@@ -227,21 +279,31 @@
         }
     };
 
-    const STORAGE_KEY = "doodream_lectures"; // manager.html과 공유하는 저장 키
+    const STORAGE_KEY = "doodream_lectures";
     
+    let currentCreationType = ""; // 'main' | 'mid' | 'sub' | 'lecture'
     let mainInfo = null;
-    let contents = [];       // { type: 'image'|'video', data(base64 또는 파일명), caption }
+    let contents = []; 
     let mainImgBase64 = "";
-    let pendingContentFile = null; // 콘텐츠 추가 모달에서 선택/드롭한 파일 { type, data }
+    let pendingContentFile = null; 
 
     window.onload = () => {
         const m = document.getElementById('catM'), d = document.getElementById('catD'), s = document.getElementById('catS');
         for (let k in categoryData) m.options.add(new Option(k, k));
-        m.onchange = () => { d.innerHTML = '<option value="">중단원 선택</option>'; s.innerHTML = '<option value="">소단원 선택</option>'; if(m.value) for(let k in categoryData[m.value]) d.options.add(new Option(k, k)); };
-        d.onchange = () => { s.innerHTML = '<option value="">소단원 선택</option>'; if(d.value) categoryData[m.value][d.value].forEach(v => s.options.add(new Option(v, v))); };
+        
+        m.onchange = () => { 
+            d.innerHTML = '<option value="">중단원 선택</option>'; 
+            s.innerHTML = '<option value="">소단원 선택</option>'; 
+            if(m.value) for(let k in categoryData[m.value]) d.options.add(new Option(k, k)); 
+        };
+        d.onchange = () => { 
+            s.innerHTML = '<option value="">소단원 선택</option>'; 
+            if(d.value && m.value && categoryData[m.value][d.value]) {
+                categoryData[m.value][d.value].forEach(v => s.options.add(new Option(v, v)));
+            }
+        };
         renderGrid();
 
-        // 콘텐츠 추가 모달의 파일 칸에 드래그 앤 드롭 지원
         const box = document.getElementById('contentFileBox');
         box.addEventListener('dragover', (e) => { e.preventDefault(); box.classList.add('dragover'); });
         box.addEventListener('dragleave', () => box.classList.remove('dragover'));
@@ -254,22 +316,120 @@
         });
     };
 
+    // 생성 유형 버튼 클릭 시 처리
+    function selectCreationType(type) {
+        currentCreationType = type;
+        
+        // 버튼 active 상태 변경
+        document.querySelectorAll('.type-btn').forEach(btn => btn.classList.remove('active'));
+        document.getElementById('btnType' + type.charAt(0).toUpperCase() + type.slice(1)).classList.add('active');
+
+        const catGroup = document.getElementById('categoryGroup');
+        const m = document.getElementById('catM');
+        const d = document.getElementById('catD');
+        const s = document.getElementById('catS');
+        const nextBtn = document.getElementById('nextStepBtn');
+
+        // 초기화 및 숨김
+        catGroup.style.display = 'block';
+        m.style.display = 'none';
+        d.style.display = 'none';
+        s.style.display = 'none';
+
+        if (type === 'main') {
+            catGroup.style.display = 'none';
+            nextBtn.innerHTML = '대단원 등록 완료';
+        } else if (type === 'mid') {
+            m.style.display = 'block';
+            nextBtn.innerHTML = '중단원 등록 완료';
+        } else if (type === 'sub') {
+            m.style.display = 'block';
+            d.style.display = 'block';
+            nextBtn.innerHTML = '소단원 등록 완료';
+        } else if (type === 'lecture') {
+            m.style.display = 'block';
+            d.style.display = 'block';
+            s.style.display = 'block';
+            nextBtn.innerHTML = '다음 단계 (콘텐츠 구성) <i class="fa-solid fa-arrow-right"></i>';
+        }
+    }
+
     function moveSlide(idx) { slider.style.transform = `translateX(-${idx * 100}vw)`; window.scrollTo(0,0); }
 
-    function validateStep1() {
+    function handleNextStep() {
+        if (!currentCreationType) {
+            alert("생성 유형을 먼저 선택해주세요.");
+            return;
+        }
+
         const title = document.getElementById('lectureTitle').value.trim();
         const catM = document.getElementById('catM').value;
         const catD = document.getElementById('catD').value;
         const catS = document.getElementById('catS').value;
 
-        if(!title || !catM || !catD || !catS) { 
-            alert("강의 제목 및 카테고리를 완전히 선택해주세요."); 
-            return; 
+        if (!title) {
+            alert("제목을 입력해주세요.");
+            return;
         }
+
+        if (currentCreationType === 'mid' && !catM) {
+            alert("대단원을 선택해주세요.");
+            return;
+        }
+        if (currentCreationType === 'sub' && (!catM || !catD)) {
+            alert("대단원과 중단원을 모두 선택해주세요.");
+            return;
+        }
+        if (currentCreationType === 'lecture' && (!catM || !catD || !catS)) {
+            alert("대단원, 중단원, 소단원을 모두 선택해주세요.");
+            return;
+        }
+
+        // 대단원, 중단원, 소단원 생성인 경우 -> 바로 저장 후 완료 처리
+        if (currentCreationType !== 'lecture') {
+            saveUnitItem();
+            return;
+        }
+
+        // 강의 목록 생성인 경우 -> 2단계(콘텐츠 구성 화면)로 이동
         moveSlide(1);
     }
 
-    /* ---------------- 메인 사진/설명 모달 ---------------- */
+    // 대/중/소단원 바로 저장 함수
+    function saveUnitItem() {
+        const record = {
+            id: Date.now(),
+            creationType: currentCreationType,
+            main: currentCreationType !== 'main' ? document.getElementById('catM').value : "",
+            mid: (currentCreationType === 'sub' || currentCreationType === 'lecture') ? document.getElementById('catD').value : "",
+            sub: currentCreationType === 'lecture' ? document.getElementById('catS').value : "",
+            title: document.getElementById('lectureTitle').value.trim(),
+            videoCount: 0,
+            contentCount: 0,
+            mainImg: "",
+            mainDesc: "",
+            contents: []
+        };
+
+        let existing = [];
+        try {
+            existing = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+        } catch (e) {
+            existing = [];
+        }
+        existing.push(record);
+
+        try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(existing));
+        } catch (e) {
+            alert("저장 실패. 용량을 확인해주세요.");
+            return;
+        }
+
+        const typeNames = { 'main': '대단원', 'mid': '중단원', 'sub': '소단원' };
+        alert(`새로운 ${typeNames[currentCreationType]} 등록이 완료되었습니다!`);
+        location.href = "manager.html";
+    }
 
     function openMainModal() { 
         document.getElementById('mainModal').style.display = 'flex';
@@ -282,8 +442,6 @@
         }
     }
 
-    // revert=true(기본값): 저장하지 않은 변경 사항을 취소하고 이전 상태로 되돌린 뒤 닫음
-    // revert=false: 등록 완료 후처럼, 이미 반영된 상태 그대로 닫기만 함
     function closeMainModal(revert = true) {
         document.getElementById('mainModal').style.display = 'none';
         if (revert) {
@@ -302,14 +460,10 @@
         }
     }
 
-    // 모달 바깥(배경) 클릭 시에도 취소하고 닫히도록 처리
     document.getElementById('mainModal').addEventListener('click', (e) => {
         if (e.target.id === 'mainModal') closeMainModal();
     });
 
-    // 이미지를 localStorage에 안전하게 저장할 수 있는 크기로 줄여서 base64로 변환한다
-    // (원본 사진을 그대로 base64로 저장하면 용량이 커서 localStorage 저장 한도를 넘어
-    //  "저장은 실패했는데 화면상 아무 반응도 없는" 문제가 생길 수 있다)
     function compressImage(file, maxDim = 900, quality = 0.75) {
         return new Promise((resolve, reject) => {
             const reader = new FileReader();
@@ -346,12 +500,10 @@
             document.getElementById('mainPreview').innerHTML = `<img src="${dataUrl}" style="width:100%; height:100%; object-fit:cover;">`;
             mainImgBase64 = dataUrl;
         }).catch(() => {
-            alert("이미지를 처리하는 중 오류가 발생했습니다. 다른 사진으로 시도해주세요.");
+            alert("이미지를 처리하는 중 오류가 발생했습니다.");
         });
     }
 
-    // 사진/설명을 넣지 않아도(빈 값이어도) 등록 완료를 누르면 다음 단계로 진행할 수 있도록,
-    // 필수 입력 검증 없이 그대로 반영한다.
     function completeMainInfo() {
         const desc = document.getElementById('mainDesc').value.trim();
         mainInfo = { img: mainImgBase64, desc: desc };
@@ -368,8 +520,6 @@
             renderGrid();
         }
     }
-
-    /* ---------------- 콘텐츠 추가 모달 (텍스트/사진/동영상 구분 없이 파일 하나) ---------------- */
 
     function openContentModal() {
         pendingContentFile = null;
@@ -395,7 +545,6 @@
         handleContentFile(file);
     }
 
-    // 사진이든 동영상이든 구분하지 않고 하나의 칸으로 받아, 파일 종류만 자동으로 판별한다
     function handleContentFile(file) {
         if (!file) return;
 
@@ -404,7 +553,7 @@
                 pendingContentFile = { type: 'image', data: dataUrl };
                 document.getElementById('contentFileBox').innerHTML = `<img src="${dataUrl}">`;
             }).catch(() => {
-                alert("이미지를 처리하는 중 오류가 발생했습니다. 다른 사진으로 시도해주세요.");
+                alert("이미지를 처리하는 중 오류가 발생했습니다.");
             });
         } else if (file.type.startsWith('video/')) {
             pendingContentFile = { type: 'video', data: file.name };
@@ -424,8 +573,6 @@
     function deleteContent(index) {
         if(confirm("해당 콘텐츠를 삭제하시겠습니까?")) { contents.splice(index, 1); renderGrid(); }
     }
-
-    /* ---------------- 그리드 렌더링 ---------------- */
 
     function renderGrid() {
         dashboardGrid.innerHTML = "";
@@ -456,7 +603,6 @@
             dashboardGrid.appendChild(mainAddCard);
         }
 
-        // 메인 정보가 등록된 이후부터, 사진/동영상 파일을 자유롭게 추가한 콘텐츠 카드들
         contents.forEach((item, index) => {
             const card = document.createElement('div');
             card.className = 'item-card';
@@ -492,8 +638,6 @@
             dashboardGrid.appendChild(card);
         });
 
-        // + 버튼은 메인 정보 등록 여부와 상관없이 항상 목록 맨 끝에 표시되어,
-        // 파일을 넣지 않고도 화면을 계속 진행/저장할 수 있다
         const addBtn = document.createElement('div');
         addBtn.className = 'add-btn content-add-more';
         addBtn.onclick = openContentModal;
@@ -501,13 +645,10 @@
         dashboardGrid.appendChild(addBtn);
     }
 
-    /* ---------------- 저장 ---------------- */
-
-    // 대표 사진/설명이나 콘텐츠 파일을 하나도 넣지 않아도 등록이 완료되도록,
-    // 필수 입력 검증(alert) 없이 바로 저장을 시도한다.
     function saveNewLecture() {
         const record = {
             id: Date.now(),
+            creationType: currentCreationType,
             main: document.getElementById('catM').value,
             mid: document.getElementById('catD').value,
             sub: document.getElementById('catS').value,
@@ -519,7 +660,6 @@
             contents: contents
         };
 
-        // manager.html과 공유하는 localStorage에 실제로 저장한다
         let existing = [];
         try {
             existing = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
@@ -528,17 +668,14 @@
         }
         existing.push(record);
 
-        // 사진 용량이 많으면 localStorage 저장 한도를 초과할 수 있는데, 이 경우
-        // setItem이 예외를 던지면서 버튼을 눌러도 아무 반응 없는 것처럼 보이는 문제가 있었다.
-        // 이제 실패 시 사용자에게 명확히 안내하고, 입력했던 내용은 화면에 그대로 남겨둔다.
         try {
             localStorage.setItem(STORAGE_KEY, JSON.stringify(existing));
         } catch (e) {
-            alert("저장 용량을 초과하여 등록에 실패했습니다. 사진 개수를 줄이거나 더 작은 사진으로 다시 시도해주세요.");
-            return; // manager.html로 이동하지 않고, 입력한 내용은 그대로 유지
+            alert("저장 용량을 초과하여 등록에 실패했습니다.");
+            return;
         }
 
-        alert("새로운 강의 콘텐츠 등록이 완벽하게 완료되었습니다!");
+        alert("새로운 강의 목록 등록이 완벽하게 완료되었습니다!");
         location.href = "manager.html"; 
     }
 </script>
