@@ -21,7 +21,6 @@
             overflow-x: hidden;
         }
 
-        /* 1. 헤더 영역 */
         #main-header-wrapper {
             width: 100%; 
             height: 60px;
@@ -33,13 +32,69 @@
         }
         iframe { border: none; display: block; width: 100%; height: 60px; }
 
-        /* 2. 메인 콘텐츠 */
-        .main-content {
+        .admin-container {
+            display: flex;
             flex: 1;
             width: 100%;
+        }
+
+        .admin-sidebar {
+            width: 240px;
+            background: #ffffff;
+            border-right: 1px solid #ebf0f5;
+            padding: 30px 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            flex-shrink: 0;
+            min-height: calc(100vh - 60px);
+        }
+
+        .sidebar-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: #888;
+            margin-bottom: 8px;
+            padding-left: 10px;
+        }
+
+        .menu-btn {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+            padding: 13px 16px;
+            background: transparent;
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            color: #555;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: left;
+        }
+
+        .menu-btn i { font-size: 17px; width: 22px; text-align: center; }
+
+        .menu-btn:hover {
+            background-color: #f0f4ff;
+            color: #0056b3;
+        }
+
+        .menu-btn.active {
+            background-color: #0056b3;
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(0, 86, 179, 0.2);
+        }
+
+        .main-content {
+            flex: 1;
             max-width: 1200px;
+            padding: 40px;
+            min-width: 0;
             margin: 0 auto;
-            padding: 40px 40px;
+            width: 100%;
         }
 
         .title-section {
@@ -52,16 +107,15 @@
         .title-section h1 { font-size: 32px; font-weight: 800; margin-bottom: 5px; color: #0b1a33; }
         .title-section p { color: #888; font-size: 16px; }
 
-        /* 검색 바 */
         .search-section { margin-bottom: 20px; position: relative; }
         .search-bar {
             width: 100%; padding: 15px 15px 15px 50px; border-radius: 12px;
             border: 2px solid #eee; font-size: 16px; outline: none; transition: 0.3s;
+            background: #fff;
         }
         .search-bar:focus { border-color: #0056b3; box-shadow: 0 0 0 4px rgba(0,86,179,0.05); }
         .search-section i { position: absolute; left: 20px; top: 50%; transform: translateY(-50%); color: #aaa; }
 
-        /* 필터 섹션 */
         .filter-section {
             background: #fff; padding: 20px; border-radius: 15px;
             display: flex; gap: 15px; align-items: center; margin-bottom: 30px;
@@ -71,18 +125,18 @@
         select {
             flex: 1; padding: 12px; border: 1px solid #e0e0e0;
             border-radius: 8px; font-size: 15px; outline: none; cursor: pointer;
+            background: #fff;
         }
 
-        /* 신규 등록 버튼 */
         .add-btn {
             background-color: #0056b3; color: white; border: none;
             padding: 12px 25px; border-radius: 10px; font-size: 16px;
             font-weight: 800; cursor: pointer; display: flex;
             align-items: center; gap: 8px; transition: 0.3s;
+            flex-shrink: 0;
         }
         .add-btn:hover { background-color: #004494; transform: translateY(-2px); }
 
-        /* 콘텐츠 리스트 */
         .content-list { display: flex; flex-direction: column; gap: 12px; }
         .content-item {
             background-color: #fff; padding: 15px 35px; border-radius: 15px;
@@ -99,11 +153,18 @@
         .edit-icon:hover { color: #0056b3; }
         .delete-icon:hover { color: #ff4d4f; }
 
-        .empty-msg { text-align: center; padding: 60px; color: #bbb; font-weight: 500; }
+        .empty-msg { text-align: center; padding: 60px; color: #bbb; font-weight: 500; background: #fff; border-radius: 15px; }
 
         footer { 
             padding: 25px 0; text-align: center; color: #bbb; 
             font-size: 14px; border-top: 1px solid #eee; background: white; 
+        }
+
+        @media (max-width: 900px) {
+            .admin-container { flex-direction: column; }
+            .admin-sidebar { width: 100%; min-height: auto; flex-direction: row; overflow-x: auto; padding: 15px; }
+            .menu-btn { white-space: nowrap; width: auto; }
+            .sidebar-title { display: none; }
         }
     </style>
 </head>
@@ -113,41 +174,60 @@
         <iframe src="./header.html?type=manager" scrolling="no"></iframe>
     </div>
 
-    <main class="main-content">
-        <section class="title-section">
-            <div class="text-group">
-                <h1>강의 목록 관리</h1>
-                <p>등록된 교육 콘텐츠를 카테고리별로 관리하세요.</p>
-            </div>
-        </section>
-
-        <div class="search-section">
-            <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="text" id="lectureSearch" class="search-bar" placeholder="강의명을 검색하세요...">
-        </div>
-
-        <div class="filter-section">
-            <div class="select-group">
-                <select id="mainCat"><option value="">대단원 선택</option></select>
-                <select id="midCat"><option value="">중단원 선택</option></select>
-                <select id="subCat"><option value="">소단원 선택</option></select>
-            </div>
-            <button class="add-btn" onclick="location.href='addition.html'">
-                <i class="fa-solid fa-plus"></i> 신규 등록
+    <div class="admin-container">
+        <!-- 좌측 사이드바 메뉴 -->
+        <aside class="admin-sidebar">
+            <div class="sidebar-title">관리자 메뉴</div>
+            <button class="menu-btn active" onclick="location.href='manager.html'">
+                <i class="fa-solid fa-book-open"></i> 강의 목록 관리
             </button>
-        </div>
+            <button class="menu-btn" onclick="alert('공지사항 관리 페이지는 준비 중입니다.')">
+                <i class="fa-solid fa-bullhorn"></i> 공지사항 관리
+            </button>
+            <button class="menu-btn" onclick="alert('건의사항 관리 페이지는 준비 중입니다.')">
+                <i class="fa-solid fa-comments"></i> 건의사항 관리
+            </button>
+            <button class="menu-btn" onclick="location.href='banner.html'">
+                <i class="fa-solid fa-image"></i> 배너 관리
+            </button>
+        </aside>
 
-        <div class="content-list" id="lectureList">
-            <div class="empty-msg">상단 카테고리를 선택해 주세요.</div>
-        </div>
-    </main>
+        <!-- 우측 메인 콘텐츠 -->
+        <main class="main-content">
+            <section class="title-section">
+                <div class="text-group">
+                    <h1>강의 목록 관리</h1>
+                    <p>등록된 교육 콘텐츠 및 단원을 카테고리별로 관리하세요.</p>
+                </div>
+            </section>
+
+            <div class="search-section">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="lectureSearch" class="search-bar" placeholder="항목명을 검색하세요...">
+            </div>
+
+            <div class="filter-section">
+                <div class="select-group">
+                    <select id="mainCat"><option value="">대단원 선택</option></select>
+                    <select id="midCat"><option value="">중단원 선택</option></select>
+                    <select id="subCat"><option value="">소단원 선택</option></select>
+                </div>
+                <button class="add-btn" onclick="location.href='addition.html'">
+                    <i class="fa-solid fa-plus"></i> 신규 등록
+                </button>
+            </div>
+
+            <div class="content-list" id="lectureList">
+                <div class="empty-msg">데이터를 불러오는 중입니다...</div>
+            </div>
+        </main>
+    </div>
 
     <footer>
         <p>© 2026 두드림, 모든 시니어의 디지털 자립을 응원합니다.</p>
     </footer>
 
     <script>
-        // addition.html / revise.html과 공유하는 저장 키
         const STORAGE_KEY = "doodream_lectures";
 
         const categoryData = {
@@ -193,7 +273,7 @@
 
         midSelect.addEventListener('change', function() {
             subSelect.innerHTML = '<option value="">소단원 선택</option>';
-            if (this.value) {
+            if (this.value && mainSelect.value) {
                 categoryData[mainSelect.value][this.value].forEach(sub => {
                     let opt = document.createElement('option');
                     opt.value = sub; opt.textContent = sub;
@@ -208,7 +288,8 @@
 
         function loadLectures() {
             try {
-                return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+                const data = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+                return data;
             } catch (e) {
                 return [];
             }
@@ -222,52 +303,79 @@
             const mainVal = mainSelect.value;
             const midVal = midSelect.value;
             const subVal = subSelect.value;
-            const keyword = searchInput.value.toLowerCase();
+            const keyword = searchInput.value.toLowerCase().trim();
 
-            if (!mainVal || !midVal || !subVal) {
-                listContainer.innerHTML = '<div class="empty-msg">상단 카테고리를 선택해 주세요.</div>';
+            const allLectures = loadLectures();
+
+            if (allLectures.length === 0) {
+                listContainer.innerHTML = '<div class="empty-msg">저장된 데이터가 없습니다. 우측 상단의 [신규 등록]을 통해 단원이나 강의를 추가해 주세요.</div>';
                 return;
             }
 
-            const lectures = loadLectures().filter(item =>
-                item.main === mainVal && item.mid === midVal && item.sub === subVal
-            );
+            const filtered = allLectures.filter(item => {
+                const itemMain = item.main || item.category1 || item.category || "";
+                const itemMid = item.mid || item.category2 || "";
+                const itemSub = item.sub || item.category3 || "";
+                const itemTitle = item.title || item.name || item.lectureTitle || "";
 
-            const filtered = keyword
-                ? lectures.filter(item => item.title.toLowerCase().includes(keyword))
-                : lectures;
+                if (mainVal && itemMain !== mainVal) return false;
+                if (midVal && itemMid !== midVal) return false;
+                if (subVal && itemSub !== subVal) return false;
+                if (keyword && !itemTitle.toLowerCase().includes(keyword)) return false;
+                return true;
+            });
 
             if (filtered.length === 0) {
-                listContainer.innerHTML = keyword
-                    ? '<div class="empty-msg">검색 결과가 없습니다.</div>'
-                    : '<div class="empty-msg">등록된 강의가 없습니다. 신규 등록을 눌러 강의를 추가해 주세요.</div>';
+                listContainer.innerHTML = '<div class="empty-msg">선택한 조건에 일치하는 항목이 없습니다.</div>';
                 return;
             }
 
-            const path = `${mainVal} > ${midVal} > ${subVal}`;
+            listContainer.innerHTML = filtered.map(item => {
+                const m = item.main || item.category1 || item.category || "";
+                const mi = item.mid || item.category2 || "";
+                const s = item.sub || item.category3 || "";
+                const t = item.title || item.name || item.lectureTitle || "제목 없음";
+                const id = item.id || 0;
+                const type = item.creationType || 'lecture';
 
-            listContainer.innerHTML = filtered.map(item => `
-                <div class="content-item">
-                    <div class="info">
-                        <span class="category-path">${path}</span>
-                        <h3>${item.title}</h3>
+                let badgeText = "강의 목록";
+                let badgeBg = "#0056b3";
+                if (type === 'main') { badgeText = "대단원"; badgeBg = "#10b981"; }
+                else if (type === 'mid') { badgeText = "중단원"; badgeBg = "#f59e0b"; }
+                else if (type === 'sub') { badgeText = "소단원"; badgeBg = "#8b5cf6"; }
+
+                const path = [m, mi, s].filter(Boolean).join(' > ');
+                
+                return `
+                    <div class="content-item">
+                        <div class="info">
+                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                                <span style="background: ${badgeBg}; color: white; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 6px;">${badgeText}</span>
+                                <span class="category-path">${path ? path : '최상위 분류'}</span>
+                            </div>
+                            <h3>${t}</h3>
+                        </div>
+                        <div class="actions">
+                            <button class="icon-btn edit-icon" onclick="location.href='revise.html?id=${id}'"><i class="fa-regular fa-pen-to-square"></i></button>
+                            <button class="icon-btn delete-icon" onclick="handleDelete(${id})"><i class="fa-regular fa-trash-can"></i></button>
+                        </div>
                     </div>
-                    <div class="actions">
-                        <button class="icon-btn edit-icon" onclick="location.href='revise.html?id=${item.id}'"><i class="fa-regular fa-pen-to-square"></i></button>
-                        <button class="icon-btn delete-icon" onclick="handleDelete(${item.id})"><i class="fa-regular fa-trash-can"></i></button>
-                    </div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
         }
 
         function handleDelete(id) {
-            if (confirm('이 강의를 정말 삭제하시겠습니까?')) {
-                const remaining = loadLectures().filter(item => item.id !== id);
+            if (confirm('이 항목을 정말 삭제하시겠습니까?')) {
+                const remaining = loadLectures().filter(item => (item.id || 0) !== id);
                 saveLectures(remaining);
                 alert('삭제되었습니다.');
                 updateList();
             }
         }
+
+        window.onload = function() {
+            updateList();
+        };
     </script>
 </body>
 </html>
