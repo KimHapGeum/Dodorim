@@ -95,41 +95,6 @@
         .img-box img { max-height: 100%; max-width: 100%; object-fit: contain; transition: 0.25s ease-in-out; }
         .card:hover img { transform: scale(1.06); }
 
-        /* 하단 버튼 영역 */
-        .bottom-buttons {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 15px;
-            margin-top: 55px;
-        }
-
-        /* 기존 뒤로가기 버튼 */
-        .btn-back-bottom {
-            margin-top: 0;
-        }
-
-        /* 건의하기 버튼 */
-        .btn-suggestion {
-            background: #0056b3;
-            border: none;
-            color: white;
-            padding: 12px 28px;
-            border-radius: 50px;
-            font-size: 20px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: 0.2s;
-            animation: fadeInUp 1s ease-out forwards;
-            animation-delay: 0.7s;
-            opacity: 0;
-        }
-
-        .btn-suggestion:hover {
-            background: #004494;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 18px rgba(0, 86, 179, 0.2);
-        }
         /* 💡 카드 제목 크기 확대 */
         .card h2 { 
             font-size: 42px; /* 💡 기존 26px -> 42px로 전방위 확대 */
@@ -147,6 +112,43 @@
             animation: fadeInUp 1s ease-out forwards; animation-delay: 0.6s; opacity: 0;
         }
         .btn-back-bottom:hover { background: #cbd5e1; color: #1e293b; }
+
+        /* 하단 버튼 영역 */
+        .bottom-buttons {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-top: 55px;
+        }
+
+/* 기존 뒤로가기 버튼 */
+.btn-back-bottom {
+    margin-top: 0;
+}
+
+/* 건의하기 버튼 */
+.btn-suggestion {
+    background: #0056b3;
+    border: none;
+    color: white;
+    padding: 12px 28px;
+    border-radius: 50px;
+    font-size: 20px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.2s;
+    animation: fadeInUp 1s ease-out forwards;
+    animation-delay: 0.7s;
+    opacity: 0;
+}
+
+.btn-suggestion:hover {
+    background: #004494;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 18px rgba(0, 86, 179, 0.2);
+}
+
 
         footer { padding: 18px 0; text-align: center; color: #bbb; font-size: 14px; flex-shrink: 0; border-top: 1px solid #eee; background: white; }
     </style>
@@ -170,11 +172,11 @@
             <button class="btn-back-bottom" onclick="location.href='kiosk_edu.html'">
                 <i class="fa-solid fa-arrow-left"></i> 이전 화면으로 가기
             </button>
-
             <button class="btn-suggestion" onclick="location.href='suggestion.html'">
                 <i class="fa-regular fa-comment-dots"></i> 건의하기
             </button>
         </div>
+
     </main>
 
     <footer>
