@@ -9,82 +9,116 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
 
     <style>
-        /* ✅ 1. 기본 레이아웃 - 스크롤 절대 방지 */
-        * { box-sizing: border-box; }
-        html, body { 
-            margin: 0; padding: 0; width: 100%; height: 100vh; 
-            overflow: hidden !important; 
-            font-family: 'Pretendard', sans-serif; 
-            background-color: #f9fbff; /* 화사하고 일관된 배경색 */
-            color: #1a1a1a;
-            display: flex; flex-direction: column;
+        * {
+            box-sizing: border-box;
         }
 
-        /* ✅ 2. 헤더 영역 */
+        html, body { 
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100vh; 
+            overflow: hidden !important; 
+            font-family: 'Pretendard', sans-serif; 
+            background-color: #f9fbff;
+            color: #1a1a1a;
+            display: flex;
+            flex-direction: column;
+        }
+
         #main-header-wrapper {
-            width: 100%; height: 60px;
+            width: 100%;
+            height: 60px;
             background-color: #ffffff;
-            flex-shrink: 0; z-index: 9999;
+            flex-shrink: 0;
+            z-index: 9999;
             border-bottom: 1px solid #ebf0f5;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
         }
-        iframe { border: none; display: block; width: 100%; height: 60px; }
 
-        /* ✅ 3. 메인 콘텐츠 - 고정형 연출 */
+        iframe {
+            border: none;
+            display: block;
+            width: 100%;
+            height: 60px;
+        }
+
         .main-content {
-            flex: 1; display: flex; flex-direction: column;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
             align-items: center; 
             justify-content: flex-start; 
-            padding-top: 40px; /* 상단 고정 규격 */
+            padding-top: 40px;
             overflow: hidden !important; 
         }
 
         @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
-        /* 상단 인디케이터 배지 */
         .step-indicator {
-            background: #e1e7f0; padding: 8px 22px; border-radius: 30px;
-            font-weight: 700; color: #556b8d; margin-bottom: 15px; 
+            background: #e1e7f0;
+            padding: 8px 22px;
+            border-radius: 30px;
+            font-weight: 700;
+            color: #556b8d;
+            margin-bottom: 15px; 
             font-size: 20px; 
             animation: fadeInUp 0.6s ease-out forwards;
         }
 
-        /* 상단 제목 그룹 글자 크기 대폭 확대 */
         .title-group {
-            text-align: center; margin-bottom: 35px;
+            text-align: center;
+            margin-bottom: 35px;
             animation: fadeInUp 0.6s ease-out forwards;
         }
+
         .title-group h1 { 
             font-size: 48px; 
-            font-weight: 800; margin: 0; color: #0b1a33; 
-        }
-        .title-group p { 
-            font-size: 26px; 
-            color: #222; margin-top: 12px; font-weight: 700; 
+            font-weight: 800;
+            margin: 0;
+            color: #0b1a33; 
         }
 
-        /* ✅ 4. 단일 카드 레이아웃 - 가운데 웅장하게 배치 */
+        .title-group p { 
+            font-size: 26px; 
+            color: #222;
+            margin-top: 12px;
+            font-weight: 700; 
+        }
+
         .lecture-grid {
             display: flex;
             justify-content: center;
             width: 95%;
-            max-width: 500px; /* 단일 카드이므로 안정감 있게 가로폭을 넓힘 */
+            max-width: 500px;
         }
 
-        /* 가늘고 세련된 1px 테두리를 적용한 패밀리 디자인 카드 */
         .card {
             background: #ffffff; 
             padding: 0px 0px 45px 0px; 
-            border-radius: 36px; box-shadow: 0 12px 30px rgba(0,0,0,0.05);
-            text-align: center; display: flex; flex-direction: column; align-items: center;
+            border-radius: 36px;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.05);
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             border: 1px solid rgba(226, 232, 240, 0.7); 
             opacity: 0;
             animation: fadeInUp 0.6s ease-out forwards;
-            transition: all 0.25s ease-in-out; cursor: pointer;
-            width: 100%; overflow: hidden;
+            transition: all 0.25s ease-in-out;
+            cursor: pointer;
+            width: 100%;
+            overflow: hidden;
         }
 
         .card:hover {
@@ -94,82 +128,477 @@
             background-color: #f4f9ff;
         }
 
-        /* 💡 이질적인 원형 스타일을 버리고 타 페이지와 패밀리 룩을 맞춘 사각형 이미지 박스 */
         .img-box { 
             width: 100%; 
-            height: 240px; /* 단일 카드 구조에 어울리도록 웅장한 높이 부여 */
-            display: flex; align-items: center; justify-content: center;
-            overflow: hidden; background-color: #ffffff;
+            height: 240px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            background-color: #ffffff;
             border-bottom: 1px solid rgba(226, 232, 240, 0.7); 
             transition: 0.25s ease-in-out;
         }
         
-        /* 💡 휴대폰 아이콘이 아주 시원하고 큼직하게 보이도록 비율 조정 */
-        .img-box img { max-height: 75%; max-width: 75%; object-fit: contain; transition: 0.25s ease-in-out; }
-        .card:hover .img-box img { transform: scale(1.05); }
-        
-        .card:hover .img-box { border-bottom-color: #0056b3; }
+        .img-box img {
+            max-height: 75%;
+            max-width: 75%;
+            object-fit: contain;
+            transition: 0.25s ease-in-out;
+        }
 
-        /* 대제목 글씨 크기 고정 일치 */
+        .card:hover .img-box img {
+            transform: scale(1.05);
+        }
+        
+        .card:hover .img-box {
+            border-bottom-color: #0056b3;
+        }
+
         .card h2 { 
             font-size: 40px; 
-            margin: 35px 0 0 0; color: #111; font-weight: 900; 
+            margin: 35px 0 0 0;
+            color: #111;
+            font-weight: 900; 
         }
-        .card:hover h2 { color: #004494; }
 
-        /* 부연 설명 문구 영역 */
+        .card:hover h2 {
+            color: #004494;
+        }
+
         .card p {
-            font-size: 22px; color: #444; line-height: 1.6; margin: 15px 0 0 0; font-weight: 600;
+            font-size: 22px;
+            color: #444;
+            line-height: 1.6;
+            margin: 15px 0 0 0;
+            font-weight: 600;
         }
 
-        /* 하단 뒤로가기 버튼 스타일 및 0.5초 딜레이 리듬 일치 */
+
+        /* =========================================
+           하단 버튼 영역
+           ========================================= */
+
         .btn-back-bottom {
-            margin-top: 45px; 
-            background: #e2e8f0; border: none; color: #475569;
-            padding: 14px 38px; border-radius: 50px;
-            font-size: 22px; font-weight: 700; cursor: pointer; transition: 0.2s;
-            display: inline-flex; align-items: center; gap: 10px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-            text-decoration: none; 
-            
+            margin-top: 0;
+            background: #e2e8f0;
+            border: none;
+            color: #475569;
+            padding: 12px 28px;
+            border-radius: 50px;
+            font-size: 20px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+            animation: fadeInUp 1s ease-out forwards;
+            animation-delay: 0.6s;
             opacity: 0;
-            animation: fadeInUp 0.6s ease-out forwards;
-            animation-delay: 0.5s; 
         }
-        .btn-back-bottom:hover { background: #cbd5e1; color: #1e293b; }
 
-        /* 푸터 영역 고정 */
-        footer { padding: 18px 0; text-align: center; color: #bbb; font-size: 14px; flex-shrink: 0; border-top: 1px solid #eee; background: white; }
+        .btn-back-bottom:hover {
+            background: #cbd5e1;
+            color: #1e293b;
+            transform: translateY(-2px);
+        }
+
+        .bottom-buttons {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-top: 45px;
+        }
+
+
+        /* =========================================
+           건의하기 버튼
+           ※ 기존 코드와 동일
+           ========================================= */
+
+        .btn-suggestion {
+            background: #0056b3;
+            border: none;
+            color: white;
+            padding: 12px 28px;
+            border-radius: 50px;
+            font-size: 20px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+            animation: fadeInUp 1s ease-out forwards;
+            animation-delay: 0.7s;
+            opacity: 0;
+        }
+
+        .btn-suggestion:hover {
+            background: #004494;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 18px rgba(0, 86, 179, 0.2);
+        }
+
+
+        /* ==================================================
+           건의하기 팝업 배경
+           ※ 기존 코드와 동일
+           ================================================== */
+
+        .suggestion-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.45);
+            z-index: 99999;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .suggestion-modal.show {
+            display: flex;
+        }
+
+
+        /* ==================================================
+           건의하기 팝업창
+           ※ 기존 코드와 동일
+           ================================================== */
+
+        .suggestion-box {
+            width: 100%;
+            max-width: 600px;
+            background: #ffffff;
+            border-radius: 24px;
+            padding: 35px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+            animation: modalOpen 0.25s ease-out;
+        }
+
+        @keyframes modalOpen {
+            from {
+                opacity: 0;
+                transform: translateY(20px) scale(0.96);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+
+        /* 팝업 제목 */
+
+        .suggestion-title {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .suggestion-title h2 {
+            margin: 0;
+            font-size: 30px;
+            font-weight: 800;
+            color: #0b1a33;
+        }
+
+        .suggestion-title i {
+            font-size: 28px;
+            color: #0056b3;
+        }
+
+
+        /* 안내 문구 */
+
+        .suggestion-description {
+            margin: 0 0 15px 0;
+            font-size: 18px;
+            color: #475569;
+            font-weight: 600;
+            line-height: 1.5;
+        }
+
+
+        /* 입력창 */
+
+        .suggestion-textarea {
+            width: 100%;
+            height: 200px;
+            resize: none;
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 18px;
+            font-family: 'Pretendard', sans-serif;
+            font-size: 18px;
+            line-height: 1.6;
+            color: #222;
+            outline: none;
+            background-color: #f8fafc;
+            transition: 0.2s;
+        }
+
+        .suggestion-textarea:focus {
+            border-color: #0056b3;
+            background-color: #ffffff;
+            box-shadow: 0 0 0 3px rgba(0, 86, 179, 0.1);
+        }
+
+        .suggestion-textarea::placeholder {
+            color: #94a3b8;
+        }
+
+
+        /* 팝업 하단 버튼 */
+
+        .suggestion-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .modal-btn {
+            border: none;
+            padding: 13px 28px;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-cancel {
+            background: #e2e8f0;
+            color: #475569;
+        }
+
+        .btn-cancel:hover {
+            background: #cbd5e1;
+        }
+
+        .btn-submit {
+            background: #0056b3;
+            color: #ffffff;
+        }
+
+        .btn-submit:hover {
+            background: #004494;
+        }
+
+
+        /* 작은 화면 대응 */
+
+        @media (max-width: 700px) {
+
+            .main-content {
+                padding-top: 35px;
+            }
+
+            .title-group {
+                margin-bottom: 30px;
+            }
+
+            .title-group h1 {
+                font-size: 36px;
+            }
+
+            .title-group p {
+                font-size: 20px;
+            }
+
+            .lecture-grid {
+                width: 94%;
+                gap: 15px;
+            }
+
+            .card {
+                padding: 25px 18px;
+            }
+
+            .img-box {
+                height: 150px;
+            }
+
+            .card h2 {
+                font-size: 30px;
+            }
+
+            .bottom-buttons {
+                margin-top: 30px;
+                gap: 8px;
+            }
+
+            .btn-back-bottom,
+            .btn-suggestion {
+                font-size: 17px;
+                padding: 11px 18px;
+            }
+
+            .suggestion-box {
+                max-width: 100%;
+                padding: 25px 20px;
+                border-radius: 22px;
+            }
+
+            .suggestion-title h2 {
+                font-size: 27px;
+            }
+
+            .suggestion-description {
+                font-size: 17px;
+            }
+
+            .suggestion-textarea {
+                height: 180px;
+                font-size: 17px;
+            }
+
+            .modal-btn {
+                font-size: 17px;
+                padding: 12px 24px;
+            }
+        }
+
+
+        /* =========================================
+           푸터
+           ========================================= */
+
+        footer {
+            padding: 18px 0;
+            text-align: center;
+            color: #bbb;
+            font-size: 14px;
+            flex-shrink: 0;
+            border-top: 1px solid #eee;
+            background: white;
+        }
     </style>
 </head>
+
 <body>
 
     <div id="main-header-wrapper">
         <iframe src="./header.html?type=edu" scrolling="no"></iframe>
     </div>
 
+
     <main class="main-content">
-        <div class="step-indicator">휴대폰 기능 교육</div>
+
+        <div class="step-indicator">
+            휴대폰 기능 교육
+        </div>
         
         <div class="title-group">
             <h1>무엇을 배워볼까요?</h1>
             <p>연습하고 싶은 장소 그림을 살짝 눌러주세요.</p>
         </div>
 
+
         <div class="lecture-grid" id="kiosk-list">
+        </div>
+
+
+        <!-- 하단 버튼 -->
+
+        <div class="bottom-buttons">
+
+            <button
+                class="btn-back-bottom"
+                onclick="location.href='device_edu.html'">
+
+                <i class="fa-solid fa-arrow-left"></i>
+                이전 화면으로 가기
+
+            </button>
+
+
+            <!-- 기존 병원 페이지와 동일한 건의하기 버튼 -->
+
+            <button
+                class="btn-suggestion"
+                onclick="openSuggestion()">
+
+                <i class="fa-regular fa-comment-dots"></i>
+                건의하기
+
+            </button>
+
+        </div>
+
+    </main>
+
+
+    <!-- ==================================================
+         건의하기 팝업
+         기존 병원 페이지와 동일한 구조
+         ================================================== -->
+
+    <div
+        id="suggestionModal"
+        class="suggestion-modal">
+
+        <div class="suggestion-box">
+
+            <div class="suggestion-title">
+
+                <h2>건의하기</h2>
+
+                <i class="fa-regular fa-comment-dots"></i>
+
             </div>
 
-        <button class="btn-back-bottom" onclick="location.href='device_edu.html'">
-            <i class="fa-solid fa-arrow-left"></i> 이전 화면으로 가기
-        </button>
-    </main>
+
+            <p class="suggestion-description">
+                두드림에 바라는 점이나 불편한 점을 자유롭게 작성해주세요.
+            </p>
+
+
+            <textarea
+                id="suggestionText"
+                class="suggestion-textarea"
+                maxlength="500"
+                placeholder="건의하실 내용을 입력해주세요."></textarea>
+
+
+            <div class="suggestion-actions">
+
+                <button
+                    type="button"
+                    class="modal-btn btn-cancel"
+                    onclick="closeSuggestion()">
+
+                    취소
+
+                </button>
+
+
+                <button
+                    type="button"
+                    class="modal-btn btn-submit"
+                    onclick="submitSuggestion()">
+
+                    확인
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
 
     <footer>
         © 2026 두드림. 모든 시니어의 디지털 자립을 응원합니다.
     </footer>
 
+
     <script>
-        // 💡 통일감 형성을 위해 상세 안내 문구(desc)를 패밀리 룩 규격에 맞춰 추가했습니다.
+
         const kioskData = [
             { 
                 name: '전화/문자하기', 
@@ -179,28 +608,183 @@
             }
         ];
 
-        const listContainer = document.getElementById('kiosk-list');
-        listContainer.innerHTML = ''; 
+
+        const listContainer =
+            document.getElementById('kiosk-list');
+
+        listContainer.innerHTML = '';
+
 
         kioskData.forEach((item, index) => {
+
             const card = document.createElement('div');
+
             card.className = 'card';
-            card.style.animationDelay = ((index * 0.1) + 0.1) + 's'; 
-            card.onclick = () => location.href = item.url;
-            
+
+            card.style.animationDelay =
+                ((index * 0.1) + 0.1) + 's';
+
+            card.onclick = () =>
+                location.href = item.url;
+
+
             card.innerHTML = `
                 <div class="img-box">
-                    <img src="${item.img}" alt="${item.name}">
+                    <img
+                        src="${item.img}"
+                        alt="${item.name}">
                 </div>
+
                 <h2>${item.name}</h2>
+
                 <p>${item.desc}</p>
             `;
+
+
             listContainer.appendChild(card);
+
         });
 
+
+        /* ==================================================
+           건의하기 팝업 열기
+           기존 병원 페이지와 동일
+           ================================================== */
+
+        function openSuggestion() {
+
+            const modal =
+                document.getElementById('suggestionModal');
+
+            const textarea =
+                document.getElementById('suggestionText');
+
+
+            modal.classList.add('show');
+
+
+            setTimeout(() => {
+
+                textarea.focus();
+
+            }, 100);
+
+        }
+
+
+        /* ==================================================
+           건의하기 팝업 닫기
+           기존 병원 페이지와 동일
+           ================================================== */
+
+        function closeSuggestion() {
+
+            const modal =
+                document.getElementById('suggestionModal');
+
+
+            modal.classList.remove('show');
+
+
+            // 닫을 때 입력 내용 초기화
+
+            document.getElementById(
+                'suggestionText'
+            ).value = '';
+
+        }
+
+
+        /* ==================================================
+           건의 내용 확인
+           기존 병원 페이지와 동일
+           ================================================== */
+
+        function submitSuggestion() {
+
+            const textarea =
+                document.getElementById('suggestionText');
+
+            const text =
+                textarea.value.trim();
+
+
+            if (text === '') {
+
+                alert(
+                    '건의하실 내용을 입력해주세요.'
+                );
+
+                textarea.focus();
+
+                return;
+            }
+
+
+            alert(
+                '건의해주셔서 감사합니다.'
+            );
+
+
+            textarea.value = '';
+
+            closeSuggestion();
+
+        }
+
+
+        /* ==================================================
+           팝업 바깥쪽 클릭 시 닫기
+           기존 병원 페이지와 동일
+           ================================================== */
+
+        document
+            .getElementById('suggestionModal')
+            .addEventListener(
+                'click',
+                function(event) {
+
+                    if (event.target === this) {
+
+                        closeSuggestion();
+
+                    }
+
+                }
+            );
+
+
+        /* ==================================================
+           ESC 키로 팝업 닫기
+           기존 병원 페이지와 동일
+           ================================================== */
+
+        document.addEventListener(
+            'keydown',
+            function(event) {
+
+                if (event.key === 'Escape') {
+
+                    closeSuggestion();
+
+                }
+
+            }
+        );
+
+
+        /* 음성 안내 */
+
         window.toggleVoice = function(isOn) {
-            console.log("휴대폰 교육 페이지 음성 안내 상태:", isOn);
+
+            console.log(
+                "휴대폰 교육 페이지 음성 안내 상태:",
+                isOn
+            );
+
         };
+
     </script>
+
 </body>
 </html>
