@@ -32,22 +32,22 @@
     #root { flex: 1; display: flex; flex-direction: column; min-height: 0; }
     .color-strip { width: 100%; height: 5px; transition: background-color 0.5s ease; }
 
-    /* 2-1. 공지사항 배너 */
+    /* 2-1. 공지사항 배너 (얇게 수정 완료) */
     .notice-bar {
-      width: 100%; background: #ffffff; padding: 11px 30px;
-      display: flex; align-items: center; gap: 14px; cursor: pointer;
+      width: 100%; background: #ffffff; padding: 7px 24px;
+      display: flex; align-items: center; gap: 12px; cursor: pointer;
       border-bottom: 1px solid #eee; flex-shrink: 0; transition: background 0.2s;
     }
     .notice-bar:hover { background: #f5f9ff; }
     .notice-badge {
-      background: #0056b3; color: #fff; font-size: 13px; font-weight: 800;
-      padding: 5px 12px; border-radius: 20px; flex-shrink: 0; letter-spacing: -0.5px;
+      background: #0056b3; color: #fff; font-size: 12px; font-weight: 800;
+      padding: 3px 10px; border-radius: 20px; flex-shrink: 0; letter-spacing: -0.5px;
     }
     .notice-text {
-      font-size: 16px; font-weight: 700; color: #333; flex: 1;
+      font-size: 15px; font-weight: 700; color: #333; flex: 1;
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
-    .notice-arrow { color: #bbb; font-size: 14px; flex-shrink: 0; }
+    .notice-arrow { color: #bbb; font-size: 13px; flex-shrink: 0; }
 
     /* 3. 슬라이더 영역 */
     .slider-outer { 
@@ -84,7 +84,6 @@
     .hero h1 { font-size: 38px; margin: 0 0 8px 0; color: #1a1a1a; font-weight: 800; letter-spacing: -1.2px; }
     .hero p { font-size: 19px; color: #444; line-height: 1.5; font-weight: 500; margin: 0; }
 
-    /* ✅ 버튼 그룹 - 버튼 크기 살짝 키움 (너비 480->520) */
     .btn-group { display: flex; flex-direction: column; gap: 12px; width: 100%; align-items: center; }
     .start-btn, .practice-btn { 
       font-size: 26px; padding: 20px 0; width: 520px; border-radius: 22px; 
@@ -93,7 +92,6 @@
     }
     .start-btn:hover, .practice-btn:hover { transform: translateY(-3px); filter: brightness(1.1); }
 
-    /* ✅ 안내 카드 - 아주아주 살짝 내림 (margin-top 25->35) */
     .cards { display: flex; justify-content: center; gap: 15px; margin-top: 35px; }
     .card { 
       background: white; padding: 12px 24px; border-radius: 15px; 
@@ -129,7 +127,6 @@
     }
     .modal-close:hover { background: #e6e9ee; color: #333; }
 
-    /* 상단: 날짜별 공지 목록 (선택만 하는 용도, 내용은 표시하지 않음) */
     .notice-select-list {
       flex-shrink: 0; max-height: 34vh; overflow-y: auto;
       display: flex; flex-direction: column; gap: 6px; padding-right: 4px;
@@ -154,7 +151,6 @@
     .notice-select-chevron { color: #ccc; font-size: 13px; flex-shrink: 0; }
     .notice-select-row.active .notice-select-chevron { color: #0056b3; }
 
-    /* 하단: 선택된 공지 하나의 상세 내용 */
     .notice-detail {
       flex: 1; min-height: 0; overflow-y: auto; padding-top: 20px;
       border-top: 2px solid #f0f2f5;
@@ -179,7 +175,6 @@
   </footer>
 
   <script type="text/babel">
-    // 관리자 페이지(notice.html / banner.html)와 공유하는 저장 키
     const NOTICE_KEY = "doodream_notice";
     const BANNER_KEY = "doodream_banner";
 
@@ -249,7 +244,6 @@
     }
 
     function NoticeModal({ notices, onClose }) {
-      // notices는 최신순으로 정렬되어 들어온다고 가정 (배열 맨 앞 = 가장 최근 공지)
       const [selectedId, setSelectedId] = React.useState(notices[0] ? notices[0].id : null);
       const selected = notices.find(n => n.id === selectedId) || notices[0];
 
@@ -289,8 +283,6 @@
     }
 
     function App() {
-      // 배너(슬라이더)와 공지사항은 관리자 페이지(banner.html / notice.html)에서 등록·수정한
-      // localStorage 데이터를 그대로 불러와 보여줍니다.
       const slideData = loadBannerList();
       const noticeList = loadNoticeList();
 
@@ -335,8 +327,8 @@
                 교육 시작하기
               </button>
               <button className="practice-btn" style={{ backgroundColor: currentSlide.subColor }} onClick={() => window.location.href = 'kiosk.html'}>
-  체험하기
-</button>
+                체험하기
+              </button>
             </div>
 
             <div className="cards">
