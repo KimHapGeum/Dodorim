@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>두드림 - 관리자 모드</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #f7f9fc;
+            color: #1a1a1a;
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        #main-header-wrapper {
+            width: 100%; height: 60px; background-color: #ffffff;
+            flex-shrink: 0; z-index: 9999; border-bottom: 1px solid #ebf0f5;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+        }
+        iframe { border: none; display: block; width: 100%; height: 60px; }
+
+        .admin-container { display: flex; flex: 1; width: 100%; }
+
+        .admin-sidebar {
+            width: 240px; background: #ffffff; border-right: 1px solid #ebf0f5;
+            padding: 30px 18px; display: flex; flex-direction: column; gap: 10px;
+            flex-shrink: 0; min-height: calc(100vh - 60px);
+        }
+        .sidebar-title { font-size: 13px; font-weight: 700; color: #888; margin-bottom: 8px; padding-left: 10px; }
+        .menu-btn {
+            display: flex; align-items: center; gap: 12px; width: 100%; padding: 13px 16px;
+            background: transparent; border: none; border-radius: 12px; font-size: 15px;
+            font-weight: 600; color: #555; cursor: pointer; transition: all 0.2s; text-align: left;
+        }
+        .menu-btn i { font-size: 17px; width: 22px; text-align: center; }
+        .menu-btn:hover { background-color: #f0f4ff; color: #0056b3; }
+        .menu-btn.active { background-color: #0056b3; color: #ffffff; box-shadow: 0 4px 12px rgba(0, 86, 179, 0.2); }
+
+        .main-content { flex: 1; max-width: 1200px; padding: 40px; min-width: 0; margin: 0 auto; width: 100%; }
+
+        .title-section { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 30px; }
+        .title-section h1 { font-size: 32px; font-weight: 800; margin-bottom: 5px; color: #0b1a33; }
+        .title-section p { color: #888; font-size: 16px; }
+
+        .search-section { margin-bottom: 20px; position: relative; }
+        .search-bar {
+            width: 100%; padding: 15px 15px 15px 50px; border-radius: 12px;
+            border: 2px solid #eee; font-size: 16px; outline: none; transition: 0.3s; background: #fff;
+        }
+        .search-bar:focus { border-color: #0056b3; box-shadow: 0 0 0 4px rgba(0,86,179,0.05); }
+        .search-section i { position: absolute; left: 20px; top: 50%; transform: translateY(-50%); color: #aaa; }
+
+        .filter-section {
+            background: #fff; padding: 20px; border-radius: 15px;
+            display: flex; gap: 15px; align-items: center; justify-content: flex-end; margin-bottom: 30px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+        }
+
+        .add-btn {
+            background-color: #0056b3; color: white; border: none; padding: 12px 25px;
+            border-radius: 10px; font-size: 16px; font-weight: 800; cursor: pointer;
+            display: flex; align-items: center; gap: 8px; transition: 0.3s; flex-shrink: 0;
+        }
+        .add-btn:hover { background-color: #004494; transform: translateY(-2px); }
+
+        .content-list { display: flex; flex-direction: column; gap: 12px; }
+        .content-item {
+            background-color: #fff; padding: 15px 35px; border-radius: 15px;
+            display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.03); border: 2px solid transparent;
+            transition: all 0.3s ease; cursor: default;
+        }
+        .content-item:hover { transform: translateX(10px); border-color: #0056b3; }
+        .info { flex: 1; min-width: 0; }
+        .info-top { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+        .new-badge {
+            background: #0056b3; color: #fff; font-size: 11px; font-weight: 800;
+            padding: 2px 8px; border-radius: 6px; flex-shrink: 0;
+        }
+        .info h3 {
+            font-size: 22px; font-weight: 800; color: #111;
+            overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+        }
+        .category-path { font-size: 13px; color: #aaa; font-weight: 500; }
+
+        .actions { display: flex; gap: 15px; flex-shrink: 0; margin-left: 20px; }
+        .icon-btn { background: none; border: none; font-size: 20px; color: #ccc; cursor: pointer; transition: 0.2s; }
+        .edit-icon:hover { color: #0056b3; }
+        .delete-icon:hover { color: #ff4d4f; }
+
+        .empty-msg { text-align: center; padding: 60px; color: #bbb; font-weight: 500; background: #fff; border-radius: 15px; }
+
+        footer { padding: 25px 0; text-align: center; color: #bbb; font-size: 14px; border-top: 1px solid #eee; background: white; }
+
+        @media (max-width: 900px) {
+            .admin-container { flex-direction: column; }
+            .admin-sidebar { width: 100%; min-height: auto; flex-direction: row; overflow-x: auto; padding: 15px; }
+            .menu-btn { white-space: nowrap; width: auto; }
+            .sidebar-title { display: none; }
+        }
+
+        /* 등록/수정 모달 */
+        .modal-overlay {
+            position: fixed; inset: 0; background: rgba(10, 20, 40, 0.55);
+            display: flex; align-items: center; justify-content: center; z-index: 3000;
+        }
+        .modal-box {
+            background: #fff; border-radius: 24px; padding: 36px; width: 560px; max-width: 90vw;
+            max-height: 85vh; overflow-y: auto; box-shadow: 0 25px 60px rgba(0,0,0,0.25);
+        }
+        .modal-box h2 { font-size: 22px; font-weight: 800; color: #111; margin-bottom: 24px; }
+        .form-group { margin-bottom: 18px; }
+        .form-group label { display: block; font-size: 14px; font-weight: 700; color: #555; margin-bottom: 8px; }
+        .form-group input, .form-group textarea {
+            width: 100%; padding: 12px 14px; border: 2px solid #eee; border-radius: 10px;
+            font-size: 15px; font-family: inherit; outline: none; transition: 0.2s; resize: vertical;
+        }
+        .form-group input:focus, .form-group textarea:focus { border-color: #0056b3; }
+        .form-group textarea { min-height: 160px; line-height: 1.6; }
+        .modal-buttons { display: flex; gap: 10px; margin-top: 26px; }
+        .modal-buttons button {
+            flex: 1; padding: 14px 0; border-radius: 10px; font-size: 16px; font-weight: 800;
+            border: none; cursor: pointer; transition: 0.2s;
+        }
+        .btn-cancel { background: #f0f2f5; color: #666; }
+        .btn-cancel:hover { background: #e4e7eb; }
+        .btn-save { background: #0056b3; color: #fff; }
+        .btn-save:hover { background: #004494; }
+    </style>
+</head>
+<body>
+
+    <div id="main-header-wrapper">
+        <iframe src="./header.html?type=manager" scrolling="no"></iframe>
+    </div>
+
+    <div class="admin-container">
+        <aside class="admin-sidebar">
+            <div class="sidebar-title">관리자 메뉴</div>
+            <button class="menu-btn" onclick="location.href='manager.html'">
+                <i class="fa-solid fa-book-open"></i> 강의 목록 관리
+            </button>
+            <button class="menu-btn active" onclick="location.href='notice.html'">
+                <i class="fa-solid fa-bullhorn"></i> 공지사항 관리
+            </button>
+            <button class="menu-btn" onclick="location.href='suggestion.html'">
+                <i class="fa-solid fa-comments"></i> 건의사항 관리
+            </button>
+            <button class="menu-btn" onclick="location.href='banner.html'">
+                <i class="fa-solid fa-image"></i> 배너 관리
+            </button>
+        </aside>
+
+        <main class="main-content">
+            <section class="title-section">
+                <div class="text-group">
+                    <h1>공지사항 관리</h1>
+                    <p>메인 화면 공지 배너에 표시되는 공지사항을 등록하고 관리하세요.</p>
+                </div>
+            </section>
+
+            <div class="search-section">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="noticeSearch" class="search-bar" placeholder="제목을 검색하세요...">
+            </div>
+
+            <div class="filter-section">
+                <button class="add-btn" onclick="openForm()">
+                    <i class="fa-solid fa-plus"></i> 신규 등록
+                </button>
+            </div>
+
+            <div class="content-list" id="noticeList">
+                <div class="empty-msg">데이터를 불러오는 중입니다...</div>
+            </div>
+        </main>
+    </div>
+
+    <footer>
+        <p>© 2026 두드림, 모든 시니어의 디지털 자립을 응원합니다.</p>
+    </footer>
+
+    <!-- 등록/수정 모달 -->
+    <div class="modal-overlay" id="formOverlay" style="display:none;" onclick="closeFormOnOverlay(event)">
+        <div class="modal-box">
+            <h2 id="formTitle">공지사항 등록</h2>
+            <div class="form-group">
+                <label>제목</label>
+                <input type="text" id="inputTitle" placeholder="공지 제목을 입력하세요">
+            </div>
+            <div class="form-group">
+                <label>날짜</label>
+                <input type="date" id="inputDate">
+            </div>
+            <div class="form-group">
+                <label>내용</label>
+                <textarea id="inputContent" placeholder="공지 내용을 입력하세요"></textarea>
+            </div>
+            <div class="modal-buttons">
+                <button class="btn-cancel" onclick="closeForm()">취소</button>
+                <button class="btn-save" onclick="saveNotice()">저장</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 메인 화면(index.html)의 공지 배너와 공유하는 저장 키
+        const STORAGE_KEY = "doodream_notice";
+
+        const searchInput = document.getElementById('noticeSearch');
+        const listContainer = document.getElementById('noticeList');
+        const formOverlay = document.getElementById('formOverlay');
+        const formTitle = document.getElementById('formTitle');
+        const inputTitle = document.getElementById('inputTitle');
+        const inputDate = document.getElementById('inputDate');
+        const inputContent = document.getElementById('inputContent');
+
+        let editingId = null;
+
+        // 최초 접속 시, index.html과 동일한 기본 공지 3건을 시드로 저장 (이미 데이터가 있으면 건드리지 않음)
+        function seedIfEmpty() {
+            if (localStorage.getItem(STORAGE_KEY) === null) {
+                const sample = [
+                    {
+                        id: 2,
+                        title: "두드림 서비스 오픈 안내",
+                        date: "2026.09.22",
+                        content: "안녕하세요, 두드림입니다.\n\n시니어 여러분의 디지털 자립을 돕기 위한 교육 서비스가 새롭게 문을 열었습니다.\n키오스크, 셀프 계산대, 전자기기 사용법까지 실제와 똑같은 화면으로 편하게 연습해 보세요.\n\n이용 중 불편하신 점이나 궁금하신 점은 언제든 건의사항을 통해 알려주시면\n빠르게 확인하고 반영하겠습니다.\n\n앞으로도 여러분과 함께하는 두드림이 되겠습니다. 감사합니다."
+                    },
+                    {
+                        id: 1,
+                        title: "체험하기 메뉴 추가 안내",
+                        date: "2026.09.10",
+                        content: "실제 화면처럼 미리 눌러볼 수 있는 '체험하기' 메뉴가 새롭게 추가되었습니다.\n교육을 시작하기 전, 먼저 가볍게 화면을 눌러보며 익숙해지고 싶으신 분들은\n메인 화면의 체험하기 버튼을 이용해 보세요."
+                    },
+                    {
+                        id: 0,
+                        title: "두드림 준비 소식",
+                        date: "2026.08.28",
+                        content: "두드림이 시니어 여러분을 위한 디지털 교육 서비스를 준비하고 있습니다.\n키오스크, ATM, 셀프 계산대 등 일상에서 자주 마주치는 화면들을\n실제와 똑같이 연습할 수 있도록 정성껏 만들고 있으니 조금만 기다려 주세요."
+                    }
+                ];
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(sample));
+            }
+        }
+        seedIfEmpty();
+
+        function loadNotices() {
+            try {
+                return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+            } catch (e) {
+                return [];
+            }
+        }
+
+        function saveNotices(list) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+        }
+
+        function escapeHtml(str) {
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+
+        // "2026.09.22" -> "2026-09-22" (date input용)
+        function toInputDate(dateStr) {
+            return (dateStr || '').replace(/\./g, '-');
+        }
+        // "2026-09-22" -> "2026.09.22" (화면 표시/저장용)
+        function toDisplayDate(dateStr) {
+            return (dateStr || '').replace(/-/g, '.');
+        }
+
+        function updateList() {
+            const keyword = searchInput.value.toLowerCase().trim();
+            let list = loadNotices();
+
+            // 최신 날짜순 정렬
+            list = [...list].sort((a, b) => new Date(b.date.replace(/\./g, '-')) - new Date(a.date.replace(/\./g, '-')));
+
+            const filtered = keyword
+                ? list.filter(item => item.title.toLowerCase().includes(keyword))
+                : list;
+
+            if (filtered.length === 0) {
+                listContainer.innerHTML = keyword
+                    ? '<div class="empty-msg">검색 결과가 없습니다.</div>'
+                    : '<div class="empty-msg">등록된 공지사항이 없습니다. [신규 등록]을 눌러 공지를 추가해 주세요.</div>';
+                return;
+            }
+
+            listContainer.innerHTML = filtered.map((item, index) => `
+                <div class="content-item">
+                    <div class="info">
+                        <div class="info-top">
+                            ${index === 0 && !keyword ? '<span class="new-badge">NEW</span>' : ''}
+                            <h3>${escapeHtml(item.title)}</h3>
+                        </div>
+                        <span class="category-path">${item.date}</span>
+                    </div>
+                    <div class="actions">
+                        <button class="icon-btn edit-icon" onclick="openForm(${item.id})"><i class="fa-regular fa-pen-to-square"></i></button>
+                        <button class="icon-btn delete-icon" onclick="handleDelete(${item.id})"><i class="fa-regular fa-trash-can"></i></button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function openForm(id) {
+            const list = loadNotices();
+            if (id !== undefined) {
+                const target = list.find(item => item.id === id);
+                if (!target) return;
+                editingId = id;
+                formTitle.textContent = '공지사항 수정';
+                inputTitle.value = target.title;
+                inputDate.value = toInputDate(target.date);
+                inputContent.value = target.content;
+            } else {
+                editingId = null;
+                formTitle.textContent = '공지사항 등록';
+                inputTitle.value = '';
+                inputDate.value = new Date().toISOString().slice(0, 10);
+                inputContent.value = '';
+            }
+            formOverlay.style.display = 'flex';
+        }
+
+        function closeForm() {
+            formOverlay.style.display = 'none';
+        }
+
+        function closeFormOnOverlay(e) {
+            if (e.target === formOverlay) closeForm();
+        }
+
+        function saveNotice() {
+            const title = inputTitle.value.trim();
+            const date = inputDate.value;
+            const content = inputContent.value.trim();
+
+            if (!title || !date || !content) {
+                alert('제목, 날짜, 내용을 모두 입력해 주세요.');
+                return;
+            }
+
+            const list = loadNotices();
+
+            if (editingId !== null) {
+                const target = list.find(item => item.id === editingId);
+                target.title = title;
+                target.date = toDisplayDate(date);
+                target.content = content;
+            } else {
+                const newId = list.length > 0 ? Math.max(...list.map(i => i.id)) + 1 : 0;
+                list.push({ id: newId, title, date: toDisplayDate(date), content });
+            }
+
+            saveNotices(list);
+            closeForm();
+            updateList();
+        }
+
+        function handleDelete(id) {
+            if (confirm('이 공지사항을 정말 삭제하시겠습니까?')) {
+                const remaining = loadNotices().filter(item => item.id !== id);
+                saveNotices(remaining);
+                updateList();
+            }
+        }
+
+        searchInput.addEventListener('input', updateList);
+
+        updateList();
+    </script>
+</body>
+</html>
