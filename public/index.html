@@ -32,6 +32,23 @@
     #root { flex: 1; display: flex; flex-direction: column; min-height: 0; }
     .color-strip { width: 100%; height: 5px; transition: background-color 0.5s ease; }
 
+    /* 2-1. 공지사항 배너 */
+    .notice-bar {
+      width: 100%; background: #ffffff; padding: 11px 30px;
+      display: flex; align-items: center; gap: 14px; cursor: pointer;
+      border-bottom: 1px solid #eee; flex-shrink: 0; transition: background 0.2s;
+    }
+    .notice-bar:hover { background: #f5f9ff; }
+    .notice-badge {
+      background: #0056b3; color: #fff; font-size: 13px; font-weight: 800;
+      padding: 5px 12px; border-radius: 20px; flex-shrink: 0; letter-spacing: -0.5px;
+    }
+    .notice-text {
+      font-size: 16px; font-weight: 700; color: #333; flex: 1;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .notice-arrow { color: #bbb; font-size: 14px; flex-shrink: 0; }
+
     /* 3. 슬라이더 영역 */
     .slider-outer { 
       width: 100%; height: 38vh; position: relative; 
@@ -89,6 +106,64 @@
       width: 100%; padding: 15px 0; text-align: center; color: #bbb; 
       font-size: 13px; flex-shrink: 0; border-top: 1px solid #eee; background: white; 
     }
+
+    /* 6. 공지사항 상세 모달 */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(10, 20, 40, 0.55);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 3000; animation: fadeIn 0.2s ease;
+    }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .modal-box {
+      background: #fff; border-radius: 26px; padding: 40px;
+      width: 640px; max-width: 90vw; max-height: 80vh;
+      display: flex; flex-direction: column; position: relative;
+      box-shadow: 0 25px 60px rgba(0,0,0,0.25);
+    }
+    .modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; flex-shrink: 0; }
+    .modal-header h2 { font-size: 24px; font-weight: 800; color: #111; }
+    .modal-close {
+      width: 40px; height: 40px; background: #f2f4f7; border: none; border-radius: 50%;
+      font-size: 18px; color: #888; cursor: pointer; display: flex; align-items: center;
+      justify-content: center; transition: 0.2s; flex-shrink: 0;
+    }
+    .modal-close:hover { background: #e6e9ee; color: #333; }
+
+    /* 상단: 날짜별 공지 목록 (선택만 하는 용도, 내용은 표시하지 않음) */
+    .notice-select-list {
+      flex-shrink: 0; max-height: 34vh; overflow-y: auto;
+      display: flex; flex-direction: column; gap: 6px; padding-right: 4px;
+      margin-bottom: 18px;
+    }
+    .notice-select-row {
+      display: flex; align-items: center; gap: 10px; padding: 13px 16px;
+      border-radius: 12px; cursor: pointer; transition: 0.15s; background: transparent;
+    }
+    .notice-select-row:hover { background: #f5f8fc; }
+    .notice-select-row.active { background: #eef4ff; }
+    .notice-select-row.active .notice-select-title { color: #0056b3; }
+    .new-tag {
+      background: #0056b3; color: #fff; font-size: 11px; font-weight: 800;
+      padding: 3px 8px; border-radius: 12px; flex-shrink: 0;
+    }
+    .notice-select-title {
+      font-size: 16px; font-weight: 700; color: #333; flex: 1;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .notice-select-date { font-size: 13px; color: #aaa; font-weight: 600; flex-shrink: 0; }
+    .notice-select-chevron { color: #ccc; font-size: 13px; flex-shrink: 0; }
+    .notice-select-row.active .notice-select-chevron { color: #0056b3; }
+
+    /* 하단: 선택된 공지 하나의 상세 내용 */
+    .notice-detail {
+      flex: 1; min-height: 0; overflow-y: auto; padding-top: 20px;
+      border-top: 2px solid #f0f2f5;
+    }
+    .notice-detail-title { font-size: 20px; font-weight: 800; color: #111; margin-bottom: 6px; }
+    .notice-detail-date { font-size: 13px; color: #aaa; font-weight: 600; margin-bottom: 18px; }
+    .notice-detail-content {
+      font-size: 15.5px; line-height: 1.85; color: #444; white-space: pre-line;
+    }
   </style>
 </head>
 <body>
@@ -104,44 +179,138 @@
   </footer>
 
   <script type="text/babel">
-    function App() {
-      const slideData = [
-        {
-          id: 0,
-          img: "Image/img3.png",
-          color: "#7db249",
-          subColor: "#afd485",
-          title: "내 손안의 작은 키오스크",
-          desc: "카페 주문부터 병원 접수까지 실제와 똑같은 화면으로 연습하고\n세상 밖으로 당당하게 나아가세요. 반복 연습이 자신감이 됩니다."
-        },
-        
-        {
-          id: 1,
-          img: "Image/img1.png",
-          color: "#1A4B8F",
-          subColor: "#A5C0E4",
-          title: "어려운 기술은 없습니다",
-          desc: "단지 익숙하지 않을 뿐입니다. 두드림이 친절한 길잡이가 되어드릴게요.\n실수해도 괜찮으니 여기서 마음껏 연습해 보세요."
-        },
-        {
-          id: 2,
-          img: "Image/img4.png",
-          color: "#E67E22",
-          subColor: "#f6c777",
-          title: "당당하게 세상과 소통하기",
-          desc: "디지털로 세상과 더 넓게 연결되기를 바랍니다.\n여러분의 당당한 자립을 위해 두드림이 끝까지 함께하겠습니다."
+    // 관리자 페이지(notice.html / banner.html)와 공유하는 저장 키
+    const NOTICE_KEY = "doodream_notice";
+    const BANNER_KEY = "doodream_banner";
+
+    const DEFAULT_NOTICES = [
+      {
+        id: 2,
+        title: "두드림 서비스 오픈 안내",
+        date: "2026.09.22",
+        content: "안녕하세요, 두드림입니다.\n\n시니어 여러분의 디지털 자립을 돕기 위한 교육 서비스가 새롭게 문을 열었습니다.\n키오스크, 셀프 계산대, 전자기기 사용법까지 실제와 똑같은 화면으로 편하게 연습해 보세요.\n\n이용 중 불편하신 점이나 궁금하신 점은 언제든 건의사항을 통해 알려주시면\n빠르게 확인하고 반영하겠습니다.\n\n앞으로도 여러분과 함께하는 두드림이 되겠습니다. 감사합니다."
+      },
+      {
+        id: 1,
+        title: "체험하기 메뉴 추가 안내",
+        date: "2026.09.10",
+        content: "실제 화면처럼 미리 눌러볼 수 있는 '체험하기' 메뉴가 새롭게 추가되었습니다.\n교육을 시작하기 전, 먼저 가볍게 화면을 눌러보며 익숙해지고 싶으신 분들은\n메인 화면의 체험하기 버튼을 이용해 보세요."
+      },
+      {
+        id: 0,
+        title: "두드림 준비 소식",
+        date: "2026.08.28",
+        content: "두드림이 시니어 여러분을 위한 디지털 교육 서비스를 준비하고 있습니다.\n키오스크, ATM, 셀프 계산대 등 일상에서 자주 마주치는 화면들을\n실제와 똑같이 연습할 수 있도록 정성껏 만들고 있으니 조금만 기다려 주세요."
+      }
+    ];
+
+    const DEFAULT_BANNERS = [
+      {
+        id: 0, img: "Image/img3.png", color: "#7db249", subColor: "#afd485",
+        title: "내 손안의 작은 키오스크",
+        desc: "카페 주문부터 병원 접수까지 실제와 똑같은 화면으로 연습하고\n세상 밖으로 당당하게 나아가세요. 반복 연습이 자신감이 됩니다."
+      },
+      {
+        id: 1, img: "Image/img1.png", color: "#1A4B8F", subColor: "#A5C0E4",
+        title: "어려운 기술은 없습니다",
+        desc: "단지 익숙하지 않을 뿐입니다. 두드림이 친절한 길잡이가 되어드릴게요.\n실수해도 괜찮으니 여기서 마음껏 연습해 보세요."
+      },
+      {
+        id: 2, img: "Image/img4.png", color: "#E67E22", subColor: "#f6c777",
+        title: "당당하게 세상과 소통하기",
+        desc: "디지털로 세상과 더 넓게 연결되기를 바랍니다.\n여러분의 당당한 자립을 위해 두드림이 끝까지 함께하겠습니다."
+      }
+    ];
+
+    function loadNoticeList() {
+      try {
+        if (localStorage.getItem(NOTICE_KEY) === null) {
+          localStorage.setItem(NOTICE_KEY, JSON.stringify(DEFAULT_NOTICES));
         }
-      ];
+        const list = JSON.parse(localStorage.getItem(NOTICE_KEY)) || [];
+        if (list.length === 0) return DEFAULT_NOTICES;
+        return [...list].sort((a, b) => new Date(b.date.replace(/\./g, '-')) - new Date(a.date.replace(/\./g, '-')));
+      } catch (e) {
+        return DEFAULT_NOTICES;
+      }
+    }
 
-      const [currentIndex, setCurrentIndex] = React.useState(1);
+    function loadBannerList() {
+      try {
+        if (localStorage.getItem(BANNER_KEY) === null) {
+          localStorage.setItem(BANNER_KEY, JSON.stringify(DEFAULT_BANNERS));
+        }
+        const list = JSON.parse(localStorage.getItem(BANNER_KEY)) || [];
+        if (list.length === 0) return DEFAULT_BANNERS;
+        return list;
+      } catch (e) {
+        return DEFAULT_BANNERS;
+      }
+    }
+
+    function NoticeModal({ notices, onClose }) {
+      // notices는 최신순으로 정렬되어 들어온다고 가정 (배열 맨 앞 = 가장 최근 공지)
+      const [selectedId, setSelectedId] = React.useState(notices[0] ? notices[0].id : null);
+      const selected = notices.find(n => n.id === selectedId) || notices[0];
+
+      return (
+        <div className="modal-overlay" onClick={onClose}>
+          <div className="modal-box" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>공지사항</h2>
+              <button className="modal-close" onClick={onClose}><i className="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <div className="notice-select-list">
+              {notices.map((notice, index) => (
+                <div
+                  key={notice.id}
+                  className={`notice-select-row ${selectedId === notice.id ? 'active' : ''}`}
+                  onClick={() => setSelectedId(notice.id)}
+                >
+                  {index === 0 && <span className="new-tag">NEW</span>}
+                  <span className="notice-select-title">{notice.title}</span>
+                  <span className="notice-select-date">{notice.date}</span>
+                  <i className="fa-solid fa-chevron-right notice-select-chevron"></i>
+                </div>
+              ))}
+            </div>
+
+            {selected && (
+              <div className="notice-detail">
+                <div className="notice-detail-title">{selected.title}</div>
+                <div className="notice-detail-date">{selected.date}</div>
+                <div className="notice-detail-content">{selected.content}</div>
+              </div>
+            )}
+          </div>
+        </div>
+      );
+    }
+
+    function App() {
+      // 배너(슬라이더)와 공지사항은 관리자 페이지(banner.html / notice.html)에서 등록·수정한
+      // localStorage 데이터를 그대로 불러와 보여줍니다.
+      const slideData = loadBannerList();
+      const noticeList = loadNoticeList();
+
+      const [currentIndex, setCurrentIndex] = React.useState(Math.min(1, slideData.length - 1));
+      const [isNoticeOpen, setIsNoticeOpen] = React.useState(false);
       const currentSlide = slideData[currentIndex];
+      const latestNotice = noticeList[0];
 
-      const handlePrev = () => setCurrentIndex(prev => (prev === 0 ? 2 : prev - 1));
-      const handleNext = () => setCurrentIndex(prev => (prev === 2 ? 0 : prev + 1));
+      const handlePrev = () => setCurrentIndex(prev => (prev === 0 ? slideData.length - 1 : prev - 1));
+      const handleNext = () => setCurrentIndex(prev => (prev === slideData.length - 1 ? 0 : prev + 1));
 
       return (
         <div style={{ flex: 1, display: "flex", flexDirection: "column", minHeight: 0 }}>
           <div className="color-strip" style={{ backgroundColor: currentSlide.color }}></div>
+
+          <div className="notice-bar" onClick={() => setIsNoticeOpen(true)}>
+            <span className="notice-badge">공지</span>
+            <span className="notice-text">{latestNotice.title}</span>
+            <i className="fa-solid fa-chevron-right notice-arrow"></i>
+          </div>
 
           <div className="slider-outer">
             <button className="nav-btn prev" onClick={handlePrev}><i className="fa-solid fa-chevron-left"></i></button>
@@ -176,6 +345,8 @@
               <div className="card">언제든 도움을 요청하세요</div>
             </div>
           </div>
+
+          {isNoticeOpen && <NoticeModal notices={noticeList} onClose={() => setIsNoticeOpen(false)} />}
         </div>
       );
     }
