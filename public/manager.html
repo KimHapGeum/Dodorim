@@ -10,104 +10,54 @@
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
-        body {
+      
+        html, body {
             font-family: 'Noto Sans KR', sans-serif;
             background-color: #f7f9fc;
             color: #1a1a1a;
             line-height: 1.6;
             display: flex;
             flex-direction: column;
-            min-height: 100vh;
-            overflow-x: hidden;
+            height: 100vh;
+            overflow: hidden; 
         }
 
         #main-header-wrapper {
-            width: 100%; 
-            height: 60px;
-            background-color: #ffffff;
-            flex-shrink: 0; 
-            z-index: 9999;
-            border-bottom: 1px solid #ebf0f5;
+            width: 100%; height: 60px; background-color: #ffffff;
+            flex-shrink: 0; z-index: 9999; border-bottom: 1px solid #ebf0f5;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
         }
         iframe { border: none; display: block; width: 100%; height: 60px; }
 
-        .admin-container {
-            display: flex;
-            flex: 1;
-            width: 100%;
-        }
+        .admin-container { display: flex; flex: 1; width: 100%; overflow: hidden; }
 
         .admin-sidebar {
-            width: 240px;
-            background: #ffffff;
-            border-right: 1px solid #ebf0f5;
-            padding: 30px 18px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            flex-shrink: 0;
-            min-height: calc(100vh - 60px);
+            width: 240px; background: #ffffff; border-right: 1px solid #ebf0f5;
+            padding: 30px 18px; display: flex; flex-direction: column; gap: 10px;
+            flex-shrink: 0; height: 100%;
         }
 
-        .sidebar-title {
-            font-size: 13px;
-            font-weight: 700;
-            color: #888;
-            margin-bottom: 8px;
-            padding-left: 10px;
-        }
+        .sidebar-title { font-size: 13px; font-weight: 700; color: #888; margin-bottom: 8px; padding-left: 10px; }
 
         .menu-btn {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            width: 100%;
-            padding: 13px 16px;
-            background: transparent;
-            border: none;
-            border-radius: 12px;
-            font-size: 15px;
-            font-weight: 600;
-            color: #555;
-            cursor: pointer;
-            transition: all 0.2s;
-            text-align: left;
+            display: flex; align-items: center; gap: 12px; width: 100%; padding: 13px 16px;
+            background: transparent; border: none; border-radius: 12px; font-size: 15px;
+            font-weight: 600; color: #555; cursor: pointer; transition: all 0.2s; text-align: left;
         }
-
         .menu-btn i { font-size: 17px; width: 22px; text-align: center; }
+        .menu-btn:hover { background-color: #f0f4ff; color: #0056b3; }
+        .menu-btn.active { background-color: #0056b3; color: #ffffff; box-shadow: 0 4px 12px rgba(0, 86, 179, 0.2); }
 
-        .menu-btn:hover {
-            background-color: #f0f4ff;
-            color: #0056b3;
+        .main-content { 
+            flex: 1; max-width: 1200px; padding: 40px; min-width: 0; margin: 0 auto; width: 100%; 
+            height: 100%; display: flex; flex-direction: column; overflow: hidden;
         }
 
-        .menu-btn.active {
-            background-color: #0056b3;
-            color: #ffffff;
-            box-shadow: 0 4px 12px rgba(0, 86, 179, 0.2);
-        }
-
-        .main-content {
-            flex: 1;
-            max-width: 1200px;
-            padding: 40px;
-            min-width: 0;
-            margin: 0 auto;
-            width: 100%;
-        }
-
-        .title-section {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-            margin-bottom: 30px;
-        }
-
+        .title-section { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 20px; flex-shrink: 0; }
         .title-section h1 { font-size: 32px; font-weight: 800; margin-bottom: 5px; color: #0b1a33; }
         .title-section p { color: #888; font-size: 16px; }
 
-        .search-section { margin-bottom: 20px; position: relative; }
+        .search-section { margin-bottom: 20px; position: relative; flex-shrink: 0; }
         .search-bar {
             width: 100%; padding: 15px 15px 15px 50px; border-radius: 12px;
             border: 2px solid #eee; font-size: 16px; outline: none; transition: 0.3s;
@@ -116,10 +66,11 @@
         .search-bar:focus { border-color: #0056b3; box-shadow: 0 0 0 4px rgba(0,86,179,0.05); }
         .search-section i { position: absolute; left: 20px; top: 50%; transform: translateY(-50%); color: #aaa; }
 
+        /* 필터 섹션 */
         .filter-section {
             background: #fff; padding: 20px; border-radius: 15px;
-            display: flex; gap: 15px; align-items: center; margin-bottom: 30px;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+            display: flex; gap: 15px; align-items: center; margin-bottom: 20px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.05); flex-shrink: 0;
         }
         .select-group { display: flex; flex: 1; gap: 10px; }
         select {
@@ -137,35 +88,54 @@
         }
         .add-btn:hover { background-color: #004494; transform: translateY(-2px); }
 
-        .content-list { display: flex; flex-direction: column; gap: 12px; }
-        .content-item {
-            background-color: #fff; padding: 15px 35px; border-radius: 15px;
-            display: flex; justify-content: space-between; align-items: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.03); border: 2px solid transparent; 
-            transition: all 0.3s ease; cursor: default;
+        /* 리스트 컨테이너 영역 (내부 스크롤이 필요할 경우를 대비해 스크롤바 디자인 깔끔하게 처리 혹은 감춤) */
+        #categoryGroupContainer {
+            flex: 1; overflow-y: auto; padding-bottom: 20px; min-height: 0;
         }
-        .content-item:hover { transform: translateX(10px); border-color: #0056b3; }
-        .info h3 { font-size: 22px; font-weight: 800; color: #111; }
-        .category-path { font-size: 13px; color: #aaa; font-weight: 500; }
+        /* 스크롤바 숨기기 (깔끔한 UI 유지) */
+        #categoryGroupContainer::-webkit-scrollbar { display: none; }
 
-        .actions { display: flex; gap: 15px; }
-        .icon-btn { background: none; border: none; font-size: 20px; color: #ccc; cursor: pointer; transition: 0.2s; }
+        /* 카테고리 그룹 카드 스타일 */
+        .category-group {
+            background: #fff; border-radius: 16px; margin-bottom: 20px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.04); overflow: hidden; border: 1px solid #eee;
+        }
+
+        .category-header {
+            padding: 20px 25px; background: #fafbfc; display: flex; justify-content: space-between;
+            align-items: center; cursor: pointer; transition: background 0.2s;
+        }
+        .category-header:hover { background: #f0f4ff; }
+
+        .category-title-area { display: flex; align-items: center; gap: 12px; }
+        .category-title-area h2 { font-size: 20px; font-weight: 800; color: #0b1a33; }
+        .count-badge { background: #0056b3; color: white; font-size: 12px; padding: 2px 10px; border-radius: 20px; font-weight: 700; }
+
+        .toggle-icon { font-size: 16px; color: #666; transition: transform 0.3s; }
+        .category-header.active .toggle-icon { transform: rotate(180deg); }
+
+        .category-body { display: none; padding: 20px; background: #fff; flex-direction: column; gap: 12px; }
+        .category-header.active + .category-body { display: flex; }
+
+        .content-item {
+            background-color: #fcfcfc; padding: 16px 24px; border-radius: 12px;
+            display: flex; justify-content: space-between; align-items: center;
+            border: 1px solid #edf0f5; transition: all 0.2s ease;
+        }
+        .content-item:hover { border-color: #0056b3; background: #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
+
+        .info h3 { font-size: 18px; font-weight: 700; color: #222; margin-bottom: 4px; }
+        .category-path { font-size: 13px; color: #888; font-weight: 500; }
+
+        .actions { display: flex; gap: 12px; }
+        .icon-btn { background: none; border: none; font-size: 18px; color: #bbb; cursor: pointer; transition: 0.2s; }
         .edit-icon:hover { color: #0056b3; }
         .delete-icon:hover { color: #ff4d4f; }
 
-        .empty-msg { text-align: center; padding: 60px; color: #bbb; font-weight: 500; background: #fff; border-radius: 15px; }
+        .empty-msg { text-align: center; padding: 20px; color: #aaa; font-size: 15px; font-weight: 500; }
+        .root-empty { text-align: center; padding: 60px; color: #bbb; background: #fff; border-radius: 16px; font-weight: 500; }
 
-        footer { 
-            padding: 25px 0; text-align: center; color: #bbb; 
-            font-size: 14px; border-top: 1px solid #eee; background: white; 
-        }
-
-        @media (max-width: 900px) {
-            .admin-container { flex-direction: column; }
-            .admin-sidebar { width: 100%; min-height: auto; flex-direction: row; overflow-x: auto; padding: 15px; }
-            .menu-btn { white-space: nowrap; width: auto; }
-            .sidebar-title { display: none; }
-        }
+        footer { flex-shrink: 0; padding: 15px 0; text-align: center; color: #bbb; font-size: 14px; border-top: 1px solid #eee; background: white; }
     </style>
 </head>
 <body>
@@ -175,7 +145,7 @@
     </div>
 
     <div class="admin-container">
-        <!-- 좌측 사이드바 메뉴 -->
+        <!-- 좌측 사이드바 -->
         <aside class="admin-sidebar">
             <div class="sidebar-title">관리자 메뉴</div>
             <button class="menu-btn active" onclick="location.href='manager.html'">
@@ -206,9 +176,10 @@
                 <input type="text" id="lectureSearch" class="search-bar" placeholder="항목명을 검색하세요...">
             </div>
 
+            <!-- 대단원 / 중단원 / 소단원 드롭다운 -->
             <div class="filter-section">
                 <div class="select-group">
-                    <select id="mainCat"><option value="">대단원 선택</option></select>
+                    <select id="mainCat"><option value="">전체 대단원 선택</option></select>
                     <select id="midCat"><option value="">중단원 선택</option></select>
                     <select id="subCat"><option value="">소단원 선택</option></select>
                 </div>
@@ -217,8 +188,9 @@
                 </button>
             </div>
 
-            <div class="content-list" id="lectureList">
-                <div class="empty-msg">데이터를 불러오는 중입니다...</div>
+            <!-- 중단원별 그룹 카드가 펼쳐지는 리스트 컨테이너 -->
+            <div id="categoryGroupContainer">
+                <div class="root-empty">데이터를 불러오는 중입니다...</div>
             </div>
         </main>
     </div>
@@ -232,7 +204,7 @@
 
         const categoryData = {
             "키오스크": {
-                "병원": ["동네병원", "종합병원", "약국 수납"],
+                "병원": ["동네병원", "종합병원"],
                 "공공시설": ["민원/발급", "기차역", "공항", "영화관"],
                 "음식점/카페": ["버거킹", "롯데리아", "맥도날드", "메가커피", "컴포즈", "스타벅스"]
             },
@@ -250,46 +222,48 @@
         const midSelect = document.getElementById('midCat');
         const subSelect = document.getElementById('subCat');
         const searchInput = document.getElementById('lectureSearch');
-        const listContainer = document.getElementById('lectureList');
+        const container = document.getElementById('categoryGroupContainer');
 
+        // 대단원 드롭다운 초기화
         for (let main in categoryData) {
             let opt = document.createElement('option');
             opt.value = main; opt.textContent = main;
             mainSelect.appendChild(opt);
         }
 
+        // 대단원 선택 시 -> 중단원 드롭다운 갱신 및 화면 리렌더링
         mainSelect.addEventListener('change', function() {
             midSelect.innerHTML = '<option value="">중단원 선택</option>';
             subSelect.innerHTML = '<option value="">소단원 선택</option>';
-            if (this.value) {
+            if (this.value && categoryData[this.value]) {
                 for (let mid in categoryData[this.value]) {
                     let opt = document.createElement('option');
                     opt.value = mid; opt.textContent = mid;
                     midSelect.appendChild(opt);
                 }
             }
-            updateList();
+            renderCategories();
         });
 
+        // 중단원 선택 시 -> 소단원 드롭다운 갱신 및 화면 리렌더링
         midSelect.addEventListener('change', function() {
             subSelect.innerHTML = '<option value="">소단원 선택</option>';
-            if (this.value && mainSelect.value) {
+            if (this.value && mainSelect.value && categoryData[mainSelect.value][this.value]) {
                 categoryData[mainSelect.value][this.value].forEach(sub => {
                     let opt = document.createElement('option');
                     opt.value = sub; opt.textContent = sub;
                     subSelect.appendChild(opt);
                 });
             }
-            updateList();
+            renderCategories();
         });
 
-        subSelect.addEventListener('change', updateList);
-        searchInput.addEventListener('input', updateList);
+        subSelect.addEventListener('change', renderCategories);
+        searchInput.addEventListener('input', renderCategories);
 
         function loadLectures() {
             try {
-                const data = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-                return data;
+                return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
             } catch (e) {
                 return [];
             }
@@ -299,7 +273,7 @@
             localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
         }
 
-        function updateList() {
+        function renderCategories() {
             const mainVal = mainSelect.value;
             const midVal = midSelect.value;
             const subVal = subSelect.value;
@@ -308,60 +282,80 @@
             const allLectures = loadLectures();
 
             if (allLectures.length === 0) {
-                listContainer.innerHTML = '<div class="empty-msg">저장된 데이터가 없습니다. 우측 상단의 [신규 등록]을 통해 단원이나 강의를 추가해 주세요.</div>';
+                container.innerHTML = '<div class="root-empty">저장된 데이터가 없습니다. 우측 상단의 [신규 등록]을 통해 단원이나 강의를 추가해 주세요.</div>';
                 return;
             }
 
-            const filtered = allLectures.filter(item => {
-                const itemMain = item.main || item.category1 || item.category || "";
-                const itemMid = item.mid || item.category2 || "";
-                const itemSub = item.sub || item.category3 || "";
-                const itemTitle = item.title || item.name || item.lectureTitle || "";
+            let htmlContent = "";
 
-                if (mainVal && itemMain !== mainVal) return false;
-                if (midVal && itemMid !== midVal) return false;
-                if (subVal && itemSub !== subVal) return false;
-                if (keyword && !itemTitle.toLowerCase().includes(keyword)) return false;
-                return true;
+            const targetMains = mainVal ? [mainVal] : Object.keys(categoryData);
+
+            targetMains.forEach(mainName => {
+                const subCategoryMap = categoryData[mainName] || {};
+                const targetMids = midVal ? [midVal] : Object.keys(subCategoryMap);
+
+                targetMids.forEach(midName => {
+                    const matchedItems = allLectures.filter(item => {
+                        const itemMain = item.main || item.category1 || item.category || "";
+                        const itemMid = item.mid || item.category2 || "";
+                        const itemSub = item.sub || item.category3 || "";
+                        const itemTitle = item.title || item.name || item.lectureTitle || "";
+                        
+                        if (itemMain !== mainName) return false;
+                        if (itemMid !== midName) return false;
+                        if (subVal && itemSub !== subVal) return false;
+                        if (keyword && !itemTitle.toLowerCase().includes(keyword)) return false;
+                        return true;
+                    });
+
+                    if ((mainVal || midVal) && matchedItems.length === 0 && !keyword) return;
+
+                    const itemsHtml = matchedItems.length > 0 ? matchedItems.map(item => {
+                        const mi = item.mid || item.category2 || "";
+                        const s = item.sub || item.category3 || "";
+                        const t = item.title || item.name || item.lectureTitle || "제목 없음";
+                        const id = item.id || 0;
+                        const path = [mi, s].filter(Boolean).join(' > ');
+
+                        return `
+                            <div class="content-item">
+                                <div class="info">
+                                    <h3>${t}</h3>
+                                    <div class="category-path">${path ? path : '하위 분류 없음'}</div>
+                                </div>
+                                <div class="actions">
+                                    <button class="icon-btn edit-icon" onclick="location.href='revise.html?id=${id}'" title="수정"><i class="fa-regular fa-pen-to-square"></i></button>
+                                    <button class="icon-btn delete-icon" onclick="handleDelete(${id})" title="삭제"><i class="fa-regular fa-trash-can"></i></button>
+                                </div>
+                            </div>
+                        `;
+                    }).join('') : `<div class="empty-msg">등록된 항목이 없습니다.</div>`;
+
+                    const isActive = (mainVal || midVal || subVal || keyword) ? "active" : "";
+                    const groupDisplayTitle = `${mainName} > ${midName}`;
+
+                    htmlContent += `
+                        <div class="category-group">
+                            <div class="category-header ${isActive}" onclick="toggleGroup(this)">
+                                <div class="category-title-area">
+                                    <h2>${groupDisplayTitle}</h2>
+                                    <span class="count-badge">${matchedItems.length}개</span>
+                                </div>
+                                <i class="fa-solid fa-chevron-down toggle-icon"></i>
+                            </div>
+                            <div class="category-body">
+                                ${itemsHtml}
+                            </div>
+                        </div>
+                    `;
+                });
             });
 
-            if (filtered.length === 0) {
-                listContainer.innerHTML = '<div class="empty-msg">선택한 조건에 일치하는 항목이 없습니다.</div>';
-                return;
-            }
+            container.innerHTML = htmlContent || '<div class="root-empty">선택한 조건에 일치하는 항목이 없습니다.</div>';
+        }
 
-            listContainer.innerHTML = filtered.map(item => {
-                const m = item.main || item.category1 || item.category || "";
-                const mi = item.mid || item.category2 || "";
-                const s = item.sub || item.category3 || "";
-                const t = item.title || item.name || item.lectureTitle || "제목 없음";
-                const id = item.id || 0;
-                const type = item.creationType || 'lecture';
-
-                let badgeText = "강의 목록";
-                let badgeBg = "#0056b3";
-                if (type === 'main') { badgeText = "대단원"; badgeBg = "#10b981"; }
-                else if (type === 'mid') { badgeText = "중단원"; badgeBg = "#f59e0b"; }
-                else if (type === 'sub') { badgeText = "소단원"; badgeBg = "#8b5cf6"; }
-
-                const path = [m, mi, s].filter(Boolean).join(' > ');
-                
-                return `
-                    <div class="content-item">
-                        <div class="info">
-                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
-                                <span style="background: ${badgeBg}; color: white; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 6px;">${badgeText}</span>
-                                <span class="category-path">${path ? path : '최상위 분류'}</span>
-                            </div>
-                            <h3>${t}</h3>
-                        </div>
-                        <div class="actions">
-                            <button class="icon-btn edit-icon" onclick="location.href='revise.html?id=${id}'"><i class="fa-regular fa-pen-to-square"></i></button>
-                            <button class="icon-btn delete-icon" onclick="handleDelete(${id})"><i class="fa-regular fa-trash-can"></i></button>
-                        </div>
-                    </div>
-                `;
-            }).join('');
+        function toggleGroup(headerElem) {
+            headerElem.classList.toggle('active');
         }
 
         function handleDelete(id) {
@@ -369,14 +363,13 @@
                 const remaining = loadLectures().filter(item => (item.id || 0) !== id);
                 saveLectures(remaining);
                 alert('삭제되었습니다.');
-                updateList();
+                renderCategories();
             }
         }
 
         window.onload = function() {
-            updateList();
+            renderCategories();
         };
     </script>
 </body>
 </html>
-
