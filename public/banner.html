@@ -64,6 +64,8 @@
             display: flex; align-items: center; gap: 8px; transition: 0.3s; flex-shrink: 0;
         }
         .add-btn:hover { background-color: #004494; transform: translateY(-2px); }
+        .reset-btn { background-color: #6c757d; }
+        .reset-btn:hover { background-color: #565e64; transform: translateY(-2px); }
 
         .content-list { display: flex; flex-direction: column; gap: 12px; }
         .content-item {
@@ -169,9 +171,14 @@
 
             <div class="filter-section">
                 <span class="hint">목록 순서가 실제 메인 화면 슬라이더 순서와 동일합니다.</span>
-                <button class="add-btn" onclick="openForm()">
-                    <i class="fa-solid fa-plus"></i> 신규 등록
-                </button>
+                <div style="display:flex; gap:10px;">
+                    <button class="add-btn reset-btn" onclick="resetToDefault()">
+                        <i class="fa-solid fa-rotate-left"></i> 기본 3개로 초기화
+                    </button>
+                    <button class="add-btn" onclick="openForm()">
+                        <i class="fa-solid fa-plus"></i> 신규 등록
+                    </button>
+                </div>
             </div>
 
             <div class="content-list" id="bannerList">
@@ -233,39 +240,48 @@
 
         let editingId = null;
 
-        // 최초 접속 시 index.html과 동일한 기본 배너 3건을 시드로 저장 (이미 데이터가 있으면 유지)
+        // index.html과 동일한 기본 배너 3건 (최초 시드 및 "기본값으로 초기화"에 공통 사용)
+        const DEFAULT_BANNERS = [
+            {
+                id: 0,
+                img: "Image/img3.png",
+                color: "#7db249",
+                subColor: "#afd485",
+                title: "내 손안의 작은 키오스크",
+                desc: "카페 주문부터 병원 접수까지 실제와 똑같은 화면으로 연습하고\n세상 밖으로 당당하게 나아가세요. 반복 연습이 자신감이 됩니다."
+            },
+            {
+                id: 1,
+                img: "Image/img1.png",
+                color: "#1A4B8F",
+                subColor: "#A5C0E4",
+                title: "어려운 기술은 없습니다",
+                desc: "단지 익숙하지 않을 뿐입니다. 두드림이 친절한 길잡이가 되어드릴게요.\n실수해도 괜찮으니 여기서 마음껏 연습해 보세요."
+            },
+            {
+                id: 2,
+                img: "Image/img4.png",
+                color: "#E67E22",
+                subColor: "#f6c777",
+                title: "당당하게 세상과 소통하기",
+                desc: "디지털로 세상과 더 넓게 연결되기를 바랍니다.\n여러분의 당당한 자립을 위해 두드림이 끝까지 함께하겠습니다."
+            }
+        ];
+
+        // 최초 접속 시 기본 배너 3건을 시드로 저장 (이미 데이터가 있으면 유지)
         function seedIfEmpty() {
             if (localStorage.getItem(STORAGE_KEY) === null) {
-                const sample = [
-                    {
-                        id: 0,
-                        img: "Image/img3.png",
-                        color: "#7db249",
-                        subColor: "#afd485",
-                        title: "내 손안의 작은 키오스크",
-                        desc: "카페 주문부터 병원 접수까지 실제와 똑같은 화면으로 연습하고\n세상 밖으로 당당하게 나아가세요. 반복 연습이 자신감이 됩니다."
-                    },
-                    {
-                        id: 1,
-                        img: "Image/img1.png",
-                        color: "#1A4B8F",
-                        subColor: "#A5C0E4",
-                        title: "어려운 기술은 없습니다",
-                        desc: "단지 익숙하지 않을 뿐입니다. 두드림이 친절한 길잡이가 되어드릴게요.\n실수해도 괜찮으니 여기서 마음껏 연습해 보세요."
-                    },
-                    {
-                        id: 2,
-                        img: "Image/img4.png",
-                        color: "#E67E22",
-                        subColor: "#f6c777",
-                        title: "당당하게 세상과 소통하기",
-                        desc: "디지털로 세상과 더 넓게 연결되기를 바랍니다.\n여러분의 당당한 자립을 위해 두드림이 끝까지 함께하겠습니다."
-                    }
-                ];
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(sample));
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT_BANNERS));
             }
         }
         seedIfEmpty();
+
+        function resetToDefault() {
+            if (confirm('현재 배너 목록을 지우고, 처음 기본 배너 3개로 되돌리시겠습니까?')) {
+                saveBanners(JSON.parse(JSON.stringify(DEFAULT_BANNERS)));
+                updateList();
+            }
+        }
 
         function loadBanners() {
             try {
