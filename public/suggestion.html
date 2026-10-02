@@ -276,7 +276,7 @@
             if (keyword) {
                 list = list.filter(item =>
                     item.title.toLowerCase().includes(keyword) ||
-                    item.name.toLowerCase().includes(keyword)
+                    (item.name || '').toLowerCase().includes(keyword)
                 );
             }
 
@@ -296,7 +296,7 @@
                             <span class="status-badge ${item.status}">${item.status === 'done' ? '처리완료' : '대기중'}</span>
                             <h3>${escapeHtml(item.title)}</h3>
                         </div>
-                        <div class="meta">${escapeHtml(item.name)} · ${item.date}</div>
+                        <div class="meta">${item.name ? escapeHtml(item.name) + ' · ' : ''}${item.date}</div>
                         <div class="detail-content">${escapeHtml(item.content)}</div>
                     </div>
                     <div class="actions">
