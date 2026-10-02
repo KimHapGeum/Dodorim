@@ -619,6 +619,32 @@
         /* ==================================================
            ✅ 건의 내용 확인
         ================================================== */
+        // 건의사항 저장 (관리자 건의사항 관리 화면 suggestion.html과 공유)
+        const SUGGESTION_STORAGE_KEY = "doodream_suggestions";
+
+        function saveSuggestionToStorage(content) {
+            let list = [];
+            try {
+                list = JSON.parse(localStorage.getItem(SUGGESTION_STORAGE_KEY)) || [];
+            } catch (e) {
+                list = [];
+            }
+
+            const newId = list.length > 0 ? Math.max(...list.map(i => i.id)) + 1 : Date.now();
+            const title = content.length > 24 ? content.slice(0, 24) + '…' : content;
+
+            list.push({
+                id: newId,
+                name: "",
+                title: title,
+                content: content,
+                date: new Date().toISOString().slice(0, 10),
+                status: "pending"
+            });
+
+            localStorage.setItem(SUGGESTION_STORAGE_KEY, JSON.stringify(list));
+        }
+
         function submitSuggestion() {
             const textarea = document.getElementById('suggestionText');
             const text = textarea.value.trim();
@@ -628,6 +654,8 @@
                 textarea.focus();
                 return;
             }
+
+            saveSuggestionToStorage(text);
 
             alert('건의해주셔서 감사합니다.');
 
