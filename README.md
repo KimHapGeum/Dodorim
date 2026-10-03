@@ -1,2 +1,0 @@
-# Dodorim
-Team Nova
