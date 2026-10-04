@@ -52,8 +52,8 @@
         .inner-content::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 4px; }
 
         .form-area { width: 100%; }
-        .input-group { margin-bottom: 30px; }
-        .input-group label { display: block; font-weight: 700; margin-bottom: 14px; color: #1e293b; font-size: 16px; }
+        .input-group { margin-bottom: 25px; }
+        .input-group label { display: block; font-weight: 700; margin-bottom: 12px; color: #1e293b; font-size: 16px; }
         .text-input { width: 100%; padding: 18px; border-radius: 12px; border: 1px solid #e2e8f0; font-size: 16px; outline: none; background-color: #fff; color: #1e293b; transition: all 0.3s ease; }
         .text-input:focus { border-color: #0056b3; box-shadow: 0 0 0 4px rgba(0, 86, 179, 0.1); }
         
@@ -91,6 +91,23 @@
             box-shadow: 0 4px 12px rgba(0, 86, 179, 0.08);
         }
         .type-btn.active i { color: #0056b3; }
+
+        /* 아이콘/이미지 업로드 박스 스타일 */
+        .unit-img-preview {
+            width: 140px;
+            height: 140px;
+            border-radius: 16px;
+            background: #f8fafc;
+            border: 2px dashed #cbd5e1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            overflow: hidden;
+            transition: 0.3s;
+        }
+        .unit-img-preview:hover { border-color: #0056b3; background-color: #f0f6ff; }
+        .unit-img-preview img { width: 100%; height: 100%; object-fit: cover; }
 
         /* 카드 항목 디자인 */
         .item-card { position: relative; min-width: 230px; max-width: 230px; height: 340px; background: #fff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 22px 18px; display: flex; flex-direction: column; box-shadow: 0 4px 12px rgba(0,0,0,0.02); transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); animation: fadeIn 0.4s ease-out; }
@@ -184,12 +201,7 @@
                             </div>
                         </div>
 
-                        <div class="input-group">
-                            <label>제목 입력</label>
-                            <input type="text" id="lectureTitle" class="text-input" placeholder="이름을 입력하세요">
-                        </div>
-
-                        <!-- 카테고리 선택 영역 (유형에 따라 동적으로 노출됨) -->
+                        <!-- 상위 분류 선택 영역 (유형에 따라 동적으로 노출됨) -->
                         <div class="input-group" id="categoryGroup" style="display: none;">
                             <label>상위 분류 선택</label>
                             <div class="select-group">
@@ -198,6 +210,27 @@
                                 <select class="select-box" id="catS" style="display:none;"><option value="">소단원 선택</option></select>
                             </div>
                         </div>
+
+                        <!-- 아이콘 이미지 입력 영역 (대/중/소단원 생성 시 노출) -->
+                        <div class="input-group" id="unitImgGroup" style="display: none;">
+                            <label>아이콘 이미지</label>
+                            <input type="file" id="fileUnitImg" accept="image/*" style="display: none;" onchange="previewUnitImg(this)">
+                            <div class="unit-img-preview" onclick="document.getElementById('fileUnitImg').click()" id="unitImgPreview">
+                                <i class="fa-solid fa-plus" style="font-size:22px; color:#cbd5e1;"></i>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label>제목 입력</label>
+                            <input type="text" id="lectureTitle" class="text-input" placeholder="이름을 입력하세요">
+                        </div>
+
+                        <!-- 설명 입력 영역 (소단원 생성 시 숨김 처리됨) -->
+                        <div class="input-group" id="unitDescGroup" style="display: none;">
+                            <label>설명 입력</label>
+                            <textarea id="unitDesc" class="text-input" style="height:120px; resize:none; font-family:inherit;" placeholder="설명을 입력하세요 (선택 사항)"></textarea>
+                        </div>
+
                     </div>
 
                     <div class="footer-nav">
@@ -285,6 +318,7 @@
     let mainInfo = null;
     let contents = []; 
     let mainImgBase64 = "";
+    let unitImgBase64 = "";
     let pendingContentFile = null; 
 
     window.onload = () => {
@@ -325,28 +359,39 @@
         document.getElementById('btnType' + type.charAt(0).toUpperCase() + type.slice(1)).classList.add('active');
 
         const catGroup = document.getElementById('categoryGroup');
+        const unitImgGroup = document.getElementById('unitImgGroup');
+        const unitDescGroup = document.getElementById('unitDescGroup');
         const m = document.getElementById('catM');
         const d = document.getElementById('catD');
         const s = document.getElementById('catS');
         const nextBtn = document.getElementById('nextStepBtn');
 
         // 초기화 및 숨김
-        catGroup.style.display = 'block';
+        catGroup.style.display = 'none';
+        unitImgGroup.style.display = 'none';
+        unitDescGroup.style.display = 'none';
         m.style.display = 'none';
         d.style.display = 'none';
         s.style.display = 'none';
 
         if (type === 'main') {
-            catGroup.style.display = 'none';
+            unitImgGroup.style.display = 'block';
+            unitDescGroup.style.display = 'block';
             nextBtn.innerHTML = '대단원 등록 완료';
         } else if (type === 'mid') {
+            catGroup.style.display = 'block';
             m.style.display = 'block';
+            unitImgGroup.style.display = 'block';
+            unitDescGroup.style.display = 'block';
             nextBtn.innerHTML = '중단원 등록 완료';
         } else if (type === 'sub') {
+            catGroup.style.display = 'block';
             m.style.display = 'block';
             d.style.display = 'block';
+            unitImgGroup.style.display = 'block'; // 소단원은 아이콘 이미지와 제목만 (설명은 숨김)
             nextBtn.innerHTML = '소단원 등록 완료';
         } else if (type === 'lecture') {
+            catGroup.style.display = 'block';
             m.style.display = 'block';
             d.style.display = 'block';
             s.style.display = 'block';
@@ -404,6 +449,8 @@
             mid: (currentCreationType === 'sub' || currentCreationType === 'lecture') ? document.getElementById('catD').value : "",
             sub: currentCreationType === 'lecture' ? document.getElementById('catS').value : "",
             title: document.getElementById('lectureTitle').value.trim(),
+            unitImg: unitImgBase64,
+            unitDesc: currentCreationType !== 'sub' ? document.getElementById('unitDesc').value.trim() : "",
             videoCount: 0,
             contentCount: 0,
             mainImg: "",
@@ -429,6 +476,23 @@
         const typeNames = { 'main': '대단원', 'mid': '중단원', 'sub': '소단원' };
         alert(`새로운 ${typeNames[currentCreationType]} 등록이 완료되었습니다!`);
         location.href = "manager.html";
+    }
+
+    // 단원 아이콘 이미지 미리보기 설정
+    function previewUnitImg(input) {
+        const file = input.files && input.files[0];
+        if (!file) return;
+        if (!file.type.startsWith('image/')) {
+            alert("이미지 파일만 업로드할 수 있습니다.");
+            input.value = "";
+            return;
+        }
+        compressImage(file).then((dataUrl) => {
+            document.getElementById('unitImgPreview').innerHTML = `<img src="${dataUrl}">`;
+            unitImgBase64 = dataUrl;
+        }).catch(() => {
+            alert("이미지를 처리하는 중 오류가 발생했습니다.");
+        });
     }
 
     function openMainModal() { 
