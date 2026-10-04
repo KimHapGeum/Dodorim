@@ -700,6 +700,34 @@
            기존 병원 페이지와 동일
            ================================================== */
 
+        // suggestion.html에서 읽는 공용 저장소에 휴대폰 화면 건의를 추가합니다.
+        const SUGGESTION_STORAGE_KEY = 'doodream_suggestions';
+
+        function saveSuggestionToStorage(content) {
+            let list = [];
+            try {
+                list = JSON.parse(localStorage.getItem(SUGGESTION_STORAGE_KEY)) || [];
+            } catch (error) {
+                list = [];
+            }
+
+            const newId = list.length > 0
+                ? Math.max(...list.map(item => Number(item.id) || 0)) + 1
+                : Date.now();
+            const title = content.length > 24 ? content.slice(0, 24) + '…' : content;
+
+            list.push({
+                id: newId,
+                name: '',
+                title,
+                content,
+                date: new Date().toISOString().slice(0, 10),
+                status: 'pending'
+            });
+
+            localStorage.setItem(SUGGESTION_STORAGE_KEY, JSON.stringify(list));
+        }
+
         function submitSuggestion() {
 
             const textarea =
@@ -720,6 +748,7 @@
                 return;
             }
 
+            saveSuggestionToStorage(text);
 
             alert(
                 '건의해주셔서 감사합니다.'
