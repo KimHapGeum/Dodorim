@@ -50,6 +50,38 @@
 }
         #btn-area { display: flex; align-items: center; gap: 12px; }
 
+        .font-control-group {
+            display: flex;
+            align-items: center;
+            padding: 3px;
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 50px;
+            margin-bottom: 9px;
+            flex-shrink: 0;
+        }
+        .font-control-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 12px;
+            border: 0;
+            border-radius: 50px;
+            background: transparent;
+            color: #475569;
+            font: 800 15px 'Noto Sans KR', sans-serif;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .font-control-button:hover { background: #0056b3; color: #fff; }
+
+        @media (max-width: 800px) {
+            .header-inner { padding: 0 16px; }
+            .font-control-button { padding: 7px 10px; }
+            .font-control-label { display: none; }
+        }
+
         /* 음성 안내 컨트롤 스타일 */
         .voice-control {
             display: flex; 
@@ -127,8 +159,26 @@
                 btnArea.innerHTML = `<button class="logout-btn" onclick="handleLogout()"><i class="fa-solid fa-arrow-right-from-bracket"></i> 로그아웃</button>`;
             } 
             
-            // 2. 오직 screen.html에서만 음성 안내 아이콘 세트 노출 (글자 조절 버튼은 삭제)
-            else if (parentTarget === 'screen.html' || type === 'edu') {
+            // 2. screen.html은 글자 조절 버튼과 음성 안내 버튼을 헤더 안에 배치
+            else if (parentTarget === 'screen.html' || params.get('fontControls') === 'true') {
+                btnArea.innerHTML = `
+                    <div class="font-control-group" aria-label="설명 글자 크기 조절">
+                        <button class="font-control-button" onclick="requestFontSize(2)" aria-label="글자 크게">
+                            <i class="fa-solid fa-magnifying-glass-plus"></i><span class="font-control-label">글자 크게</span>
+                        </button>
+                        <button class="font-control-button" onclick="requestFontSize(-2)" aria-label="글자 작게">
+                            <i class="fa-solid fa-magnifying-glass-minus"></i><span class="font-control-label">글자 작게</span>
+                        </button>
+                    </div>
+                    <div class="voice-control" id="voiceToggle" onclick="toggleVoiceLocal()">
+                        <div class="voice-label" id="voiceStatus">음성 안내 켜짐</div>
+                        <div class="voice-btn voice-on" id="voiceIconBox">
+                            <i class="fa-solid fa-volume-high" id="voiceIcon"></i>
+                        </div>
+                    </div>`;
+            }
+            // 3. 그 밖의 교육 화면은 음성 안내만 표시
+            else if (type === 'edu') {
                 btnArea.innerHTML = `
                     <div class="voice-control" id="voiceToggle" onclick="toggleVoiceLocal()">
                         <div class="voice-label" id="voiceStatus">음성 안내 켜짐</div>
@@ -138,7 +188,7 @@
                     </div>`;
             } 
             
-            // 3. 교육하기 다음 대기화면 및 특정 메뉴들 (관리자 로그인 숨김)
+            // 4. 교육하기 다음 대기화면 및 특정 메뉴들 (관리자 로그인 숨김)
             else if (
                 type === 'login' || 
                 parentTarget === 'login.html' ||
@@ -150,11 +200,15 @@
                 btnArea.innerHTML = ''; 
             } 
             
-            // 4. 메인 화면(index.html) 등 기본 상태일 때만 로그인 버튼 노출
+            // 5. 메인 화면(index.html) 등 기본 상태일 때만 로그인 버튼 노출
             else {
                 btnArea.innerHTML = `<button class="login-btn" onclick="window.parent.location.href='login.html'">관리자 로그인</button>`;
             }
         })();
+
+        function requestFontSize(amount) {
+            window.parent.postMessage({ type: 'screen-font-size', amount }, '*');
+        }
 
         let isVoiceOn = true;
         function toggleVoiceLocal() {
