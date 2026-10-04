@@ -231,7 +231,7 @@
         const list = JSON.parse(localStorage.getItem(NOTICE_KEY)) || [];
         if (list.length === 0) return DEFAULT_NOTICES.slice(0, 3);
         const sorted = [...list].sort((a, b) => new Date(b.date.replace(/\./g, '-')) - new Date(a.date.replace(/\./g, '-')));
-        return sorted.slice(0, 3); // 메인 화면에는 가장 최근 공지 3개만 노출
+        return sorted; // 공지사항 창에서 전체 목록을 스크롤해 볼 수 있도록 모두 표시
       } catch (e) {
         return DEFAULT_NOTICES;
       }
