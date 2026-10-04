@@ -204,9 +204,9 @@
                 <textarea id="inputDesc" placeholder="배너 설명 문구 (줄바꿈 가능)"></textarea>
             </div>
             <div class="form-group">
-                <label>이미지 경로</label>
-                <input type="text" id="inputImg" placeholder="예: Image/img1.png">
-                <div class="form-hint">메인 화면과 같은 폴더 기준 상대 경로를 입력해 주세요.</div>
+                <label>배너 이미지 파일</label>
+                <input type="file" id="inputImg" accept="image/*">
+                <div class="form-hint" id="imageHint">이미지 파일을 선택해 주세요. 수정할 때 파일을 선택하지 않으면 기존 이미지가 유지됩니다.</div>
             </div>
             <div class="color-row">
                 <div class="form-group">
@@ -235,6 +235,7 @@
         const inputTitle = document.getElementById('inputTitle');
         const inputDesc = document.getElementById('inputDesc');
         const inputImg = document.getElementById('inputImg');
+        const imageHint = document.getElementById('imageHint');
         const inputColor = document.getElementById('inputColor');
         const inputSubColor = document.getElementById('inputSubColor');
 
@@ -315,7 +316,7 @@
                     <div class="info">
                         <span class="order-badge">${index + 1}번째 슬라이드</span>
                         <h3>${escapeHtml(item.title)}</h3>
-                        <span class="category-path">${escapeHtml(item.img)}</span>
+                        <span class="category-path">${escapeHtml(item.imgName || item.img)}</span>
                     </div>
                     <div class="actions">
                         <button class="icon-btn order-icon" ${index === 0 ? 'disabled' : ''} onclick="moveItem(${item.id}, -1)"><i class="fa-solid fa-arrow-up"></i></button>
@@ -346,7 +347,8 @@
                 formTitle.textContent = '배너 수정';
                 inputTitle.value = target.title;
                 inputDesc.value = target.desc;
-                inputImg.value = target.img;
+                inputImg.value = '';
+                imageHint.textContent = `새 이미지를 선택하지 않으면 현재 이미지(${target.img.startsWith('data:') ? '등록된 이미지' : target.img})가 유지됩니다.`;
                 inputColor.value = target.color;
                 inputSubColor.value = target.subColor;
             } else {
@@ -355,6 +357,7 @@
                 inputTitle.value = '';
                 inputDesc.value = '';
                 inputImg.value = '';
+                imageHint.textContent = '이미지 파일을 선택해 주세요.';
                 inputColor.value = '#0056b3';
                 inputSubColor.value = '#a5c0e4';
             }
@@ -369,35 +372,59 @@
             if (e.target === formOverlay) closeForm();
         }
 
-        function saveBanner() {
+        function readImageFile(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = () => reject(new Error('이미지 파일을 읽지 못했습니다.'));
+                reader.readAsDataURL(file);
+            });
+        }
+
+        async function saveBanner() {
             const title = inputTitle.value.trim();
             const desc = inputDesc.value.trim();
-            const img = inputImg.value.trim();
+            const selectedFile = inputImg.files[0];
             const color = inputColor.value;
             const subColor = inputSubColor.value;
 
-            if (!title || !desc || !img) {
-                alert('제목, 설명, 이미지 경로를 모두 입력해 주세요.');
+            if (!title || !desc || (editingId === null && !selectedFile)) {
+                alert('제목, 설명, 이미지 파일을 모두 입력해 주세요.');
                 return;
             }
 
             const list = loadBanners();
+            let img;
+            try {
+                img = selectedFile ? await readImageFile(selectedFile) : null;
+            } catch (error) {
+                alert(error.message);
+                return;
+            }
 
             if (editingId !== null) {
                 const target = list.find(item => item.id === editingId);
+                if (!target) return;
                 target.title = title;
                 target.desc = desc;
-                target.img = img;
+                if (img) {
+                    target.img = img;
+                    target.imgName = selectedFile.name;
+                }
                 target.color = color;
                 target.subColor = subColor;
             } else {
                 const newId = list.length > 0 ? Math.max(...list.map(i => i.id)) + 1 : 0;
-                list.push({ id: newId, img, color, subColor, title, desc });
+                list.push({ id: newId, img, imgName: selectedFile.name, color, subColor, title, desc });
             }
 
-            saveBanners(list);
-            closeForm();
-            updateList();
+            try {
+                saveBanners(list);
+                closeForm();
+                updateList();
+            } catch (error) {
+                alert('이미지를 저장할 공간이 부족합니다. 용량이 작은 이미지 파일을 선택해 주세요.');
+            }
         }
 
         function handleDelete(id) {
