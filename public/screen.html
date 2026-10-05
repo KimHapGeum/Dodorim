@@ -291,7 +291,9 @@
 
         function changeLecture(direction) {
             if (direction > 0 && currentIndex === lectures.length - 1) {
-                window.location.href = 'screen_list.html';
+                if (confirm('강의 학습 목록으로 넘어가시겠습니까?')) {
+                    window.location.href = 'screen_list.html';
+                }
                 return;
             }
             currentIndex += direction;
