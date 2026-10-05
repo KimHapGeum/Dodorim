@@ -47,7 +47,9 @@
     line-height: 1;
     display: inline-block;
     padding-top: 2px;
+    visibility: hidden;
 }
+        .logo-text.font-ready { visibility: visible; }
         #btn-area { display: flex; align-items: center; gap: 12px; }
 
         .font-control-group {
@@ -141,6 +143,13 @@
     </div>
 
     <script>
+        const logoText = document.querySelector('.logo-text');
+        document.fonts.load('42px "Black Han Sans"').then(() => {
+            logoText.classList.add('font-ready');
+        }).catch(() => {
+            logoText.classList.add('font-ready');
+        });
+
         (function() {
             const btnArea = document.getElementById('btn-area');
             const params = new URLSearchParams(window.location.search);
