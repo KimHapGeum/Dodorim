@@ -11,15 +11,15 @@
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
       
-        html, body {
+        body {
             font-family: 'Noto Sans KR', sans-serif;
             background-color: #f7f9fc;
             color: #1a1a1a;
             line-height: 1.6;
             display: flex;
             flex-direction: column;
-            height: 100vh;
-            overflow: hidden; 
+            min-height: 100vh;
+            overflow-x: hidden;
         }
 
         #main-header-wrapper {
@@ -29,12 +29,11 @@
         }
         iframe { border: none; display: block; width: 100%; height: 60px; }
 
-        .admin-container { display: flex; flex: 1; width: 100%; overflow: hidden; }
-
+        .admin-container { display: flex; flex: 1; width: 100%; }
         .admin-sidebar {
             width: 240px; background: #ffffff; border-right: 1px solid #ebf0f5;
             padding: 30px 18px; display: flex; flex-direction: column; gap: 10px;
-            flex-shrink: 0; height: 100%;
+            flex-shrink: 0; min-height: calc(100vh - 60px);
         }
 
         .sidebar-title { font-size: 13px; font-weight: 700; color: #888; margin-bottom: 8px; padding-left: 10px; }
@@ -50,7 +49,7 @@
 
         .main-content { 
             flex: 1; max-width: 1200px; padding: 40px; min-width: 0; margin: 0 auto; width: 100%; 
-            height: 100%; display: flex; flex-direction: column; overflow: hidden;
+            display: flex; flex-direction: column;
         }
 
         .title-section { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 20px; flex-shrink: 0; }
