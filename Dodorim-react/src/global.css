@@ -1,0 +1,39 @@
+/* 원본 페이지들은 body 바로 아래에 헤더/본문/푸터를 두고 body를 flex로 배치하므로 #root는 레이아웃에서 투명하게 둡니다. */
+#root { display: contents !important; }
+
+/* 키보드로 이동할 때 지금 어디에 있는지 잘 보이게 */
+button:focus-visible, a:focus-visible, [role="button"]:focus-visible {
+  outline: 3px solid #0056b3 !important;
+  outline-offset: 3px;
+}
+
+/* 공통 알림/확인 팝업 (dialog.jsx).
+   화면별 CSS의 `body.page-xx * { margin: 0; padding: 0 }` 초기화가 팝업 여백까지 지우지 않도록 html body로 우선순위를 높임 */
+html body .dd-dialog-overlay {
+  position: fixed; inset: 0; z-index: 10000;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(15, 23, 42, 0.55); padding: 16px; margin: 0; box-sizing: border-box;
+}
+html body .dd-dialog {
+  box-sizing: border-box; width: min(460px, 100%); margin: 0;
+  background: #fff; border-radius: 22px; padding: 44px 40px 36px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+  font-family: 'Pretendard', 'Noto Sans KR', sans-serif; text-align: center;
+}
+html body .dd-dialog-message {
+  margin: 0 0 32px; padding: 0; font-size: 22px; line-height: 1.6; color: #1e293b;
+  white-space: pre-line; word-break: keep-all; overflow-wrap: anywhere;
+}
+/* 버튼은 가운데에 적당한 너비로 (팝업 끝까지 늘어나지 않게) */
+html body .dd-dialog-buttons { display: flex; justify-content: center; gap: 14px; margin: 0; padding: 0; }
+html body .dd-dialog-btn {
+  flex: 0 1 150px; min-height: 58px; margin: 0; padding: 0 20px; box-sizing: border-box;
+  border: none; border-radius: 14px;
+  font-size: 21px; font-weight: 700; font-family: inherit; cursor: pointer;
+}
+html body .dd-dialog-btn.ok { background: #0056b3; color: #fff; }
+html body .dd-dialog-btn.cancel { background: #e2e8f0; color: #334155; }
+@media (max-width: 480px) {
+  html body .dd-dialog { padding: 36px 24px 28px; }
+  html body .dd-dialog-message { margin-bottom: 28px; font-size: 20px; }
+}

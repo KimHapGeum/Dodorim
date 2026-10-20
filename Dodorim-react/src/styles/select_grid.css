@@ -1,0 +1,156 @@
+/* 단원 선택 화면 카드: 한 쪽에 최대 3개, 넘치면 좌우 화살표로 넘김 (PagedGrid) */
+.select-pager { width: 100%; display: flex; flex-direction: column; align-items: center; }
+.select-row { width: 100%; max-width: 1320px; display: flex; align-items: center; justify-content: center; gap: 20px; }
+/* 화살표 자리를 남기도록 카드 묶음이 줄어듦 */
+.select-row > .select-grid { flex: 0 1 auto; min-width: 0; }
+
+/* 카드 크기 기준 = 대단원(주제 선택) 카드 340 x 377px, 카드 사이 35px. 중단원·소단원 화면도 모두 이 크기로 맞춤 */
+:root { --select-card-w: 340px; --select-card-h: 377px; --select-gap: 35px; }
+
+/* 카드 1장이 2칸을 차지하는 격자 (--cols = 한 쪽 카드 수). --offset으로 모자란 쪽을 가운데 정렬.
+   화면별 CSS(음식점·공공시설 등)의 칸·너비 설정보다 우선하도록 !important */
+.select-grid {
+  display: grid !important;
+  grid-template-columns: repeat(calc(var(--cols, 3) * 2), minmax(0, calc((var(--select-card-w) - var(--select-gap)) / 2))) !important;
+  gap: var(--select-gap) !important;
+  width: auto !important;
+  max-width: none !important;
+  justify-content: center;
+}
+.select-grid > * { box-sizing: border-box; grid-column: span 2; }
+.select-grid > :first-child { grid-column: var(--offset, 1) / span 2; }
+
+/* 카드 자체 크기 고정. 안의 그림 칸은 남는 높이에 맞춰 줄어듦 */
+.select-grid > :is(.card, .location-card) {
+  width: 100% !important;
+  max-width: none !important;
+  height: var(--select-card-h) !important;
+  margin: 0 !important;
+  overflow: hidden;
+  display: flex !important;
+  flex-direction: column;
+  align-items: center;
+}
+.select-grid > .card { justify-content: center; }
+.select-grid > .card > :is(.img-box, .icon-box) { flex-shrink: 1 !important; min-height: 0 !important; max-width: 100%; }
+.select-grid > .card > .img-box img { max-height: 100%; object-fit: contain; }
+/* 단원 이름은 한 줄. 길면 …으로 줄여서, 이름이 두 줄이 되며 그림이 작아지는 일이 없게 (전체 이름은 마우스를 올리면 보임) */
+.select-grid > :is(.card, .location-card) h2 { flex-shrink: 0; max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* 설명: 대단원 카드와 같은 글자(22px)로, 길이와 상관없이 항상 2줄 높이 자리를 차지 → 그림 크기가 설명 때문에 바뀌지 않음.
+   2줄을 넘는 글은 잘리므로 관리자 입력에서 글자 수를 제한함 (Addition.jsx UNIT_DESC_MAX) */
+.select-grid > :is(.card, .location-card) p {
+  font-size: 22px !important;
+  line-height: 1.6 !important;
+  height: 3.2em;
+  margin: 12px 0 0 !important;
+  flex-shrink: 0;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  word-break: keep-all;
+}
+/* 셀프 계산대·전자기기·새 대단원 화면 카드는 좌우 여백이 커서 대단원 카드(25px) 수준으로 */
+body:is(.page-self_check, .page-device_edu) .select-grid > .card { padding: 40px 22px !important; }
+/* 병원·공공시설(+ 새 중단원) 화면 카드도 좌우 여백을 같게 → 설명 한 줄 글자 수를 다른 화면과 맞춤 */
+body:is(.page-hospital, .page-public_edu) .select-grid > .card { padding-left: 22px !important; padding-right: 22px !important; }
+.select-grid > .location-card > .card-img { width: 100%; flex-shrink: 1; min-height: 0; }
+.select-grid > .location-card > .card-body { width: 100%; box-sizing: border-box; flex: 1 0 auto; display: flex; flex-direction: column; justify-content: center; padding-top: 20px !important; padding-bottom: 20px !important; }
+
+/* 관리자가 올린 단원 이미지를 기존 단원 아이콘과 같은 크기로.
+   대단원·중단원: 기존 아이콘 글자 크기(1em = 화면마다 90px / 70px) 정사각형 안에 맞춤
+   소단원: 기존 사진처럼 그림 칸(화면별 최대 크기 규칙 그대로)을 채우게 → 작은 이미지도 같은 크기로 보임 */
+.unit-icon { display: block; width: 1em; height: 1em; margin: 0 auto; object-fit: contain; }
+.select-grid .img-box img.unit-photo { width: 100%; height: 100%; object-fit: contain; }
+
+.select-empty {
+  grid-column: 1 / -1 !important;
+  padding: 40px 20px;
+  font-size: 20px;
+  color: #64748b;
+  text-align: center;
+}
+
+/* 강의 화면(screen.css .nav-btn)과 같은 모양의 둥근 화살표 */
+.select-arrow {
+  flex-shrink: 0;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  background: rgba(255, 255, 255, 0.8);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+  font-size: 28px;
+  color: #64748b;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.25s ease;
+}
+.select-arrow:hover {
+  color: #0056b3;
+  background: #fff;
+  box-shadow: 0 8px 20px rgba(0, 86, 179, 0.15);
+  transform: scale(1.1);
+}
+
+.select-page {
+  margin-top: 16px;
+  font-weight: 700;
+  font-size: 18px;
+  letter-spacing: 2px;
+  color: #94a3b8;
+}
+
+@media (max-width: 768px) {
+  .select-row { gap: 8px; }
+  .select-arrow { width: 48px; height: 48px; font-size: 22px; }
+}
+
+/* 태블릿 세로(601~900px): 카드 3장이 화면 끝에 붙고 이름·설명이 잘리므로 여백·간격을 줄이고 글자를 조금 작게 */
+@media (min-width: 601px) and (max-width: 900px) {
+  :root { --select-gap: 14px; }
+  .select-row { padding: 0 12px; box-sizing: border-box; }
+  .select-grid > :is(.card, .location-card) { padding-left: 12px !important; padding-right: 12px !important; }
+  .select-grid > .location-card > .card-body { padding-left: 12px !important; padding-right: 12px !important; }
+  .select-grid > :is(.card, .location-card) h2 { font-size: 26px !important; }
+  .select-grid > :is(.card, .location-card) p { font-size: 17px !important; }
+}
+
+@media (max-width: 600px) {
+  /* 한 줄에 한 장이라 높이를 맞출 필요가 없음 → 내용 높이대로 (고정 높이면 그림이 글자와 겹침) */
+  :root { --select-card-h: auto; --select-gap: 16px; }
+  .select-row { flex-wrap: wrap; gap: 16px 40px; padding: 0 16px; box-sizing: border-box; }
+  .select-row > .select-grid { order: -1; flex-basis: 100%; grid-template-columns: minmax(0, var(--select-card-w)) !important; }
+  .select-grid > *, .select-grid > :first-child { grid-column: auto !important; }
+  /* 카드가 세로로 쌓이므로 화면 높이 고정(100vh, overflow hidden)을 풀어 스크롤되게. html을 붙여 화면별 CSS보다 우선 */
+  html body:has(.select-grid) { height: auto !important; min-height: 100vh; overflow: auto !important; }
+  /* 아래 버튼(이전 화면 / 건의하기 / 메인 화면): 화면별 22px·좌우 35px 여백이면 두 줄로 깨지고 잘림 */
+  html body:has(.select-grid) .bottom-buttons { gap: 8px; padding: 0 16px; }
+  html body:has(.select-grid) :is(.btn-back-bottom, .btn-suggestion, .home-button) { font-size: 16px; padding: 12px 14px; white-space: nowrap; }
+
+  /* 카드를 가로형(그림 왼쪽, 이름·설명 오른쪽)으로 낮게 → 한 쪽 3장이 스크롤 없이 한 화면에 들어감.
+     그림·여백은 화면 높이에 맞춰 늘고 줄어듦 (360x740에서 넘치지 않는 크기 기준) */
+  html body:has(.select-grid) { --m-img: clamp(68px, 16vh - 44px, 120px); --m-pad: clamp(10px, 4vh - 18px, 26px); }
+  html body:has(.select-grid) .main-content { padding-top: 16px !important; padding-bottom: 16px !important; justify-content: flex-start !important; }
+  html body:has(.select-grid) .title-group { margin-bottom: 16px !important; }
+  html body:has(.select-grid) .title-group h1 { font-size: 26px !important; word-break: keep-all; margin-bottom: 4px !important; }
+  html body:has(.select-grid) .title-group p { font-size: 16px !important; word-break: keep-all; }
+  html body:has(.select-grid) .step-indicator { margin-bottom: 8px !important; font-size: 15px !important; padding: 4px 14px !important; }
+  html body:has(.select-grid) .select-pager { margin: 0 !important; }
+  html body:has(.select-grid) .select-page { margin-top: 0; font-size: 15px; }
+  html body:has(.select-grid) .select-arrow { width: 40px; height: 40px; font-size: 18px; }
+  html body:has(.select-grid) :is(.bottom-buttons, .home-button, .btn-back-bottom) { margin-top: 12px !important; }
+  html body:has(.select-grid) .select-grid > :is(.card, .location-card) { flex-direction: row !important; align-items: center; text-align: left; padding: var(--m-pad) 16px !important; gap: 14px; border-radius: 18px !important; }
+  html body:has(.select-grid) .select-grid > .card { display: grid !important; grid-template-columns: var(--m-img) minmax(0, 1fr); grid-template-rows: auto auto; column-gap: 14px; row-gap: 0; align-content: center; }
+  html body:has(.select-grid) .select-grid > .card > :is(.img-box, .icon-box) { grid-row: 1 / span 2; width: var(--m-img) !important; height: var(--m-img) !important; margin: 0 !important; padding: 0 !important; font-size: 50px !important; display: flex; align-items: center; justify-content: center; border-radius: 14px; }
+  html body:has(.select-grid) .select-grid > .card > :is(.img-box, .icon-box) i { font-size: 50px !important; }
+  html body:has(.select-grid) .select-grid > .location-card { padding: 0 !important; overflow: hidden; min-height: calc(var(--m-img) + 2 * var(--m-pad)); }
+  html body:has(.select-grid) .select-grid > .location-card > .card-img { flex: 0 0 104px !important; width: 104px !important; height: auto !important; align-self: stretch; font-size: 40px !important; }
+  html body:has(.select-grid) .select-grid > .location-card > .card-img i { font-size: 40px !important; }
+  html body:has(.select-grid) .select-grid > .location-card > .card-body { flex: 1 1 auto; padding: var(--m-pad) 16px var(--m-pad) 0 !important; text-align: left; }
+  html body:has(.select-grid) .select-grid > :is(.card, .location-card) h2 { font-size: 24px !important; margin: 0 !important; align-self: end; text-align: left; }
+  html body:has(.select-grid) .select-grid > :is(.card, .location-card) p { font-size: 16px !important; line-height: 1.45 !important; height: auto; margin: 4px 0 0 !important; align-self: start; text-align: left; white-space: normal !important; }
+}

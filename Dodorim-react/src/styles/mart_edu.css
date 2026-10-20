@@ -1,0 +1,425 @@
+@keyframes mart_edu-fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+@keyframes mart_edu-modalOpen {
+            from {
+                opacity: 0;
+                transform: translateY(20px) scale(0.96);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+body.page-mart_edu {
+&, * {
+            box-sizing: border-box;
+        }
+
+& { 
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100vh; 
+            overflow: hidden !important; 
+            font-family: 'Pretendard', sans-serif; 
+            background-color: #f9fbff; 
+            color: #1a1a1a;
+            display: flex;
+            flex-direction: column; 
+        }
+
+#main-header-wrapper {
+            width: 100%;
+            height: 60px;
+            background-color: #ffffff;
+            flex-shrink: 0;
+            z-index: 9999;
+            border-bottom: 1px solid #ebf0f5;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+        }
+
+iframe {
+            border: none;
+            display: block;
+            width: 100%;
+            height: 60px;
+        }
+
+.main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center; 
+            justify-content: flex-start; 
+            padding-top: 40px; 
+            overflow: hidden !important; 
+        }
+
+.step-indicator {
+            background: #e1e7f0;
+            padding: 8px 22px;
+            border-radius: 30px;
+            font-weight: 700;
+            color: #556b8d;
+            margin-bottom: 15px; 
+            font-size: 20px; 
+            animation: mart_edu-fadeInUp 0.6s ease-out forwards;
+        }
+
+.title-group {
+            text-align: center;
+            margin-bottom: 35px;
+            animation: mart_edu-fadeInUp 0.6s ease-out forwards;
+        }
+
+.title-group h1 { 
+            font-size: 48px; 
+            font-weight: 800;
+            margin: 0;
+            color: #0b1a33; 
+        }
+
+.title-group p { 
+            font-size: 26px; 
+            color: #222;
+            margin-top: 12px;
+            font-weight: 700; 
+        }
+
+.lecture-grid {
+            display: flex;
+            justify-content: center;
+            gap: 35px;
+            width: 95%;
+            max-width: 1100px; 
+        }
+
+.card {
+            background: #ffffff; 
+            padding: 0 0 45px 0; 
+            border-radius: 36px;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.05);
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border: 1px solid rgba(226, 232, 240, 0.7); 
+            opacity: 0;
+            animation: mart_edu-fadeInUp 0.6s ease-out forwards;
+            transition: all 0.25s ease-in-out;
+            cursor: pointer;
+            flex: 1;
+            overflow: hidden;
+        }
+
+.card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 86, 179, 0.18);
+            border-color: #0056b3;
+            background-color: #f4f9ff;
+        }
+
+.img-box { 
+            width: 100%; 
+            height: 160px; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            background-color: #ffffff;
+            border-bottom: 1px solid rgba(226, 232, 240, 0.7); 
+            transition: 0.25s ease-in-out;
+        }
+
+.img-box img {
+            max-height: 65%;
+            max-width: 65%;
+            object-fit: contain;
+            transition: 0.25s ease-in-out;
+        }
+
+.card:hover .img-box img {
+            transform: scale(1.05);
+        }
+
+.card:hover .img-box {
+            border-bottom-color: #0056b3;
+        }
+
+.card h2 { 
+            font-size: 40px; 
+            margin: 35px 0 0 0;
+            color: #111;
+            font-weight: 900; 
+        }
+
+.card:hover h2 {
+            color: #004494;
+        }
+
+.card p {
+            font-size: 22px;
+            color: #444;
+            line-height: 1.6;
+            margin: 15px 0 0 0;
+            font-weight: 600;
+        }
+
+.bottom-buttons {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-top: 45px;
+        }
+
+.btn-back-bottom {
+            margin-top: 0;
+            background: #e2e8f0;
+            border: none;
+            color: #475569;
+            padding: 14px 38px;
+            border-radius: 50px;
+            font-size: 22px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            text-decoration: none;
+            opacity: 0;
+            animation: mart_edu-fadeInUp 0.6s ease-out forwards;
+            animation-delay: 0.5s; 
+        }
+
+.btn-back-bottom:hover {
+            background: #cbd5e1;
+            color: #1e293b;
+        }
+
+.btn-suggestion {
+            background: #0056b3;
+            border: none;
+            color: white;
+            padding: 14px 38px;
+            border-radius: 50px;
+            font-size: 22px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+            opacity: 0;
+            animation: mart_edu-fadeInUp 0.6s ease-out forwards;
+            animation-delay: 0.6s;
+        }
+
+.btn-suggestion:hover {
+            background: #004494;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 18px rgba(0, 86, 179, 0.2);
+        }
+
+.suggestion-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.45);
+            z-index: 99999;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+.suggestion-modal.show {
+            display: flex;
+        }
+
+.suggestion-box {
+            width: 100%;
+            max-width: 600px;
+            background: #ffffff;
+            border-radius: 24px;
+            padding: 35px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+            animation: mart_edu-modalOpen 0.25s ease-out;
+        }
+
+.suggestion-title {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+.suggestion-title h2 {
+            margin: 0;
+            font-size: 30px;
+            font-weight: 800;
+            color: #0b1a33;
+        }
+
+.suggestion-title i {
+            font-size: 28px;
+            color: #0056b3;
+        }
+
+.suggestion-description {
+            margin: 0 0 15px 0;
+            font-size: 18px;
+            color: #475569;
+            font-weight: 600;
+            line-height: 1.5;
+        }
+
+.suggestion-textarea {
+            width: 100%;
+            height: 200px;
+            resize: none;
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 18px;
+            font-family: 'Pretendard', sans-serif;
+            font-size: 18px;
+            line-height: 1.6;
+            color: #222;
+            outline: none;
+            background-color: #f8fafc;
+            transition: 0.2s;
+        }
+
+.suggestion-textarea:focus {
+            border-color: #0056b3;
+            background-color: #ffffff;
+            box-shadow: 0 0 0 3px rgba(0, 86, 179, 0.1);
+        }
+
+.suggestion-textarea::placeholder {
+            color: #94a3b8;
+        }
+
+.suggestion-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+.modal-btn {
+            border: none;
+            padding: 13px 28px;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+.btn-cancel {
+            background: #e2e8f0;
+            color: #475569;
+        }
+
+.btn-cancel:hover {
+            background: #cbd5e1;
+        }
+
+.btn-submit {
+            background: #0056b3;
+            color: #ffffff;
+        }
+
+.btn-submit:hover {
+            background: #004494;
+        }
+
+@media (max-width: 700px) {
+  .main-content {
+                padding-top: 25px;
+            }
+  .step-indicator {
+                font-size: 17px;
+                padding: 7px 18px;
+            }
+  .title-group {
+                margin-bottom: 25px;
+            }
+  .title-group h1 {
+                font-size: 36px;
+            }
+  .title-group p {
+                font-size: 20px;
+            }
+  .lecture-grid {
+                width: 94%;
+                gap: 15px;
+            }
+  .card {
+                padding-bottom: 25px;
+            }
+  .img-box {
+                height: 120px;
+            }
+  .card h2 {
+                font-size: 30px;
+                margin-top: 22px;
+            }
+  .card p {
+                font-size: 16px;
+                margin-top: 10px;
+            }
+  .bottom-buttons {
+                margin-top: 25px;
+                gap: 8px;
+            }
+  .btn-back-bottom, .btn-suggestion {
+                font-size: 17px;
+                padding: 11px 18px;
+            }
+  .suggestion-box {
+                max-width: 100%;
+                padding: 25px 20px;
+                border-radius: 22px;
+            }
+  .suggestion-title h2 {
+                font-size: 27px;
+            }
+  .suggestion-description {
+                font-size: 17px;
+            }
+  .suggestion-textarea {
+                height: 180px;
+                font-size: 17px;
+            }
+  .modal-btn {
+                font-size: 17px;
+                padding: 12px 24px;
+            }
+}
+
+footer {
+            padding: 18px 0;
+            text-align: center;
+            color: #bbb;
+            font-size: 14px;
+            flex-shrink: 0;
+            border-top: 1px solid #eee;
+            background: white;
+        }
+}

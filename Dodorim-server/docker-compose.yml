@@ -1,0 +1,39 @@
+# NAS에서 실행: 이 폴더(Dodorim-server)에서 `docker compose up -d --build`
+# 데이터는 ./data 아래에 남습니다 (DB 파일, 업로드한 사진·영상·글).
+services:
+  db:
+    image: mariadb:11.4   # 공식 MariaDB 이미지 (Ubuntu 기반)
+    restart: unless-stopped
+    environment:
+      TZ: Asia/Seoul
+      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MARIADB_DATABASE: ${DB_NAME:-dodorim}
+      MARIADB_USER: ${DB_USER:-dodorim}
+      MARIADB_PASSWORD: ${DB_PASSWORD}
+    command: ["--character-set-server=utf8mb4", "--collation-server=utf8mb4_unicode_ci"]
+    volumes:
+      - ./data/mariadb:/var/lib/mysql
+      # 처음 실행(빈 DB)일 때만 자동으로 테이블 생성
+      - ./db/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  app:
+    build:
+      context: ..
+      dockerfile: Dodorim-server/Dockerfile
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      DB_HOST: db
+      DB_PORT: 3306
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "${APP_PORT:-3000}:3000"
+    volumes:
+      - ./data/storage:/data/storage
