@@ -26,16 +26,19 @@ function browserSpeak(text) {
   window.speechSynthesis.speak(u);
 }
 
-export async function speak(text) {
+// force: 체험하기처럼 화면에 따로 '소리 켜기'가 있으면 전체 음성 설정과 상관없이 바로 읽음
+export async function speak(text, force = false) {
   stopVoice();
-  if (!enabled || !text) return;
+  if (force) currentText = text;
+  const on = () => enabled || force;
+  if (!on() || !text) return;
   if (serverTts) {
     try {
       const res = await fetch('/api/speech/tts', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text }) });
       if (res.status === 503) serverTts = false;
       if (res.ok) {
         const url = URL.createObjectURL(await res.blob());
-        if (text !== currentText || !enabled) return; // 기다리는 사이 페이지가 바뀜
+        if (text !== currentText || !on()) return; // 기다리는 사이 페이지가 바뀜
         audio = new Audio(url);
         audio.onended = () => URL.revokeObjectURL(url);
         // 사용자가 화면을 한 번도 누르지 않았으면 브라우저가 자동 재생을 막을 수 있음
@@ -46,7 +49,7 @@ export async function speak(text) {
       // 서버 연결 실패 시 브라우저 음성으로
     }
   }
-  if (text === currentText && enabled) browserSpeak(text);
+  if (text === currentText && on()) browserSpeak(text);
 }
 
 export function setVoiceEnabled(on) {

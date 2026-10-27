@@ -17,6 +17,7 @@ import Places from './pages/Places';
 import ScreenList from './pages/ScreenList';
 import Screen from './pages/Screen';
 import Kiosk from './pages/Kiosk';
+import Experience from './pages/Experience';
 import Manager from './pages/Manager';
 import UnitManager from './pages/UnitManager';
 import Notice from './pages/Notice';
@@ -67,6 +68,7 @@ export default function App() {
         <Route path="/screen_list" element={<ScreenList />} />
         <Route path="/screen" element={<Screen />} />
         <Route path="/kiosk" element={<Kiosk />} />
+        <Route path="/experience" element={<Experience />} />
         <Route path="/manager" element={<Admin><Manager /></Admin>} />
         <Route path="/unit_manager" element={<Admin><UnitManager /></Admin>} />
         <Route path="/notice" element={<Admin><Notice /></Admin>} />

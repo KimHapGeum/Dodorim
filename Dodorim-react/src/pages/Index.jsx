@@ -137,7 +137,7 @@ function Home({ slideData, noticeList }) {
           <button className="start-btn" style={{ backgroundColor: currentSlide.color }} onClick={() => navigate('/select_topic')}>
             교육 시작하기
           </button>
-          <button className="practice-btn" style={{ backgroundColor: currentSlide.subColor }} onClick={() => navigate('/kiosk')}>
+          <button className="practice-btn" style={{ backgroundColor: currentSlide.subColor }} onClick={() => navigate('/experience')}>
   체험하기
 </button>
         </div>
