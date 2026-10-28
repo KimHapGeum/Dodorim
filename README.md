@@ -92,5 +92,3 @@ npm run dev
 - 관리자가 교육 콘텐츠를 쉽게 등록하고 갱신할 수 있는 운영 환경 제공
 
 ---
-
-본 README는 `Dodorim-react`, `Dodorim-server` 구조를 기준으로 작성한 예제입니다.
